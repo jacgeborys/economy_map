@@ -44,6 +44,48 @@ COUNTRY_FILES = {
         "source": "Rosstat (Federal State Statistics Service)",
         "source_url": "https://rosstat.gov.ru",
     },
+    "DE": {
+        "file": "germany_destatis_wages.csv",
+        "wage_col": "wage_local",
+        "currency_col": "currency",
+        "source": "Destatis (Federal Statistical Office of Germany)",
+        "source_url": "https://www.destatis.de",
+    },
+    "CZ": {
+        "file": "czechia_czso_wages.csv",
+        "wage_col": "wage_local",
+        "currency_col": "currency",
+        "source": "CZSO (Czech Statistical Office)",
+        "source_url": "https://www.czso.cz",
+    },
+    "SK": {
+        "file": "slovakia_susr_wages.csv",
+        "wage_col": "wage_local",
+        "currency_col": "currency",
+        "source": "SUSR (Statistical Office of Slovak Republic)",
+        "source_url": "https://www.statistics.sk",
+    },
+    "LT": {
+        "file": "lithuania_osp_wages.csv",
+        "wage_col": "wage_local",
+        "currency_col": "currency",
+        "source": "OSP (Statistics Lithuania)",
+        "source_url": "https://osp.stat.gov.lt",
+    },
+    "BY": {
+        "file": "belarus_belstat_wages.csv",
+        "wage_col": "wage_local",
+        "currency_col": "currency",
+        "source": "Belstat (National Statistical Committee of Belarus)",
+        "source_url": "https://www.belstat.gov.by",
+    },
+    "UA": {
+        "file": "ukraine_ukrstat_wages.csv",
+        "wage_col": "wage_local",
+        "currency_col": "currency",
+        "source": "Ukrstat (State Statistics Service of Ukraine)",
+        "source_url": "https://www.ukrstat.gov.ua",
+    },
 }
 
 
@@ -51,14 +93,14 @@ def map_region_for_year(country_code: str, year: int) -> str:
     """Map a country code to the correct region_id for a given year.
     E.g. Serbia pre-2006 -> SCG, pre-2003 -> YU."""
     if country_code == "RS":
-        if year < 1992:
+        if year < 2003:
             return "YU"
-        elif year < 2003:
-            return "YU"  # FRY was still internationally called Yugoslavia
         elif year < 2006:
             return "SCG"
         else:
             return "RS"
+    if country_code in ("CZ", "SK") and year < 1993:
+        return "CS"
     return country_code
 
 

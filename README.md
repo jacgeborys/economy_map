@@ -9,9 +9,10 @@ across all European countries from 1990-2025, with optional forecast to 2030.
 entities), `wages`, `fx_rates`, `gdp`. Derived view `wages_converted` computes
 EUR/USD wages at query time.
 
-**Stage 2 (Ingestion):** PoC complete for Poland, Serbia (Yugoslavia successor test
-case), and Russia via curated national stat office CSVs. FX rates and GDP (IMF WEO)
-ingested. Eurostat API script scaffolded but not yet parsing responses.
+**Stage 2 (Ingestion):** PoC complete for 9 countries: Poland, Germany, Czechia,
+Slovakia, Lithuania, Belarus, Ukraine, Serbia (Yugoslavia successor test case),
+and Russia via curated national stat office CSVs. FX rates (20 currency series)
+and GDP (IMF WEO) ingested. Eurostat API script scaffolded but not yet parsing.
 
 **Stage 3 (Cleaning):** Complete. Cubic spline interpolation from annual to monthly,
 with hard breaks at currency redenominations (PLZ->PLN 1995, RUR->RUB 1998,
@@ -27,7 +28,7 @@ discontinuities and coverage gaps.
 ```
 src/
   schema.py              DuckDB schema + region seed data (55 European regions)
-  ingest_national.py     National stat office CSV ingestion (GUS, RZS, Rosstat)
+  ingest_national.py     National stat office CSV ingestion (9 countries)
   ingest_eurostat.py     Eurostat API scaffold
   ingest_imf_weo.py      IMF WEO GDP ingestion
   ingest_fx.py           FX rate ingestion (ECB/IMF)
@@ -39,15 +40,22 @@ data/raw/                Curated source CSVs
 output/wages.duckdb      Output database (~3MB)
 ```
 
-## Current Coverage (PoC)
+## Current Coverage
 
-| Country | Actual Years | Interpolated Months | Currencies |
-|---------|-------------|-------------------|------------|
-| Poland  | 1990-2025   | 363 monthly rows  | PLZ, PLN   |
-| Serbia  | 2006-2025   | 209 monthly rows  | RSD        |
-| Yugoslavia | 1990-2002 | 44 monthly rows  | YUD, YUN, YUM, CSD |
-| Serbia & Montenegro | 2003-2005 | 11 monthly rows | RSD |
-| Russia  | 1990-2025   | 352 monthly rows  | SUR, RUR, RUB |
+| Region | Actual Years | Interpolated Months | Currencies |
+|--------|-------------|-------------------|------------|
+| Germany | 1990-2025 | 363 | DEM, EUR |
+| Poland | 1990-2025 | 363 | PLZ, PLN |
+| Czechia | 1993-2025 | 352 | CZK |
+| Slovakia | 1993-2025 | 330 | SKK, EUR |
+| Lithuania | 1993-2025 | 330 | LTL, EUR |
+| Ukraine | 1996-2025 | 308 | UAH |
+| Belarus | 1995-2025 | 286 | BYB, BYR, BYN |
+| Russia | 1990-2025 | 352 | SUR, RUR, RUB |
+| Serbia | 2006-2025 | 209 | RSD |
+| Czechoslovakia | 1990-1992 | 22 | CSK |
+| Yugoslavia | 1990-2002 | 44 | YUD, YUN, YUM, CSD |
+| Serbia & Montenegro | 2003-2005 | 11 | RSD |
 
 ## Key Design Decisions
 

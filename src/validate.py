@@ -86,6 +86,10 @@ def discontinuity_report(con) -> None:
         ("RU", 1992), ("RU", 1993), ("RU", 1994), ("RU", 1995),  # Russian hyperinflation
         ("RU", 1998), ("RU", 1999),  # RUB redenomination + crisis
         ("RU", 2015),  # Ruble devaluation
+        ("BY", 2000), ("BY", 2011), ("BY", 2012), ("BY", 2016),  # Belarus redenominations + devaluations
+        ("UA", 2015), ("UA", 2017),  # Ukraine devaluations + tax reform
+        ("CS", 1991), ("CS", 1992),  # Czechoslovakia transition
+        ("LT", 2019),  # Lithuania gross/net methodology shift
     }
 
     regions = con.execute("""

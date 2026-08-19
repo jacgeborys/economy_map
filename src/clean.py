@@ -30,6 +30,20 @@ HARD_BREAKS = {
     ("YU", "1991-06-01"),   # Slovenia/Croatia independence
     ("YU", "1992-03-01"),   # Bosnia independence
     ("SCG", "2006-06-01"),  # Serbia/Montenegro split
+    # Czechoslovakia breakup
+    ("CS", "1993-01-01"),
+    # Germany DEM->EUR
+    ("DE", "1999-01-01"),
+    # Slovakia SKK->EUR
+    ("SK", "2009-01-01"),
+    # Lithuania LTL->EUR
+    ("LT", "2015-01-01"),
+    # Belarus BYB->BYR redenomination
+    ("BY", "2000-01-01"),
+    # Belarus BYR->BYN redenomination
+    ("BY", "2016-07-01"),
+    # Ukraine: major devaluation events (not redenomination but massive FX shifts)
+    ("UA", "2014-06-01"),   # post-Crimea devaluation
 }
 
 
