@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(python:*)",
+      "Bash(where uv:*)",
+      "Bash(rm:*)",
+      "Bash(.venv/Scripts/python:*)"
+    ]
+  }
+}

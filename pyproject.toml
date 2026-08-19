@@ -1,0 +1,14 @@
+[project]
+name = "economy-map"
+version = "0.1.0"
+description = "CEE/Post-Soviet wage convergence dataset and visualization"
+requires-python = ">=3.10"
+dependencies = [
+    "duckdb>=1.0",
+    "pandas>=2.0",
+    "requests>=2.31",
+    "scipy>=1.11",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "ipython"]
