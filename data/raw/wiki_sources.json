@@ -1,0 +1,442 @@
+[
+  {
+    "iso2": "AL",
+    "country": "Albania",
+    "date": "2026 (Q1)",
+    "source_urls": [
+      "https://www.instat.gov.al/media/jcde25r3/wage-statistics-q1-2026.pdf"
+    ],
+    "source_desc": "↑ \"Wage Statistics Q1 - 2026\" (PDF). INSTAT. 10 June 2026. Retrieved 11 June 2026."
+  },
+  {
+    "iso2": "AD",
+    "country": "Andorra",
+    "date": "2024-09",
+    "source_urls": [
+      "https://www.altaveu.com/actualitat/economia/salari-mitja-setembre-se-situa-en-251484-euros_61884_102.html"
+    ],
+    "source_desc": "↑ \"El salari mitjà del setembre se situa en els 2.514,84 euros (\"The average salary for September is 2,514.84 euros\")\". altaveu.com (in Catalan). 14 November 2024. Retrieved 16 November 2024."
+  },
+  {
+    "iso2": "AM",
+    "country": "Armenia",
+    "date": "2026-06",
+    "source_urls": [
+      "https://armstat.am/en/?nid=12&id=08001",
+      "https://web.archive.org/web/20260805170907/https://armstat.am/en/?nid=12&id=08001"
+    ],
+    "source_desc": "↑ \"Average monthly nominal wages, drams / 2026\". Archived from the original on 5 August 2026. Retrieved 5 August 2026."
+  },
+  {
+    "iso2": "AT",
+    "country": "Austria",
+    "date": "2024",
+    "source_urls": [
+      "https://www.statistik.at/fileadmin/pages/333/2_brutto-_und_nettojahreseinkommen_der_ganzjaehrig_vollzeitbeschaeftigten_2004_2024_020055.ods"
+    ],
+    "source_desc": "1 2 \"Jährliche Personeneinkommen - STATISTIK AUSTRIA - Die Informationsmanager\" (ODS). Statistik Austria (in German). 12 December 2025."
+  },
+  {
+    "iso2": "AZ",
+    "country": "Azerbaijan",
+    "date": "2026-06",
+    "source_urls": [
+      "https://www.stat.gov.az/news/index.php?lang=az&id=6833"
+    ],
+    "source_desc": "↑ \"Ölkədə muzdla çalışan işçilərin sayı və əməkhaqqı barədə\" [About the number and salaries of employees working in the country]. State Statistics Committee (in Azerbaijani). 11 August 2026. Retrieved"
+  },
+  {
+    "iso2": "BY",
+    "country": "Belarus",
+    "date": "2026-06",
+    "source_urls": [
+      "https://www.belstat.gov.by/upload-belstat/upload-belstat-pdf/oficial_statistika/2026/zarplata-2606-en.pdf"
+    ],
+    "source_desc": "↑ \"Nominal gross average earnings in the Republic of Belarus (BYN), June 2026\" (PDF). Belstat. 24 July 2026."
+  },
+  {
+    "iso2": "BE",
+    "country": "Belgium",
+    "date": "2022",
+    "source_urls": [
+      "https://statbel.fgov.be/en/themes/work-training/wages-and-labourcost/overview-belgian-wages-and-salaries"
+    ],
+    "source_desc": "↑ \"An overview of Belgian wages and salaries | Statbel\". statbel.fgov.be. 25 September 2024. Retrieved 21 April 2026."
+  },
+  {
+    "iso2": "BA",
+    "country": "Bosnia and Herzegovina",
+    "date": "2026-05",
+    "source_urls": [
+      "https://bhas.gov.ba/data/Publikacije/Saopstenja/2026/LAB_05_2026_Q1_1_BS.pdf"
+    ],
+    "source_desc": "↑ \"Average monthly gross wages of persons in employment, 2026 | By accounting period (I quarter)\" (PDF). Agency for Statistics of Bosnia and Herzegovina. 20 May 2026. Retrieved 11 June 2026."
+  },
+  {
+    "iso2": "BG",
+    "country": "Bulgaria",
+    "date": "2026-Q2",
+    "source_urls": [
+      "https://www.nsi.bg/statistical-data/179/570"
+    ],
+    "source_desc": "↑ \"Average Gross Salary, National Statistics Institute\"."
+  },
+  {
+    "iso2": "HR",
+    "country": "Croatia",
+    "date": "2026-03",
+    "source_urls": [
+      "https://dzs.gov.hr/vijesti/prosjecna-mjesecna-neto-placa-za-ozujak-2026-iznosila-1-555-eura/2561"
+    ],
+    "source_desc": "↑ \"Average Monthly Net and Gross Earnings of Persons in Paid Employment for March\". dzs.hr."
+  },
+  {
+    "iso2": "CY",
+    "country": "Cyprus",
+    "date": "2025 (Q4)",
+    "source_urls": [
+      "https://www.cystat.gov.cy/el/default",
+      "https://www.cystat.gov.cy/el/SubthemeStatistics?id=42"
+    ],
+    "source_desc": "↑ \"Home - Monthly Earnings\". cystat.gov.cy (in Greek). Statistical Service of Cyprus (CYSTAT). → \"Labor Costs and Benefits // Latest News // Average Monthly Employee Benefits by Quarter - 2nd Quarter "
+  },
+  {
+    "iso2": "CZ",
+    "country": "Czech Republic",
+    "date": "2026 (Q1)",
+    "source_urls": [
+      "https://csu.gov.cz/rychle-informace/prumerne-mzdy-1-ctvrtleti-2026"
+    ],
+    "source_desc": "↑ \"Average wages - 1st quarter of 2026\". Czech Statistical Office."
+  },
+  {
+    "iso2": "DK",
+    "country": "Denmark",
+    "date": "2024",
+    "source_urls": [
+      "https://ec.europa.eu/eurostat/web/labour-market/database",
+      "https://ec.europa.eu/eurostat/databrowser/view/earn_nt_net__custom_13839826/default/table?lang=en"
+    ],
+    "source_desc": "1 2 3 4 5 6 7 8 9 10 11 .mw-parser-output cite.citation{font-style:inherit;word-wrap:break-word}.mw-parser-output .citation q{quotes:\"\\\"\"\"\\\"\"\"'\"\"'\"}.mw-parser-output .citation:target{background-color:"
+  },
+  {
+    "iso2": "EE",
+    "country": "Estonia",
+    "date": "2026-03",
+    "source_urls": [
+      "https://www.stat.ee/en/find-statistics/statistics-theme/work-life/wages-and-salaries-and-labour-costs/average-monthly-gross-wages-and-salaries"
+    ],
+    "source_desc": "↑ \"Average monthly gross wages and salaries\". www.stat.ee. 2 June 2026."
+  },
+  {
+    "iso2": "FI",
+    "country": "Finland",
+    "date": "2025 (Q4)",
+    "source_urls": [
+      "https://www.stat.fi/en/statistics/ati"
+    ],
+    "source_desc": "↑ \"Index of wage and salary earnings\". Stat.fi. 26 January 2024."
+  },
+  {
+    "iso2": "FR",
+    "country": "France",
+    "date": "2024",
+    "source_urls": [
+      "https://www.insee.fr/fr/statistiques/8657156#onglet-2"
+    ],
+    "source_desc": "↑ \"Les salaires dans le secteur privé en 2024\". Insee (in French). National Institute of Statistics and Economic Studies. 23 October 2025. Retrieved 25 January 2026."
+  },
+  {
+    "iso2": "GE",
+    "country": "Georgia",
+    "date": "2026 (Q1)",
+    "source_urls": [
+      "https://www.geostat.ge/en/modules/categories/39/wages"
+    ],
+    "source_desc": "↑ \"Wages\". National Statistics Office of Georgia. Retrieved 10 July 2026."
+  },
+  {
+    "iso2": "DE",
+    "country": "Germany",
+    "date": "2025 excl. special payments",
+    "source_urls": [
+      "https://www.destatis.de/EN/Themes/Labour/Earnings/Earnings-Earnings-Differences/Tables/long-time-series-germany.html"
+    ],
+    "source_desc": "↑ \"Average gross monthly earnings excluding special payments - Germany 2025\". Destatis. Federal Statistical Office of Germany. Retrieved 1 April 2026. 2025: 4,851 Euro - Full-time employees - 1: Exclu"
+  },
+  {
+    "iso2": "GR",
+    "country": "Greece",
+    "date": "2025 (Q1)",
+    "source_urls": [
+      "https://www.ot.gr/2023/06/13/forologia/ergasiaka-asfalistika/ergani-ayksisi-stous-misthotous-kai-stis-miniaies-apodoxes-pinakes/"
+    ],
+    "source_desc": "↑ \"\"ΕΡΓΑΝΗ\": Αύξηση στους μισθωτούς και στις μηνιαίες αποδοχές [πίνακες]\". 13 June 2023."
+  },
+  {
+    "iso2": "HU",
+    "country": "Hungary",
+    "date": "2026-05",
+    "source_urls": [
+      "https://www.ksh.hu/gyorstajekoztatok/ker/ker2605.html"
+    ],
+    "source_desc": "1 2 \"Average gross earnings at HUF 764,100\". www.ksh.hu. Hungarian Central Statistical Office (KSH). 2026-07-16. Retrieved 2026-07-16."
+  },
+  {
+    "iso2": "IS",
+    "country": "Iceland",
+    "date": "2024",
+    "source_urls": [
+      "https://px.hagstofa.is/pxen/pxweb/en/Samfelag/Samfelag__launogtekjur__1_laun__1_laun/VIN02001.px/"
+    ],
+    "source_desc": "↑ \"Regular earnings - full-time\". statice.is. Statistics Iceland. Retrieved 2025-09-06."
+  },
+  {
+    "iso2": "IE",
+    "country": "Ireland",
+    "date": "2025 (Q4)",
+    "source_urls": [
+      "https://www.cso.ie/en/statistics/earnings/earningsandlabourcosts/"
+    ],
+    "source_desc": "↑ \"Earnings and Labour Costs Q3 2024 (Final) Q4 2024 (Preliminary Estimates)\". cso.ie."
+  },
+  {
+    "iso2": "IT",
+    "country": "Italy",
+    "date": "2023",
+    "source_urls": [
+      "https://ec.europa.eu/eurostat/web/labour-market/database",
+      "https://ec.europa.eu/eurostat/databrowser/view/earn_nt_net__custom_13839826/default/table?lang=en"
+    ],
+    "source_desc": "1 2 3 4 5 6 7 8 9 10 11 .mw-parser-output cite.citation{font-style:inherit;word-wrap:break-word}.mw-parser-output .citation q{quotes:\"\\\"\"\"\\\"\"\"'\"\"'\"}.mw-parser-output .citation:target{background-color:"
+  },
+  {
+    "iso2": "KZ",
+    "country": "Kazakhstan",
+    "date": "2026 (Q1)",
+    "source_urls": [
+      "https://stat.gov.kz/en/industries/labor-and-income/stat-wags/",
+      "https://web.archive.org/web/20260703235951/https://stat.gov.kz/en/industries/labor-and-income/stat-wags/"
+    ],
+    "source_desc": "↑ \"Wages and working conditions\". Bureau of National Statistics. Archived from the original on 3 July 2026. Retrieved 11 June 2026.}"
+  },
+  {
+    "iso2": "XK",
+    "country": "Kosovo",
+    "date": "2025",
+    "source_urls": [
+      "https://ask.rks-gov.net/Releases/Details/10112"
+    ],
+    "source_desc": "1 2 \"Niveli i pagave në Kosovë, 2025\" [Salary level in Kosovo, 2025]. Kosovo Agency of Statistics (in Albanian). 29 May 2026. Retrieved 11 June 2026."
+  },
+  {
+    "iso2": "LV",
+    "country": "Latvia",
+    "date": "2026 (Q1)",
+    "source_urls": [
+      "https://stat.gov.lv/en/statistics-themes/labour-market/wages-and-salaries/press-releases/27579-wages-and-salaries-1st"
+    ],
+    "source_desc": "↑ \"Gross salary at 1 831 euro in Q1 2026 Oficiālās statistikas portāls\". stat.gov.lv."
+  },
+  {
+    "iso2": "LT",
+    "country": "Lithuania",
+    "date": "2026 (Q1)",
+    "source_urls": [
+      "https://osp.stat.gov.lt/covid19-statistika/covid19-itaka-darbo-rinkai/darbo-uzmokestis"
+    ],
+    "source_desc": "1 2 \"Average earnings (monthly)\". osp.stat.gov.lt."
+  },
+  {
+    "iso2": "LU",
+    "country": "Luxembourg",
+    "date": "2023",
+    "source_urls": [
+      "https://ec.europa.eu/eurostat/web/labour-market/database",
+      "https://ec.europa.eu/eurostat/databrowser/view/earn_nt_net__custom_13839826/default/table?lang=en"
+    ],
+    "source_desc": "1 2 3 4 5 6 7 8 9 10 11 .mw-parser-output cite.citation{font-style:inherit;word-wrap:break-word}.mw-parser-output .citation q{quotes:\"\\\"\"\"\\\"\"\"'\"\"'\"}.mw-parser-output .citation:target{background-color:"
+  },
+  {
+    "iso2": "MT",
+    "country": "Malta",
+    "date": "2024 (Q4)",
+    "source_urls": [
+      "https://nso.gov.mt/labour-market/labour-force-survey-q4-2024/"
+    ],
+    "source_desc": "↑ \"Labour Force Survey: Q4/2024\". National Statistics Office Malta. 13 March 2025. Retrieved 2025-03-13."
+  },
+  {
+    "iso2": "MD",
+    "country": "Moldova",
+    "date": "2026 (Q1)",
+    "source_urls": [
+      "https://statistica.gov.md/en/the-average-gross-monthly-earnings-and-average-number-of-employees-index-in-the--9436_62476.html"
+    ],
+    "source_desc": "↑ \"The average gross monthly earnings and average number of employees index in the first quarter of 2026\". National Bureau of Statistics of the Republic of Moldova. 2 June 2026. Retrieved 2 June 2026."
+  },
+  {
+    "iso2": "ME",
+    "country": "Montenegro",
+    "date": "2026-05",
+    "source_urls": [
+      "https://monstat.org/uploads/files/zarade/2026/5/RAD_EN_Maj_2026.pdf"
+    ],
+    "source_desc": "1 2 \"Average earnings (wages)\" (PDF). MONSTAT. 30 June 2026. Retrieved 11 July 2026."
+  },
+  {
+    "iso2": "NL",
+    "country": "Netherlands",
+    "date": "2023",
+    "source_urls": [
+      "https://ec.europa.eu/eurostat/web/labour-market/database",
+      "https://ec.europa.eu/eurostat/databrowser/view/earn_nt_net__custom_13839826/default/table?lang=en"
+    ],
+    "source_desc": "1 2 3 4 5 6 7 8 9 10 11 .mw-parser-output cite.citation{font-style:inherit;word-wrap:break-word}.mw-parser-output .citation q{quotes:\"\\\"\"\"\\\"\"\"'\"\"'\"}.mw-parser-output .citation:target{background-color:"
+  },
+  {
+    "iso2": "MK",
+    "country": "North Macedonia",
+    "date": "2026-05",
+    "source_urls": [
+      "https://www.stat.mk/en/stat/population-and-living-conditions/labour-market/average-monthly-gross-wage-paid-per-employee/average-monthly-gross-wage-paid-per-employee-may-2026/"
+    ],
+    "source_desc": "↑ \"Average monthly gross wage paid per employee, May 2026\". State Statistical Office. 22 July 2026. Retrieved 22 July 2026."
+  },
+  {
+    "iso2": "NO",
+    "country": "Norway",
+    "date": "2025",
+    "source_urls": [
+      "https://www.ssb.no/en/arbeid-og-lonn/lonn-og-arbeidskraftkostnader/statistikk/lonn"
+    ],
+    "source_desc": "↑ \"Earnings of all employees\". ssb.no. 2024-08-28. Retrieved 2024-08-28."
+  },
+  {
+    "iso2": "PL",
+    "country": "Poland",
+    "date": "2026-06",
+    "source_urls": [
+      "https://dbw.stat.gov.pl/en/dashboard/213"
+    ],
+    "source_desc": "↑ \"Wages and salaries in enterprise sector; average monthly gross [zl]\"."
+  },
+  {
+    "iso2": "PT",
+    "country": "Portugal",
+    "date": "2025 (Q4)",
+    "source_urls": [
+      "https://www.ine.pt/xportal/xmain?xpid=INE&xpgid=ine_destaques&DESTAQUESdest_boui=757873293&DESTAQUESmodo=2",
+      "https://web.archive.org/web/20260213132325/https://www.ine.pt/xportal/xmain?xpid=INE&xpgid=ine_destaques&DESTAQUESdest_boui=757873293&DESTAQUESmodo=2"
+    ],
+    "source_desc": "↑ \"Statistics Portugal - Web Portal\". www.ine.pt. Archived from the original on 2026-02-13. Retrieved 2026-03-27."
+  },
+  {
+    "iso2": "RO",
+    "country": "Romania",
+    "date": "2026-03",
+    "source_urls": [
+      "https://insse.ro/cms/sites/default/files/com_presa/com_pdf/cs03e26.pdf"
+    ],
+    "source_desc": "1 2 \"The average Gross earnings on total economy in March 2026 were 9902 LEI and the Net 5938 LEI\" (PDF). www.insse.ro. National Institute of Statistics - Romania (INS). 2026-05-13. Retrieved 2026-05-"
+  },
+  {
+    "iso2": "RU",
+    "country": "Russia",
+    "date": "2026-04",
+    "source_urls": [
+      "https://eng.rosstat.gov.ru",
+      "https://web.archive.org/web/20260721231252/https://eng.rosstat.gov.ru"
+    ],
+    "source_desc": "↑ \"Indicators\". Federal State Statistics Service. Archived from the original on 21 July 2026. Retrieved 28 July 2026."
+  },
+  {
+    "iso2": "SM",
+    "country": "San Marino",
+    "date": "2024-10",
+    "source_urls": [],
+    "source_desc": ""
+  },
+  {
+    "iso2": "RS",
+    "country": "Serbia",
+    "date": "2026-03",
+    "source_urls": [
+      "https://www.stat.gov.rs/en-us/vesti/statisticalrelease/?p=17893"
+    ],
+    "source_desc": "1 2 \"Average salaries and wages per employee, March 2026\". Statistical Office of the Republic of Serbia. 25 May 2026. Retrieved 11 June 2026."
+  },
+  {
+    "iso2": "SK",
+    "country": "Slovakia",
+    "date": "2025 (Q4)",
+    "source_urls": [
+      "https://slovak.statistics.sk/wps/portal/ext/products/informationmessages/inf_sprava_detail/!ut/p/z1/tVHBUsIwEP0ajplsmtQmx8JgW0RGwArNxUlDKhVIC2Sq_r3B8aIOOB7cy-7OvLfz3j4s8RJLq7r6Sbm6sWrr90JePU6jjPf7JAbojylko5v5JB1cB0ke4sVXAJ_MhpDdx3fJbMQIsBDLy_wHLLHU1rVujYumPKo1MhbVtkJq43rgh-aw82o6a9CxPajurQfd0biN7xXhhBtKUeAHxIgQSJCAIxGVjFRUlFAGp_Otrle4WBlVRoqFqNRaI8ZCj64qjginRjPNAxGI73Z-6j3ZgTMVg-fLD8ggiVMWjQH4OAkhi9N8JqaUQkw_ARduFF5DdFYDifCiq80Lzu3pM1s8_6PFFPDot1R87PXzfi9jn01jnXl1ePkf4bS7fMfpG9pUt0PKZPEOPNJibw!!/dz/d5/L2dBISEvZ0FBIS9nQSEh/"
+    ],
+    "source_desc": "↑ \"Average monthly wage in economy of the SR\". slovak.statistics.sk. Retrieved 2025-09-06."
+  },
+  {
+    "iso2": "SI",
+    "country": "Slovenia",
+    "date": "2026-05",
+    "source_urls": [],
+    "source_desc": ""
+  },
+  {
+    "iso2": "ES",
+    "country": "Spain",
+    "date": "2024",
+    "source_urls": [
+      "https://ec.europa.eu/eurostat/web/labour-market/database",
+      "https://ec.europa.eu/eurostat/databrowser/view/earn_nt_net__custom_13839826/default/table?lang=en"
+    ],
+    "source_desc": "1 2 3 4 5 6 7 8 9 10 11 .mw-parser-output cite.citation{font-style:inherit;word-wrap:break-word}.mw-parser-output .citation q{quotes:\"\\\"\"\"\\\"\"\"'\"\"'\"}.mw-parser-output .citation:target{background-color:"
+  },
+  {
+    "iso2": "SE",
+    "country": "Sweden",
+    "date": "2025",
+    "source_urls": [
+      "https://www.scb.se/hitta-statistik/sverige-i-siffror/utbildning-jobb-och-pengar/medelloner-i-sverige/"
+    ],
+    "source_desc": "↑ \"Statistics Sweden\"."
+  },
+  {
+    "iso2": "CH",
+    "country": "Switzerland",
+    "date": "2024",
+    "source_urls": [
+      "https://www.bfs.admin.ch/bfs/en/home/statistics/work-income/wages-income-employment-labour-costs.gnpdetail.2025-0708.html",
+      "https://www.bfs.admin.ch/bfs/en/home/statistics/work-income/wages-income-employment-labour-costs/income-employment.html"
+    ],
+    "source_desc": "↑ \"Wages, income from employment and labour costs\". bfs.admin.ch. Federal Statistical Office (Switzerland). 25 November 2025. → \"Income from employment in 2023\". 29 August 2024. Retrieved 20 November "
+  },
+  {
+    "iso2": "TR",
+    "country": "Turkey",
+    "date": "2023",
+    "source_urls": [
+      "https://www.eleman.net/meslek/kazanci/maas"
+    ],
+    "source_desc": "↑ Earnings Salaries"
+  },
+  {
+    "iso2": "UA",
+    "country": "Ukraine",
+    "date": "2026-06",
+    "source_urls": [
+      "https://stat.gov.ua/en",
+      "https://web.archive.org/web/20260809022525/https://stat.gov.ua/en"
+    ],
+    "source_desc": "↑ \"Main page Ukrstat\". State Statistics Service of Ukraine. Archived from the original on 9 August 2026. Retrieved 10 August 2026."
+  },
+  {
+    "iso2": "GB",
+    "country": "United Kingdom",
+    "date": "2025 (Apr) ASHE full-time mean TOTAL",
+    "source_urls": [
+      "https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/bulletins/annualsurveyofhoursandearnings/2025"
+    ],
+    "source_desc": "↑ \"Employee earnings in the UK: 2025 - ASHE full-time mean TOTAL incl. bonuses\". Ons.gov.uk. Mean weekly full-time total pay (incl. bonuses/overtime) provisional £968. Annual mean £50,336."
+  }
+]
