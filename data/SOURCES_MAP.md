@@ -20,56 +20,56 @@ with API type, historical availability, and pipeline status.
 
 ## Source Table
 
-| ISO2 | Country | Institution | Source type | Currency | Wiki date | Pipeline | Hist. | Source URL | Notes |
-|------|---------|-------------|-------------|----------|-----------|----------|-------|------------|-------|
-| AL | Albania | INSTAT | pdf | ALL | 2026 Q1 | wiki | ? | instat.gov.al | Quarterly PDF publications |
-| AD | Andorra | Altaveu (news) | html | EUR | 2024-09 | wiki | no | altaveu.com | News article, not stats office |
-| AM | Armenia | ArmStat | api/html | AMD | 2026-06 | wiki | yes | armstat.am/en/?nid=12&id=08001 | Monthly data available |
-| AT | Austria | Statistik Austria | ods | EUR | 2024 | oecd | yes | statistik.at | ODS spreadsheet 2004-2024 |
-| AZ | Azerbaijan | AZSTAT | html | AZN | 2026-06 | wiki | ? | stat.gov.az | Press releases |
-| BY | Belarus | Belstat | pdf | BYN | 2026-06 | wiki | yes | belstat.gov.by | Monthly PDF, EN available |
-| BE | Belgium | Statbel | html | EUR | 2022 | oecd | yes | statbel.fgov.be | Has data explorer |
-| BA | Bosnia & Herz. | BHAS | pdf | BAM | 2026 Q1 | wiki | yes | bhas.gov.ba | Quarterly PDF, gross+net |
-| BG | Bulgaria | NSI | html/api | BGN→EUR | 2026 Q2 | oecd | yes | nsi.bg/statistical-data/179/570 | Joined eurozone 2025 |
-| HR | Croatia | DZS | html | EUR | 2026-03 | oecd | yes | dzs.gov.hr | Already in EUR (since 2023) |
-| CY | Cyprus | CYSTAT | html | EUR | 2025 Q4 | wiki | yes | cystat.gov.cy | Quarterly earnings data |
-| CZ | Czechia | CZSO | html/api | CZK | 2026 Q1 | oecd | yes | csu.gov.cz | Quarterly "Average wages" reports |
-| DK | Denmark | DST / Eurostat | eurostat | DKK | 2024 | oecd | yes | dst.dk + Eurostat | Wikipedia uses Eurostat earn_nt_net |
-| EE | Estonia | Stat.ee | html/api | EUR | 2026-03 | oecd | yes | stat.ee | Good statistics portal, EN |
-| FI | Finland | Stat.fi | html | EUR | 2025 Q4 | oecd | yes | stat.fi/en/statistics/ati | Wage index, can derive levels |
-| FR | France | INSEE | html | EUR | 2024 | oecd | yes | insee.fr/fr/statistiques/8657156 | Annual survey, private sector |
-| GE | Georgia | GeoStat | html/api | GEL | 2026 Q1 | wiki | yes | geostat.ge/en/modules/categories/39/wages | EN interface, quarterly |
-| DE | Germany | Destatis | html | EUR | 2025 | destatis | yes | destatis.de/.../long-time-series-germany.html | **DONE** 1991-2025 |
-| GR | Greece | ERGANI | html | EUR | 2025 Q1 | oecd | ? | ot.gr (news) | Source is news article, not stats office |
-| HU | Hungary | KSH | html/api | HUF | 2026-05 | oecd | yes | ksh.hu | Monthly rapid reports |
-| IS | Iceland | Hagstofa | pxweb | ISK | 2024 | oecd | yes | px.hagstofa.is/pxen/ | PxWeb database, queryable |
-| IE | Ireland | CSO | html | EUR | 2025 Q4 | oecd | yes | cso.ie | Quarterly earnings reports |
-| IT | Italy | ISTAT / Eurostat | eurostat | EUR | 2023 | oecd | yes | istat.it | Wikipedia uses Eurostat earn_nt_net |
-| KZ | Kazakhstan | BNS | html | KZT | 2026 Q1 | wiki | yes | stat.gov.kz | Not strictly European |
-| XK | Kosovo | KAS | html | EUR | 2025 | wiki | ? | ask.rks-gov.net | Uses EUR, annual reports |
-| LV | Latvia | CSB | html | EUR | 2026 Q1 | oecd | yes | stat.gov.lv | Press releases, quarterly |
-| LT | Lithuania | OSP | html/api | EUR | 2026 Q1 | oecd | yes | osp.stat.gov.lt | Good EN interface |
-| LU | Luxembourg | STATEC / Eurostat | eurostat | EUR | 2023 | oecd | yes | statistiques.public.lu | Wikipedia uses Eurostat earn_nt_net |
-| MT | Malta | NSO Malta | html | EUR | 2024 Q4 | wiki | yes | nso.gov.mt | Labour Force Survey |
-| MD | Moldova | BNS | html | MDL | 2026 Q1 | wiki | yes | statistica.gov.md/en/ | EN available, quarterly |
-| ME | Montenegro | MONSTAT | pdf | EUR | 2026-05 | wiki | yes | monstat.org | Monthly PDF, uses EUR |
-| NL | Netherlands | CBS / Eurostat | eurostat | EUR | 2023 | oecd | yes | cbs.nl | Wikipedia uses Eurostat earn_nt_net |
-| MK | N. Macedonia | SSO | html | MKD | 2026-05 | wiki | yes | stat.mk/en/ | Monthly gross wage data |
-| NO | Norway | SSB | pxweb | NOK | 2025 | oecd | yes | ssb.no | StatBank, good API |
-| PL | Poland | GUS | api | PLN | 2026-06 | gus | yes | dbw.stat.gov.pl | **DONE** BDL API, 2002-2025 |
-| PT | Portugal | INE | html | EUR | 2025 Q4 | oecd | yes | ine.pt | Portuguese stats office |
-| RO | Romania | INS | pdf | RON | 2026-03 | oecd | yes | insse.ro | Monthly PDF press releases |
-| RU | Russia | Rosstat | html | RUB | 2026-04 | wiki | yes | eng.rosstat.gov.ru | EN site, may have access issues |
-| SM | San Marino | Numbeo | — | EUR | 2024-10 | wiki | no | numbeo.com | Not an official source! |
-| RS | Serbia | SORS | html | RSD | 2026-03 | wiki | yes | stat.gov.rs/en-us/ | EN available, monthly |
-| SK | Slovakia | SUSR | html | EUR | 2025 Q4 | oecd | yes | slovak.statistics.sk | Uses EUR (since 2009) |
-| SI | Slovenia | SURS | html | EUR | 2026-05 | oecd | yes | stat.si | EN available, monthly |
-| ES | Spain | INE / Eurostat | eurostat | EUR | 2024 | oecd | yes | ine.es + Eurostat | Wikipedia uses Eurostat earn_nt_net |
-| SE | Sweden | SCB | pxweb | SEK | 2025 | oecd | yes | scb.se | StatBank, PxWeb API |
-| CH | Switzerland | BFS | html | CHF | 2024 | oecd | yes | bfs.admin.ch | Federal Statistical Office |
-| TR | Turkey | Eleman.net (news) | html | TRY | 2023 | wiki | no | eleman.net | Not official! TurkStat is tuik.gov.tr |
-| UA | Ukraine | Ukrstat | html | UAH | 2026-06 | wiki | yes | stat.gov.ua/en | EN available, monthly |
-| GB | United Kingdom | ONS | html/api | GBP | 2025 Apr | oecd | yes | ons.gov.uk | ASHE survey, annual |
+| ISO2 | Country | Institution | Source type | Granularity | Currency | Wiki date | Pipeline | Hist. | Source URL | Notes |
+|------|---------|-------------|-------------|-------------|----------|-----------|----------|-------|------------|-------|
+| AL | Albania | INSTAT | pdf | quarterly | ALL | 2026 Q1 | wiki | ? | instat.gov.al | Quarterly PDF publications |
+| AD | Andorra | Altaveu (news) | html | — | EUR | 2024-09 | wiki | no | altaveu.com | News article, not stats office |
+| AM | Armenia | ArmStat | api/html | monthly | AMD | 2026-06 | wiki | yes | armstat.am/en/?nid=12&id=08001 | Monthly data, EN |
+| AT | Austria | Statistik Austria | ods | annual | EUR | 2024 | oecd | yes | statistik.at | ODS spreadsheet 2004-2024 |
+| AZ | Azerbaijan | AZSTAT | html | monthly | AZN | 2026-06 | wiki | ? | stat.gov.az | Press releases |
+| BY | Belarus | Belstat | pdf | monthly | BYN | 2026-06 | wiki | yes | belstat.gov.by | Monthly PDF, EN available |
+| BE | Belgium | Statbel | html | annual | EUR | 2022 | oecd | yes | statbel.fgov.be | Has data explorer |
+| BA | Bosnia & Herz. | BHAS | pdf | quarterly | BAM | 2026 Q1 | wiki | yes | bhas.gov.ba | Quarterly PDF, gross+net |
+| BG | Bulgaria | NSI | html/api | quarterly | BGN→EUR | 2026 Q2 | oecd | yes | nsi.bg/statistical-data/179/570 | Joined eurozone 2025 |
+| HR | Croatia | DZS | html | monthly | EUR | 2026-03 | oecd | yes | dzs.gov.hr | Already in EUR (since 2023) |
+| CY | Cyprus | CYSTAT | html | quarterly | EUR | 2025 Q4 | wiki | yes | cystat.gov.cy | Quarterly earnings data |
+| CZ | Czechia | CZSO | html/api | quarterly | CZK | 2026 Q1 | oecd | yes | csu.gov.cz | Quarterly "Average wages" reports |
+| DK | Denmark | DST / Eurostat | eurostat | annual | DKK | 2024 | oecd | yes | dst.dk + Eurostat | Wikipedia uses Eurostat earn_nt_net |
+| EE | Estonia | Stat.ee | html/api | quarterly | EUR | 2026-03 | oecd | yes | stat.ee | Good statistics portal, EN |
+| FI | Finland | Stat.fi | html | quarterly | EUR | 2025 Q4 | oecd | yes | stat.fi/en/statistics/ati | Wage index, can derive levels |
+| FR | France | INSEE | html | annual | EUR | 2024 | oecd | yes | insee.fr/fr/statistiques/8657156 | Annual survey, private sector |
+| GE | Georgia | GeoStat | html/api | quarterly | GEL | 2026 Q1 | wiki | yes | geostat.ge/en/modules/categories/39/wages | EN interface, quarterly |
+| DE | Germany | Destatis | html | annual | EUR | 2025 | destatis | yes | destatis.de/.../long-time-series | **DONE** 1991-2025 |
+| GR | Greece | ERGANI | html | quarterly | EUR | 2025 Q1 | oecd | ? | ot.gr (news) | Source is news article, not stats office |
+| HU | Hungary | KSH | html/api | monthly | HUF | 2026-05 | oecd | yes | ksh.hu | Monthly rapid reports |
+| IS | Iceland | Hagstofa | pxweb | monthly | ISK | 2024 | oecd | yes | px.hagstofa.is/pxen/ | PxWeb database, queryable |
+| IE | Ireland | CSO | html | quarterly | EUR | 2025 Q4 | oecd | yes | cso.ie | Quarterly earnings reports |
+| IT | Italy | ISTAT / Eurostat | eurostat | annual | EUR | 2023 | oecd | yes | istat.it | Wikipedia uses Eurostat earn_nt_net |
+| KZ | Kazakhstan | BNS | html | quarterly | KZT | 2026 Q1 | wiki | yes | stat.gov.kz | Not strictly European |
+| XK | Kosovo | KAS | html | annual | EUR | 2025 | wiki | ? | ask.rks-gov.net | Uses EUR, annual reports |
+| LV | Latvia | CSB | html | quarterly | EUR | 2026 Q1 | oecd | yes | stat.gov.lv | Press releases, quarterly |
+| LT | Lithuania | OSP | html/api | quarterly | EUR | 2026 Q1 | oecd | yes | osp.stat.gov.lt | Good EN interface |
+| LU | Luxembourg | STATEC / Eurostat | eurostat | annual | EUR | 2023 | oecd | yes | statistiques.public.lu | Wikipedia uses Eurostat earn_nt_net |
+| MT | Malta | NSO Malta | html | quarterly | EUR | 2024 Q4 | wiki | yes | nso.gov.mt | Labour Force Survey |
+| MD | Moldova | BNS | html | quarterly | MDL | 2026 Q1 | wiki | yes | statistica.gov.md/en/ | EN available, quarterly |
+| ME | Montenegro | MONSTAT | pdf | monthly | EUR | 2026-05 | wiki | yes | monstat.org | Monthly PDF, uses EUR |
+| NL | Netherlands | CBS / Eurostat | eurostat | annual | EUR | 2023 | oecd | yes | cbs.nl | Wikipedia uses Eurostat earn_nt_net |
+| MK | N. Macedonia | SSO | html | monthly | MKD | 2026-05 | wiki | yes | stat.mk/en/ | Monthly gross wage data |
+| NO | Norway | SSB | pxweb | annual | NOK | 2025 | oecd | yes | ssb.no | StatBank, good API |
+| PL | Poland | GUS | api | monthly | PLN | 2026-06 | gus | yes | dbw.stat.gov.pl | **DONE** BDL API, 2002-2025 |
+| PT | Portugal | INE | html | quarterly | EUR | 2025 Q4 | oecd | yes | ine.pt | Portuguese stats office |
+| RO | Romania | INS | pdf | monthly | RON | 2026-03 | oecd | yes | insse.ro | Monthly PDF press releases |
+| RU | Russia | Rosstat | html | monthly | RUB | 2026-04 | wiki | yes | eng.rosstat.gov.ru | EN site, may have access issues |
+| SM | San Marino | Numbeo | — | — | EUR | 2024-10 | wiki | no | numbeo.com | Not an official source! |
+| RS | Serbia | SORS | html | monthly | RSD | 2026-03 | wiki | yes | stat.gov.rs/en-us/ | EN available, monthly |
+| SK | Slovakia | SUSR | html | quarterly | EUR | 2025 Q4 | oecd | yes | slovak.statistics.sk | Uses EUR (since 2009) |
+| SI | Slovenia | SURS | html | monthly | EUR | 2026-05 | oecd | yes | stat.si | EN available, monthly |
+| ES | Spain | INE / Eurostat | eurostat | annual | EUR | 2024 | oecd | yes | ine.es + Eurostat | Wikipedia uses Eurostat earn_nt_net |
+| SE | Sweden | SCB | pxweb | annual | SEK | 2025 | oecd | yes | scb.se | StatBank, PxWeb API |
+| CH | Switzerland | BFS | html | annual | CHF | 2024 | oecd | yes | bfs.admin.ch | Federal Statistical Office |
+| TR | Turkey | Eleman.net (news) | html | — | TRY | 2023 | wiki | no | eleman.net | Not official! TurkStat is tuik.gov.tr |
+| UA | Ukraine | Ukrstat | html | monthly | UAH | 2026-06 | wiki | yes | stat.gov.ua/en | EN available, monthly |
+| GB | United Kingdom | ONS | html/api | annual | GBP | 2025 Apr | oecd | yes | ons.gov.uk | ASHE survey, annual |
 
 ## Priority for adding national office fetchers
 
