@@ -238,63 +238,86 @@ def fetch_rosstat():
 def fetch_belstat():
     """
     Fetch Belarusian avg monthly nominal wages from Belstat Excel files.
-    Source: https://www.belstat.gov.by/.../godovye-dannye/
-    Downloads per-year Excel files (2020-2025), reads "Всего" (Total) row.
-    Currency: BYN (post-2016 redenomination). Tries 2016-2025.
-    Returns: {year: (wage_byn, "BYN")}
+
+    Primary source: long time-series file 'nach_sr_zarplata-91-24-2412.xlsx'
+    covering monthly wages 1991-2024 (annual average computed here).
+    Currency: BYR (old ruble) for 2000-2015, BYN for 2016+.
+
+    2025 topped up from per-year file 'Nominal_nach_sr_zp-2025g.xlsx'.
+    Returns: {year: (wage_local, currency)}
     """
     import openpyxl
 
-    print("  BY: Belstat Excel files...")
+    print("  BY: Belstat long time-series (2000-2024) + 2025 per-year...")
     base = ("https://www.belstat.gov.by/upload-belstat/upload-belstat-excel/"
             "Oficial_statistika/")
 
-    # Year-specific file patterns (try 2016-2025; pre-2016 uses BYR old ruble)
-    files = {
-        2025: "Nominal_nach_sr_zp-2025g.xlsx",
-        2024: "Nominal_nach_sr_zp-2024g.xlsx",
-        2023: "Nominal_nach_sr_zp-2023g.xlsx",
-        2022: "Nominal_nach_sr_zp-2022g.xlsx",
-        2021: "Nominal_nach_sr_zp-2021g.xlsx",
-        2020: "Nominal_nach_sr_zp-2020g-1.xlsx",
-        2019: "Nominal_nach_sr_zp-2019g.xlsx",
-        2018: "Nominal_nach_sr_zp-2018g.xlsx",
-        2017: "Nominal_nach_sr_zp-2017g.xlsx",
-        2016: "Nominal_nach_sr_zp-2016g.xlsx",
-    }
-
-    # {year: (wage_local, currency)}
-    result = {}
-    for year, fname in sorted(files.items()):
-        currency = "BYN"  # all Belstat files are in BYN (post-2016 redenomination)
-        url = base + fname
+    def _parse_num(v):
+        """Parse locale-formatted number: '1\xa0384,7' → 1384.7"""
+        if v is None:
+            return None
+        s = str(v).replace("\xa0", "").replace(" ", "").replace(",", ".")
         try:
-            resp = requests.get(url, timeout=15,
-                                headers={"User-Agent": "Mozilla/5.0"})
-            if resp.status_code != 200:
+            return float(s)
+        except ValueError:
+            return None
+
+    result = {}
+
+    # ── 1. Long time-series 2000-2024 ──────────────────────────────────────
+    long_path = os.path.join(DATA_DIR, "belstat_wages_long.xlsx")
+    long_url  = base + "nach_sr_zarplata-91-24-2412.xlsx"
+    if not os.path.exists(long_path):
+        resp = requests.get(long_url, timeout=20,
+                            headers={"User-Agent": "Mozilla/5.0"})
+        if resp.status_code == 200:
+            with open(long_path, "wb") as fh:
+                fh.write(resp.content)
+
+    if os.path.exists(long_path):
+        wb = openpyxl.load_workbook(long_path, read_only=True)
+        ws = wb.active
+        for row in ws.iter_rows(values_only=True):
+            yr_raw = str(row[0]).replace("1)", "").strip() if row[0] else ""
+            if not yr_raw.isdigit():
                 continue
-            wb = openpyxl.load_workbook(io.BytesIO(resp.content))
-            ws = wb.active
-            for row in ws.iter_rows(values_only=True):
+            yr = int(yr_raw)
+            if yr < 2000 or yr > 2024:
+                continue
+            monthly = [_parse_num(v) for v in row[1:] if v is not None]
+            monthly = [v for v in monthly if v is not None and v > 0]
+            if len(monthly) < 6:
+                continue
+            avg = sum(monthly) / len(monthly)
+            # Pre-2016: old BYR (post-2000-redenomination scale)
+            # 2016+: BYN (1 BYN = 10,000 old BYR)
+            cur = "BYN" if yr >= 2016 else "BYR"
+            result[yr] = (round(avg, 1), cur)
+
+    # ── 2. 2025 from per-year file ──────────────────────────────────────────
+    url_2025 = base + "Nominal_nach_sr_zp-2025g.xlsx"
+    try:
+        resp = requests.get(url_2025, timeout=15,
+                            headers={"User-Agent": "Mozilla/5.0"})
+        if resp.status_code == 200:
+            wb25 = openpyxl.load_workbook(io.BytesIO(resp.content))
+            ws25 = wb25.active
+            for row in ws25.iter_rows(values_only=True):
                 cells = [str(c).strip() if c else "" for c in row]
                 if any(c.startswith("Всего") for c in cells):
                     for c in cells:
-                        c_clean = c.replace("\xa0", "").replace(",", ".")
-                        try:
-                            val = float(c_clean)
-                            if val > 100:
-                                result[year] = (val, currency)
-                                break
-                        except ValueError:
-                            pass
+                        v = _parse_num(c)
+                        if v and v > 100:
+                            result[2025] = (v, "BYN")
+                            break
                     break
-        except Exception:
-            continue
+    except Exception:
+        pass
 
     if result:
         yrs = sorted(result)
         print(f"    Got {len(result)} years: {yrs[0]}-{yrs[-1]}, "
-              f"latest={yrs[-1]}: {result[yrs[-1]][0]:,.1f} BYN")
+              f"latest={yrs[-1]}: {result[yrs[-1]][0]:,.1f} {result[yrs[-1]][1]}")
     else:
         print("    No data parsed")
     return result
