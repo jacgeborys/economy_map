@@ -50,8 +50,10 @@ BBOX_WGS84 = (-27, 33, 46, 72)
 BBOX_3035  = (1_800_000, 800_000, 6_800_000, 5_800_000)
 CRS        = "EPSG:3035"
 
-# Countries that get an on-map wage label (large enough area to fit text)
-LABEL_ISOS = {"DE", "FR", "ES", "PL", "UA", "SE", "FI", "NO", "GB", "TR", "RU"}
+# Tiny/crowded countries get a smaller font so they don't overlap neighbours
+SMALL_LABEL_ISOS = {"ME", "XK", "LU", "SI", "AD", "SM", "MT", "LI",
+                    "CY", "MD", "MK", "BA", "RS", "HR", "SK", "EE",
+                    "LV", "LT", "AL", "GE", "AM", "AZ", "IS"}
 
 # Fixed canvas size — 960×960 (both divisible by 16 for codec)
 FIG_W = FIG_H = 9.6      # 960×960 px — square, both divisible by 16
@@ -92,12 +94,11 @@ world = world.cx[BBOX_WGS84[0]:BBOX_WGS84[2], BBOX_WGS84[1]:BBOX_WGS84[3]].copy(
 world = world.to_crs(CRS)
 print(f"  {len(world)} country polygons in Europe bbox (EPSG:3035)")
 
-# Pre-compute label anchor points (representative_point = always inside polygon)
+# Pre-compute label anchor points for ALL countries (representative_point = always inside polygon)
 label_points = {}
-for iso2 in LABEL_ISOS:
-    match = world[world["iso2"] == iso2]
-    if not match.empty:
-        label_points[iso2] = match.geometry.iloc[0].representative_point()
+for _, row in world.iterrows():
+    iso2 = row["iso2"]
+    label_points[iso2] = row["geometry"].representative_point()
 
 # ── 3. load wage data → nested dict {iso2: {year: wage}} ──────────────────
 wages_df = pd.read_csv(os.path.join(DATA_DIR, "oecd_wages_europe.csv"))
@@ -208,11 +209,14 @@ for idx, (yr, step, is_proj, frame_wages) in enumerate(frame_seq):
         if wage is not None:
             val = int(round(wage / 100) * 100)
             txt = f"€{val:,}"
+            small = iso2 in SMALL_LABEL_ISOS
             ax.text(pt.x, pt.y, txt,
-                    fontsize=7.5, color="white", ha="center", va="center",
-                    alpha=0.92, fontfamily="monospace", fontweight="bold",
-                    bbox=dict(boxstyle="round,pad=0.15", facecolor=BG_COLOR,
-                              alpha=0.45, linewidth=0))
+                    fontsize=5.5 if small else 7.5,
+                    color="white", ha="center", va="center",
+                    alpha=0.85 if small else 0.92,
+                    fontfamily="monospace", fontweight="bold",
+                    bbox=dict(boxstyle="round,pad=0.1", facecolor=BG_COLOR,
+                              alpha=0.35, linewidth=0))
 
     # ── colorbar — drawn into pre-positioned fixed axes ──
     cbar = fig.colorbar(sm, cax=cbar_ax)
