@@ -37,11 +37,11 @@ data/
   SOURCES_MAP.md         Source reference for all 48 countries
 
 output/charts/
-  oecd_01_poland_neighbors.png   Poland + neighbors (DE, AT, CZ, SK, LT, HU, BY, RU, UA)
-  oecd_02_all_europe_eur.png     All 48 countries in EUR
-  oecd_03_ratio_germany.png      Wages as % of Germany
-  oecd_04_gdp_wage_correlation.png  Log-log scatter: GDP per capita vs wage (R²=0.925)
-  oecd_05_wage_projection.png    Projection to 2031 for focus countries
+  europe_01_poland_neighbors.png   Poland + neighbors (DE, AT, CZ, SK, LT, HU, BY, RU, UA)
+  europe_02_all_europe_eur.png     All 48 countries in EUR
+  europe_03_ratio_germany.png      Wages as % of Germany
+  europe_04_gdp_wage_correlation.png  Log-log scatter: GDP per capita vs wage (R²=0.925)
+  europe_05_wage_projection.png    Projection to 2031 for focus countries
 ```
 
 ## CSV Columns
