@@ -68,6 +68,7 @@ COLORS = {
     "FI": "#7B68EE", "DK": "#C71585", "CH": "#808080", "EE": "#5F9EA0",
     "LV": "#A0522D", "SI": "#6495ED", "HR": "#D2691E", "RO": "#FFD700",
     "BG": "#2F4F4F", "IS": "#708090", "LU": "#9932CC", "TR": "#CC0000",
+    "BY": "#8B0000",
 }
 
 
@@ -884,8 +885,10 @@ def _add_end_labels(ax, labels, fontsize=8, x_pad=0.5):
 
     # Get axis data range for minimum spacing
     ymin, ymax = ax.get_ylim()
-    # Min gap in data units — proportional to axis range
-    min_gap = (ymax - ymin) * 0.018
+    # Min gap in data units — scale with font size, not axis range
+    # Approximate: fontsize points / dpi * data_range / axes_height_inches
+    ax_height = ax.get_position().height * ax.figure.get_figheight()
+    min_gap = (ymax - ymin) * fontsize / (ax_height * 72) * 1.4
 
     # Nudge overlapping labels
     placed = []
@@ -1212,7 +1215,7 @@ def main():
     print("=" * 70)
 
     plot_focus(rows,
-               ["DE", "PL", "CZ", "SK", "LT", "HU", "AT"],
+               ["DE", "PL", "CZ", "SK", "LT", "HU", "AT", "BY", "RU"],
                "oecd_01_poland_neighbors.png",
                " — Poland + Neighbors")
 
