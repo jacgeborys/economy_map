@@ -58,17 +58,17 @@ SMALL_LABEL_ISOS = {"ME", "XK", "LU", "SI", "AD", "SM", "MT", "LI",
 # Manual label positions in EPSG:3035 (metres) for countries whose
 # representative_point() falls outside the visible map area
 LABEL_OVERRIDES = {
-    "RU": (5_350_000, 3_700_000),  # over European Russia / Moscow region
-    "NO": (3_700_000, 4_650_000),  # central Norway (avoids elongated northern tip)
-    "GE": (6_200_000, 2_050_000),  # Georgia, pulled slightly west from edge
-    "KZ": (6_600_000, 2_700_000),  # Kazakhstan — only western sliver visible
+    "RU": (6_003_000, 3_962_000),  # Moscow area (pyproj-computed)
+    "NO": (4_360_000, 4_089_000),  # Oslo area (pyproj-computed)
+    # GE (Georgia) and KZ (Kazakhstan) are outside BBOX_3035 — omitted
 }
 
 # Fixed canvas size — 1440×1440 (both divisible by 16 for codec)
 FIG_W = FIG_H = 9.6      # inches; at DPI=150 → 1440 px each (90 × 16 ✓)
 DPI          = 150
 
-LABEL_FONT   = "Consolas"   # narrow, elegant, Windows-native monospace
+CLOCK_FONT   = "Consolas"     # year/month counter — digital clock feel
+LABEL_FONT   = "DejaVu Sans"  # country value labels — clean, fast-reading numerals
 
 # ── 1. download Natural Earth boundaries ───────────────────────────────────
 GEO_PATH = os.path.join(DATA_DIR, "ne_50m_admin0.geojson")
@@ -247,11 +247,11 @@ for idx, (yr, step, is_proj, frame_wages) in enumerate(frame_seq):
     ax.text(0.015, 0.07, str(yr),
             transform=ax.transAxes,
             fontsize=46, fontweight="bold", color=year_color,
-            alpha=0.95, va="bottom", fontfamily=LABEL_FONT)
+            alpha=0.95, va="bottom", fontfamily=CLOCK_FONT)
     ax.text(0.015, 0.065, MONTHS[step],
             transform=ax.transAxes,
             fontsize=13, color=year_color, alpha=0.75, va="top",
-            fontfamily=LABEL_FONT)
+            fontfamily=CLOCK_FONT)
 
     if is_proj:
         ax.text(0.015, 0.048, "PROJECTED  (IMF WEO Apr 2026)",
