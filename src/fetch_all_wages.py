@@ -2270,24 +2270,25 @@ def main():
     print("=" * 70)
 
     plot_focus(rows,
-               ["DE", "PL", "CZ", "SK", "LT", "HU", "AT", "BY", "RU"],
+               ["DE", "PL", "CZ", "SK", "LT", "AT", "BY", "RU",
+                "FR", "GB", "GR", "ES", "IT"],
                "europe_01_poland_neighbors.png",
-               " — Poland + Neighbors")
+               " — Poland + Neighbors + Western Europe")
 
     plot_all_europe(rows, "europe_02_all_europe_eur.png")
 
     plot_ratio_germany(rows, all_rows,
                        ["AT", "BY", "RU",
-                        "PL", "CZ", "SK", "LT", "HU", "EE", "LV", "RO", "BG", "HR",
-                        "PT", "GR", "ES", "RS"],
+                        "PL", "CZ", "SK", "LT", "EE", "RO", "BG", "HR",
+                        "PT", "GR", "ES", "RS", "FR", "GB", "IT"],
                        "europe_03_ratio_germany.png")
 
     plot_gdp_wage_scatter(rows, gdp_data, "europe_04_gdp_wage_correlation.png")
 
     # Chart 05: union of chart 01 (neighbors) + chart 03 (ratio countries)
     plot_projection(all_rows,
-                    ["DE", "AT", "PL", "CZ", "SK", "LT", "HU", "BY", "RU",
-                     "EE", "LV", "RO", "BG", "HR", "PT", "GR", "ES", "RS"],
+                    ["DE", "AT", "PL", "CZ", "SK", "LT", "BY", "RU",
+                     "EE", "RO", "BG", "HR", "PT", "GR", "ES", "RS", "FR", "GB", "IT"],
                     "europe_05_wage_projection.png")
 
     # 14. Coverage
