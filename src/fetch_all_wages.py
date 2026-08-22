@@ -626,7 +626,7 @@ POPULATION = {
 
 import math
 
-def _line_width(iso2, min_w=0.7, max_w=4.5):
+def _line_width(iso2, min_w=0.3, max_w=4.5):
     """Line width proportional to log(population)."""
     pop = POPULATION.get(iso2, 1.0)
     # log scale: Montenegro 0.62M → Russia 144M
