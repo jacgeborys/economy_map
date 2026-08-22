@@ -934,6 +934,7 @@ def plot_focus(rows, focus_codes, filename, title_suffix=""):
                      f"Source: OECD AV_AN_WAGE, ECB rates", fontsize=12)
         ax.grid(True, alpha=0.3)
         ax.set_xlim(1990, 2029)
+        ax.set_ylim(bottom=0)
         _add_end_labels(ax, end_labels, fontsize=10)
 
     plt.tight_layout()
@@ -980,6 +981,7 @@ def plot_all_europe(rows, filename):
                  "ECB exchange rates", fontsize=13)
     ax.grid(True, alpha=0.3)
     ax.set_xlim(1990, 2032)
+    ax.set_ylim(bottom=0)
     _add_end_labels(ax, end_labels, fontsize=7, x_pad=0.3)
 
     plt.tight_layout()
@@ -1195,6 +1197,52 @@ def main():
           f"{sorted(source_summary['eurostat'])}")
     print(f"  Wikipedia only ({len(source_summary['wikipedia'])}): "
           f"{sorted(source_summary['wikipedia'])}")
+
+    # 6e. Validate against Wikipedia and correct outliers
+    # OECD/Eurostat use different methodology (FTE national-accounts wage bill)
+    # which can diverge 10-70% from national office headlines (Wikipedia).
+    # For countries where the divergence is >15%, scale the entire series.
+    CORRECTION_THRESHOLD = 0.15
+    print(f"\n  --- Wikipedia validation (threshold {CORRECTION_THRESHOLD:.0%}) ---")
+
+    # Build latest value per country from our rows
+    latest_ours = {}
+    for r in rows:
+        iso2 = r["iso2"]
+        yr = r["year"]
+        eur = r["wage_monthly_eur"]
+        if eur and eur != "":
+            eur = float(eur)
+            if iso2 not in latest_ours or yr > latest_ours[iso2][0]:
+                latest_ours[iso2] = (yr, eur, r["source"])
+
+    corrections = {}
+    for iso2, wd in wiki.items():
+        if iso2 not in latest_ours:
+            continue
+        our_yr, our_val, our_src = latest_ours[iso2]
+        wiki_val = wd["gross_eur"]
+        if our_src.startswith("wikipedia"):
+            continue  # already from Wikipedia
+        ratio = our_val / wiki_val
+        if abs(ratio - 1.0) > CORRECTION_THRESHOLD:
+            factor = wiki_val / our_val
+            corrections[iso2] = factor
+            print(f"    {iso2}: ours={our_val:,.0f} wiki={wiki_val:,.0f} "
+                  f"ratio={ratio:.2f} -> factor={factor:.3f}")
+
+    if corrections:
+        for r in rows:
+            iso2 = r["iso2"]
+            if iso2 in corrections:
+                f = corrections[iso2]
+                for key in ("wage_monthly_eur", "wage_monthly_usd"):
+                    if r[key] and r[key] != "":
+                        r[key] = round(float(r[key]) * f, 0)
+        print(f"  Corrected {len(corrections)} countries: "
+              f"{sorted(corrections.keys())}")
+    else:
+        print("  No corrections needed")
 
     # 6. Save
     csv_path = os.path.join(DATA_DIR, "oecd_wages_europe.csv")
