@@ -50,6 +50,9 @@ BBOX_WGS84 = (-27, 33, 46, 72)
 BBOX_3035  = (1_800_000, 800_000, 6_800_000, 5_800_000)
 CRS        = "EPSG:3035"
 
+# Countries that get an on-map wage label (large enough area to fit text)
+LABEL_ISOS = {"DE", "FR", "ES", "PL", "UA", "SE", "FI", "NO", "GB", "TR", "RU"}
+
 # Fixed canvas size — 960×960 (both divisible by 16 for codec)
 FIG_W = FIG_H = 9.6      # 960×960 px — square, both divisible by 16
 DPI          = 100
@@ -88,6 +91,13 @@ world = world[["iso2", "NAME", "geometry"]]
 world = world.cx[BBOX_WGS84[0]:BBOX_WGS84[2], BBOX_WGS84[1]:BBOX_WGS84[3]].copy()
 world = world.to_crs(CRS)
 print(f"  {len(world)} country polygons in Europe bbox (EPSG:3035)")
+
+# Pre-compute label anchor points (representative_point = always inside polygon)
+label_points = {}
+for iso2 in LABEL_ISOS:
+    match = world[world["iso2"] == iso2]
+    if not match.empty:
+        label_points[iso2] = match.geometry.iloc[0].representative_point()
 
 # ── 3. load wage data → nested dict {iso2: {year: wage}} ──────────────────
 wages_df = pd.read_csv(os.path.join(DATA_DIR, "oecd_wages_europe.csv"))
@@ -191,6 +201,18 @@ for idx, (yr, step, is_proj, frame_wages) in enumerate(frame_seq):
     # Fix extent AFTER plot calls (geopandas resets limits to data bounds)
     ax.set_xlim(BBOX_3035[0], BBOX_3035[2])
     ax.set_ylim(BBOX_3035[1], BBOX_3035[3])
+
+    # ── on-map wage labels — stock-ticker style ──
+    for iso2, pt in label_points.items():
+        wage = frame_wages.get(iso2)
+        if wage is not None:
+            val = int(round(wage / 100) * 100)
+            txt = f"€{val:,}"
+            ax.text(pt.x, pt.y, txt,
+                    fontsize=7.5, color="white", ha="center", va="center",
+                    alpha=0.92, fontfamily="monospace", fontweight="bold",
+                    bbox=dict(boxstyle="round,pad=0.15", facecolor=BG_COLOR,
+                              alpha=0.45, linewidth=0))
 
     # ── colorbar — drawn into pre-positioned fixed axes ──
     cbar = fig.colorbar(sm, cax=cbar_ax)
