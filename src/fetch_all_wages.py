@@ -2094,6 +2094,23 @@ def main():
                              d["currency"], "national_office", d11emp_eur=d11emp))
         source_summary["national_office"].append(iso2)
 
+    # 8a-backfill: Eurostat D11 for years national-office series don't reach.
+    # E.g. GUS (Poland) starts 2002 but D11 has PL from 1995.
+    for iso2 in list(national.keys()):
+        if iso2 not in d11emp_data:
+            continue
+        covered_yrs = {r["year"] for r in rows if r["iso2"] == iso2}
+        name = ISO2_TO_NAME.get(iso2, iso2)
+        added = False
+        for year, eur in sorted(d11emp_data[iso2].items()):
+            if year not in covered_yrs:
+                usd = eur / fx_rates["USD"].get(year, 1.1) if "USD" in fx_rates else None
+                rows.append(_row(iso2, name, year, eur, usd, eur, "EUR",
+                                 "eurostat_d11emp", d11emp_eur=eur))
+                added = True
+        if added:
+            print(f"    {iso2}: D11 backfill for pre-national-office years")
+
     # 8b. OECD countries — D11/headcount preferred as primary; OECD kept as reference
     # For years before D11/headcount starts (pre-1995), fall back to OECD.
     oecd_rows = build_wage_table(oecd_data, fx_rates)
@@ -2145,21 +2162,31 @@ def main():
         source_summary["eurostat_d11emp"].append(iso2)
 
     # 8d. Eurostat earn_nt_net fallback (legacy)
+    # OECD_EXCLUDE only blocks the OECD AV_AN_WAGE series (methodology break,
+    # e.g. Turkey 2009). earn_nt_net is an independent Eurostat series and is
+    # NOT filtered here — it gives TR a full 2000-2023 time series.
     covered = set(r["iso2"] for r in rows)
-    oecd_exclude_iso2 = {ISO3_TO_ISO2.get(k, "") for k in OECD_EXCLUDE}
     for iso2, years_data in eurostat_earn.items():
-        if iso2 in covered or iso2 in oecd_exclude_iso2:
+        if iso2 in covered:
             continue
         name = ISO2_TO_NAME.get(iso2, iso2)
         if not name or iso2 == name:
             continue
+        added = 0
         for year in sorted(years_data.keys()):
             eur = years_data[year]
+            # Sanity guard: max legitimate monthly EUR wage is ~10,000.
+            # Pre-2005 Turkey earn_nt_net returns old TRL values (millions)
+            # that were not converted to EUR by Eurostat — skip them.
+            if eur > 10_000:
+                continue
             usd = eur * fx_rates["USD"].get(year, 1.1) if "USD" in fx_rates else None
             d11emp = d11emp_data.get(iso2, {}).get(year, "")
             rows.append(_row(iso2, name, year, eur, usd, eur, "EUR",
                              "eurostat_earn", d11emp_eur=d11emp))
-        source_summary["eurostat_earn"].append(iso2)
+            added += 1
+        if added:
+            source_summary["eurostat_earn"].append(iso2)
 
     # 8e. Wikipedia snapshot for remaining countries
     covered = set(r["iso2"] for r in rows)
