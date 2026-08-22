@@ -150,8 +150,6 @@ for idx, (yr, step, is_proj, frame_wages) in enumerate(frame_seq):
     fig, ax = plt.subplots(figsize=(FIG_W, FIG_H), facecolor=BG_COLOR)
     fig.subplots_adjust(left=0.01, right=0.91, top=0.97, bottom=0.02)
     ax.set_facecolor(BG_COLOR)
-    ax.set_xlim(BBOX[0], BBOX[2])
-    ax.set_ylim(BBOX[1], BBOX[3])
     ax.axis("off")
 
     # Missing countries
@@ -167,6 +165,10 @@ for idx, (yr, step, is_proj, frame_wages) in enumerate(frame_seq):
         )
         has_data.plot(ax=ax, color=has_data["color"].tolist(),
                       edgecolor=BORDER_CLR, linewidth=0.4)
+
+    # Fix extent AFTER plot calls (geopandas resets limits to data bounds)
+    ax.set_xlim(BBOX[0], BBOX[2])
+    ax.set_ylim(BBOX[1], BBOX[3])
 
     # ── colorbar ──
     cbar = fig.colorbar(sm, ax=ax, orientation="vertical",
