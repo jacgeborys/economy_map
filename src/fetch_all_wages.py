@@ -2286,8 +2286,8 @@ def main():
 
     # Chart 05: union of chart 01 (neighbors) + chart 03 (ratio countries)
     plot_projection(all_rows,
-                    ["DE", "AT", "PL", "CZ", "SK", "LT", "BY", "UA", "RU",
-                     "EE", "RO", "BG", "HR", "PT", "GR", "ES", "RS", "FR", "GB", "IT"],
+                    ["DE", "PL", "CZ", "SK", "LT", "AT", "BY", "UA", "RU",
+                     "FR", "GB", "GR", "ES", "IT"],
                     "europe_05_wage_projection.png")
 
     # 14. Coverage

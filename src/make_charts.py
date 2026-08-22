@@ -60,8 +60,8 @@ plot_ratio_germany(rows, all_rows,
 plot_gdp_wage_scatter(rows, gdp_data, "europe_04_gdp_wage_correlation.png")
 
 plot_projection(all_rows,
-                ["DE", "AT", "PL", "CZ", "SK", "LT", "BY", "UA", "RU",
-                 "EE", "RO", "BG", "HR", "PT", "GR", "ES", "RS", "FR", "GB", "IT"],
+                ["DE", "PL", "CZ", "SK", "LT", "AT", "BY", "UA", "RU",
+                 "FR", "GB", "GR", "ES", "IT"],
                 "europe_05_wage_projection.png")
 
 print(f"\nDone — charts saved to {OUT_DIR}")
