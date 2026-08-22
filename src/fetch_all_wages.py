@@ -1803,41 +1803,67 @@ def plot_all_europe(rows, filename):
     print(f"  Saved: {path}")
 
 
-def plot_ratio_germany(rows, focus_codes, filename):
-    """Wages as % of Germany."""
-    eur_series = rows_to_series(rows, "wage_monthly_eur")
-    de = eur_series.get("DE", {})
-    if not de:
+def plot_ratio_germany(rows, all_rows, focus_codes, filename):
+    """Wages as % of Germany — historical (solid) + projection to 2031 (dashed)."""
+    hist_series = rows_to_series(rows, "wage_monthly_eur")
+    proj_series = rows_to_series(
+        [r for r in all_rows if r["is_forecast"] == 1], "wage_monthly_eur"
+    )
+    # Full series (hist + proj) for Germany denominator
+    full_series = rows_to_series(all_rows, "wage_monthly_eur")
+    de_hist = hist_series.get("DE", {})
+    de_full = full_series.get("DE", {})
+    if not de_hist:
         print("  No Germany data for ratio chart")
         return
 
-    fig, ax = plt.subplots(figsize=(14, 8))
+    fig, ax = plt.subplots(figsize=(14, 11))
 
     end_labels = []
     for iso2 in focus_codes:
-        if iso2 == "DE" or iso2 not in eur_series:
+        if iso2 == "DE" or iso2 not in hist_series:
             continue
-        s = eur_series[iso2]
-        common = sorted(set(s.keys()) & set(de.keys()))
-        if not common:
-            continue
-        ratios = [(s[y] / de[y]) * 100 for y in common]
+        s_hist = hist_series[iso2]
         lw = _line_width(iso2)
         color = COLORS.get(iso2, "#888")
         name = ISO2_TO_NAME.get(iso2, iso2)
-        ax.plot(common, ratios, '-o', color=color,
+
+        # Historical solid line
+        common_hist = sorted(set(s_hist.keys()) & set(de_hist.keys()))
+        if not common_hist:
+            continue
+        ratios_hist = [(s_hist[y] / de_hist[y]) * 100 for y in common_hist]
+        ax.plot(common_hist, ratios_hist, '-o', color=color,
                 markersize=3, linewidth=lw)
-        end_labels.append((common[-1], ratios[-1], name, color))
+
+        # Projection dashed line (bridge from last historical point)
+        s_proj = proj_series.get(iso2, {})
+        if s_proj and de_full:
+            bridge_yr = common_hist[-1]
+            bridge_ratio = ratios_hist[-1]
+            proj_yrs = sorted(s_proj.keys())
+            proj_ratios = [(s_proj[y] / de_full[y]) * 100 for y in proj_yrs if y in de_full]
+            proj_yrs = [y for y in proj_yrs if y in de_full]
+            if proj_yrs:
+                ax.plot([bridge_yr] + proj_yrs,
+                        [bridge_ratio] + proj_ratios,
+                        '--', color=color, linewidth=lw, alpha=0.7)
+                end_labels.append((proj_yrs[-1], proj_ratios[-1], name, color))
+            else:
+                end_labels.append((common_hist[-1], ratios_hist[-1], name, color))
+        else:
+            end_labels.append((common_hist[-1], ratios_hist[-1], name, color))
 
     ax.axhline(y=100, color='gray', linestyle='--', alpha=0.5)
-    ax.annotate("Germany = 100%", xy=(2026, 100), fontsize=9,
-                color='gray', va='bottom')
+    ax.annotate("Germany = 100%", xy=(2026.2, 100.5), fontsize=9, color='gray')
+    ax.axvline(x=2025.5, color='gray', linestyle=':', alpha=0.4, linewidth=0.8)
+    ax.text(2025.6, 115, "← actual  projected →", fontsize=8, color='gray')
     ax.set_xlabel("Year", fontsize=12)
     ax.set_ylabel("% of German Average Wage (EUR nominal)", fontsize=12)
-    ax.set_title("Wages as % of Germany (EUR nominal)\n"
+    ax.set_title("Wages as % of Germany (EUR nominal) + Projection to 2031\n"
                  "Source: Eurostat D11/employees, national offices, ECB rates", fontsize=13)
     ax.grid(True, alpha=0.3)
-    ax.set_xlim(1995, 2029)
+    ax.set_xlim(1995, 2033)
     ax.set_ylim(0, 120)
     _add_end_labels(ax, end_labels, fontsize=10)
 
@@ -2121,21 +2147,24 @@ def main():
 
     plot_focus(rows,
                ["DE", "PL", "CZ", "SK", "LT", "HU", "AT", "BY", "RU"],
-               "oecd_01_poland_neighbors.png",
+               "europe_01_poland_neighbors.png",
                " — Poland + Neighbors")
 
-    plot_all_europe(rows, "oecd_02_all_europe_eur.png")
+    plot_all_europe(rows, "europe_02_all_europe_eur.png")
 
-    plot_ratio_germany(rows,
-                       ["PL", "CZ", "SK", "LT", "HU", "EE", "LV", "RO", "BG", "HR",
+    plot_ratio_germany(rows, all_rows,
+                       ["AT", "BY", "RU",
+                        "PL", "CZ", "SK", "LT", "HU", "EE", "LV", "RO", "BG", "HR",
                         "PT", "GR", "ES", "RS"],
-                       "oecd_03_ratio_germany.png")
+                       "europe_03_ratio_germany.png")
 
-    plot_gdp_wage_scatter(rows, gdp_data, "oecd_04_gdp_wage_correlation.png")
+    plot_gdp_wage_scatter(rows, gdp_data, "europe_04_gdp_wage_correlation.png")
 
+    # Chart 05: union of chart 01 (neighbors) + chart 03 (ratio countries)
     plot_projection(all_rows,
-                    ["DE", "PL", "CZ", "SK", "LT", "HU", "AT", "BY", "RU"],
-                    "oecd_05_wage_projection.png")
+                    ["DE", "AT", "PL", "CZ", "SK", "LT", "HU", "BY", "RU",
+                     "EE", "LV", "RO", "BG", "HR", "PT", "GR", "ES", "RS"],
+                    "europe_05_wage_projection.png")
 
     # 14. Coverage
     final_covered = set(r["iso2"] for r in rows)
