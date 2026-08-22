@@ -1153,8 +1153,13 @@ def project_wages(rows, gdp_data, horizon=2031):
 
     Method for each country:
     1. Fit log(GDP_pc) ~ year on last 5 observed years -> exponential GDP extrapolation
-    2. Fit wage/GDP_monthly ratio ~ year on last 5 years -> linear ratio extrapolation
-    3. projected_wage = projected_ratio * projected_gdp_pc / 12
+       (overridden by IMF WEO forecast GDP where available)
+    2. Compute wage/GDP_monthly ratio for last 5 years -> take MEAN (flat ratio)
+       NOTE: Linear ratio extrapolation was rejected because it amplifies temporary
+       structural shifts (e.g. Poland's minimum wage hikes, Spain's post-COVID GDP
+       recovery outpacing wages) into unrealistic long-run projections.
+       A flat mean ratio = wages grow proportionally with GDP per capita.
+    3. projected_wage = mean_ratio * projected_gdp_pc / 12
 
     Returns list of rows with source='projected', is_forecast=1.
     """
@@ -1186,9 +1191,12 @@ def project_wages(rows, gdp_data, horizon=2031):
         log_gdps = [log(max(gdp[y], 1)) for y in fit_yrs]
         g_slope, g_intcpt, _ = _linreg(fit_yrs, log_gdps)
 
-        # Wage/GDP monthly ratio trend
+        # Wage/GDP monthly ratio: flat mean of last 5 years
+        # (linear trend extrapolation causes unrealistic divergence for countries
+        # with recent structural shifts — minimum wage hikes, post-COVID recovery)
         ratios = [wages[y] / (gdp[y] / 12) for y in fit_yrs]
-        r_slope, r_intcpt, _ = _linreg(fit_yrs, ratios)
+        proj_ratio = sum(ratios) / len(ratios)
+        proj_ratio = max(0.2, min(1.5, proj_ratio))
 
         name = ISO2_TO_NAME.get(iso2, iso2)
         n_countries += 1
@@ -1199,8 +1207,6 @@ def project_wages(rows, gdp_data, horizon=2031):
                 proj_gdp = gdp[yr]
             else:
                 proj_gdp = exp(g_intcpt + g_slope * yr)
-            proj_ratio = r_intcpt + r_slope * yr
-            proj_ratio = max(0.2, min(1.5, proj_ratio))
             proj_wage = proj_ratio * (proj_gdp / 12)
             projected.append({
                 "iso2": iso2, "country": name, "year": yr,
@@ -1701,7 +1707,7 @@ def plot_projection(all_rows, focus_codes, filename):
     ax.set_xlabel("Year", fontsize=12)
     ax.set_ylabel("Avg Monthly Gross Wage (EUR nominal)", fontsize=12)
     ax.set_title("Wage Convergence + Projection to 2031\n"
-                 "Method: GDP trend (exponential) × wage/GDP ratio trend (linear)",
+                 "Method: IMF WEO GDP forecast × mean wage/GDP ratio (last 5 years)",
                  fontsize=12)
     ax.grid(True, alpha=0.3)
     ax.set_xlim(1995, 2033)
