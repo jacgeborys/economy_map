@@ -6,11 +6,11 @@ evolution across all European countries from 1990-2025, with forecast to 2031.
 ## Status
 
 **Data pipeline:** Complete. 48 countries covered (missing only Liechtenstein, Monaco).
-- 5 national office fetchers (DE, PL, RU, BY, UA)
-- 29 countries from OECD AV_AN_WAGE (SDMX API)
-- D11/employees from Eurostat national accounts (additional column, ~40 countries)
-- GDP per capita from Eurostat + World Bank (all 48 countries)
-- 14 countries from Wikipedia current snapshot only
+- 10 national office fetchers: DE, PL, RU, BY, UA, MK, GE, AM (Armstat), KZ (BNS), AL (INSTAT)
+- 33 countries from Eurostat D11/employees (primary for non-national-office countries)
+- 1 country from OECD AV_AN_WAGE: GB (no Eurostat D11)
+- GDP per capita from Eurostat + World Bank + IMF WEO (all 48 countries, forecasts to 2031)
+- 5 countries from Wikipedia snapshot only: AD, AZ, SM, TR, XK
 
 **Validation:** All latest values cross-checked against Wikipedia (national office
 headlines). Divergences reported but NOT corrected — no scaling applied.
@@ -65,7 +65,7 @@ output/charts/
 
 | Source | Countries | Years | Notes |
 |--------|-----------|-------|-------|
-| OECD AV_AN_WAGE | 29 | 1990-2025 | SDMX API, D1/FTE methodology |
+| OECD AV_AN_WAGE | 1 (GB) | 1990-2025 | SDMX API, D1/FTE — reference column only |
 | Eurostat nama_10_a10 | ~40 | 1995-2025 | D11 + D1 in CP_MEUR |
 | Eurostat nama_10_a10_e | ~40 | 1995-2025 | SAL_DC employees headcount |
 | Eurostat nama_10_pc | ~38 | 1975-2025 | GDP per capita CP_EUR_HAB |
@@ -75,7 +75,11 @@ output/charts/
 | Rosstat (Russia) | 1 | 2000-2025 | Excel parsing |
 | Belstat (Belarus) | 1 | 2020-2025 | Per-year Excel files |
 | ILOSTAT (Ukraine) | 1 | 1999-2022 | rplumber API |
-| Wikipedia | 14 | snapshot | Table 4, national office figures (validation only) |
+| Armstat (Armenia) | 1 | 1996-2025 | Excel time series, AMD wages |
+| Kazakhstan BNS | 1 | 2015-2025 | stat.gov.kz Excel, KZT wages |
+| INSTAT (Albania) | 1 | 2023-2025 | Quarterly survey, ALL wages |
+| World Bank PA.NUS.FCRF | 3 | 1996-2025 | AMD, KZT, ALL→USD official FX |
+| Wikipedia | 5 | snapshot | AD, AZ, SM, TR, XK only |
 | ECB FX rates | 44 currencies | 1999-2025 | + fallbacks for ISK, RUB, UAH, BYN |
 
 ## Key Design Decisions
@@ -83,7 +87,7 @@ output/charts/
 - **Nominal wages only** — EUR conversion via ECB market exchange rates, not PPP
 - **All data fetched programmatically** — no hand-curated CSVs
 - **One source per country** — no mixing sources within a time series (primary column)
-- **Source hierarchy:** national_office > OECD > Eurostat earn > Wikipedia
+- **Source hierarchy:** national_office > eurostat_d11emp > oecd > eurostat_earn > wikipedia
 - **No scaling** — if a source's methodology diverges from national headlines, it is
   kept as a separate column rather than scaled
 - **Multiple wage columns** — wage_monthly_eur (primary), wage_oecd_eur (D1/FTE),
@@ -104,7 +108,6 @@ uv pip install requests matplotlib openpyxl
 
 ## Next Steps
 
-1. Decide primary wage column per country based on divergence analysis
-2. Add national office fetchers for remaining Wikipedia-only countries (RS, BA, ME, MK, AL, GE, MD, CZ)
-3. Build GPKG for QGIS temporal animation (Stage 3)
-4. Refine projections with IMF WEO forecasts when API becomes accessible
+1. Build GPKG for QGIS temporal animation (Stage 3)
+2. Try programmatic access for AZ (ASIS portal) and XK (ASK)
+3. Replace Georgia hardcoded GEL values with Geostat API when fixed
