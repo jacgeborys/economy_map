@@ -2270,7 +2270,7 @@ def main():
     print("=" * 70)
 
     plot_focus(rows,
-               ["DE", "PL", "CZ", "SK", "LT", "AT", "BY", "RU",
+               ["DE", "PL", "CZ", "SK", "LT", "AT", "BY", "UA", "RU",
                 "FR", "GB", "GR", "ES", "IT"],
                "europe_01_poland_neighbors.png",
                " — Poland + Neighbors + Western Europe")
@@ -2278,7 +2278,7 @@ def main():
     plot_all_europe(rows, "europe_02_all_europe_eur.png")
 
     plot_ratio_germany(rows, all_rows,
-                       ["AT", "BY", "RU",
+                       ["AT", "BY", "UA", "RU",
                         "PL", "CZ", "SK", "LT", "EE", "RO", "BG", "HR",
                         "PT", "GR", "ES", "RS", "FR", "GB", "IT"],
                        "europe_03_ratio_germany.png")
@@ -2287,7 +2287,7 @@ def main():
 
     # Chart 05: union of chart 01 (neighbors) + chart 03 (ratio countries)
     plot_projection(all_rows,
-                    ["DE", "AT", "PL", "CZ", "SK", "LT", "BY", "RU",
+                    ["DE", "AT", "PL", "CZ", "SK", "LT", "BY", "UA", "RU",
                      "EE", "RO", "BG", "HR", "PT", "GR", "ES", "RS", "FR", "GB", "IT"],
                     "europe_05_wage_projection.png")
 

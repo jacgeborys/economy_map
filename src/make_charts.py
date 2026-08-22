@@ -45,7 +45,7 @@ os.makedirs(OUT_DIR, exist_ok=True)
 print("\nGenerating charts...")
 
 plot_focus(rows,
-           ["DE", "PL", "CZ", "SK", "LT", "AT", "BY", "RU",
+           ["DE", "PL", "CZ", "SK", "LT", "AT", "BY", "UA", "RU",
             "FR", "GB", "GR", "ES", "IT"],
            "europe_01_poland_neighbors.png",
            " — Poland + Neighbors + Western Europe")
@@ -53,7 +53,7 @@ plot_focus(rows,
 plot_all_europe(rows, "europe_02_all_europe_eur.png")
 
 plot_ratio_germany(rows, all_rows,
-                   ["AT", "BY", "RU",
+                   ["AT", "BY", "UA", "RU",
                     "PL", "CZ", "SK", "LT", "EE", "RO", "BG", "HR",
                     "PT", "GR", "ES", "RS", "FR", "GB", "IT"],
                    "europe_03_ratio_germany.png")
@@ -61,7 +61,7 @@ plot_ratio_germany(rows, all_rows,
 plot_gdp_wage_scatter(rows, gdp_data, "europe_04_gdp_wage_correlation.png")
 
 plot_projection(all_rows,
-                ["DE", "AT", "PL", "CZ", "SK", "LT", "BY", "RU",
+                ["DE", "AT", "PL", "CZ", "SK", "LT", "BY", "UA", "RU",
                  "EE", "RO", "BG", "HR", "PT", "GR", "ES", "RS", "FR", "GB", "IT"],
                 "europe_05_wage_projection.png")
 
