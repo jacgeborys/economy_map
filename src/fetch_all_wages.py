@@ -944,7 +944,7 @@ def plot_all_europe(rows, filename):
     """Overview chart: all European countries in EUR."""
     eur_series = rows_to_series(rows, "wage_monthly_eur")
 
-    fig, ax = plt.subplots(figsize=(18, 11))
+    fig, ax = plt.subplots(figsize=(18, 22))
 
     # Rank by latest value
     latest = {}
