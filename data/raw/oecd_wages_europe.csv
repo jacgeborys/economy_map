@@ -147,6 +147,48 @@ GE,Georgia,2021,370.0,438.0,1393,GEL,national_office,,,4298.0,0
 GE,Georgia,2022,507.0,534.0,1547,GEL,national_office,,,6391.0,0
 GE,Georgia,2023,614.0,664.0,1740,GEL,national_office,,,7661.0,0
 GE,Georgia,2024,646.0,699.0,1943,GEL,national_office,,,8285.0,0
+AM,Armenia,1996,,,9469.0,AMD,national_office,,,436.0,0
+AM,Armenia,1997,,,13581.0,AMD,national_office,,,448.0,0
+AM,Armenia,1998,,,18000.0,AMD,national_office,,,519.0,0
+AM,Armenia,1999,40.0,43.0,20157.0,AMD,national_office,,,547.0,0
+AM,Armenia,2000,39.0,36.0,22706.0,AMD,national_office,,,643.0,0
+AM,Armenia,2001,40.0,36.0,24483.0,AMD,national_office,,,736.0,0
+AM,Armenia,2002,45.0,43.0,27324.0,AMD,national_office,,,785.0,0
+AM,Armenia,2003,68.0,77.0,34783.0,AMD,national_office,,,780.0,0
+AM,Armenia,2004,101.0,126.0,43445.0,AMD,national_office,,,909.0,0
+AM,Armenia,2005,142.0,177.0,52060.0,AMD,national_office,,,1252.0,0
+AM,Armenia,2006,188.0,236.0,62293.0,AMD,national_office,,,1626.0,0
+AM,Armenia,2007,297.0,407.0,74227.0,AMD,national_office,,,2162.0,0
+AM,Armenia,2008,420.0,618.0,87406.0,AMD,national_office,,,2569.0,0
+AM,Armenia,2009,369.0,515.0,96019.0,AMD,national_office,,,2022.0,0
+AM,Armenia,2010,364.0,483.0,102652.0,AMD,national_office,,,2294.0,0
+AM,Armenia,2011,404.0,562.0,108092.0,AMD,national_office,,,2406.0,0
+AM,Armenia,2013,475.0,631.0,146524.0,AMD,national_office,,,2771.0,0
+AM,Armenia,2014,507.0,674.0,158580.0,AMD,national_office,,,2900.0,0
+AM,Armenia,2016,402.0,445.0,174445.0,AMD,national_office,,,3184.0,0
+AM,Armenia,2017,416.0,470.0,177817.0,AMD,national_office,,,3425.0,0
+AM,Armenia,2018,422.0,498.0,172727.0,AMD,national_office,,,3553.0,0
+AM,Armenia,2019,426.0,477.0,182673.0,AMD,national_office,,,4107.0,0
+AM,Armenia,2020,443.0,506.0,189716.0,AMD,national_office,,,3737.0,0
+AM,Armenia,2021,479.0,567.0,204048.0,AMD,national_office,,,3961.0,0
+AM,Armenia,2022,569.0,599.0,235576.0,AMD,national_office,,,6241.0,0
+AM,Armenia,2023,744.0,804.0,269994.0,AMD,national_office,,,7546.0,0
+AM,Armenia,2024,791.0,856.0,287172.0,AMD,national_office,,,7905.0,0
+AM,Armenia,2025,885.0,1000.0,303140.0,AMD,national_office,,,8384.0,0
+KZ,KZ,2015,631.0,700.0,126021.0,KZT,national_office,,,9474.0,0
+KZ,KZ,2016,462.0,511.0,142898.0,KZT,national_office,,,6970.0,0
+KZ,KZ,2017,523.0,591.0,150827.0,KZT,national_office,,,8187.0,0
+KZ,KZ,2018,557.0,658.0,162673.0,KZT,national_office,,,8310.0,0
+KZ,KZ,2019,546.0,611.0,186815.0,KZT,national_office,,,8766.0,0
+KZ,KZ,2020,589.0,673.0,213003.0,KZT,national_office,,,7986.0,0
+KZ,KZ,2021,695.0,822.0,250311.0,KZT,national_office,,,8771.0,0
+KZ,KZ,2022,709.0,747.0,309697.0,KZT,national_office,,,10906.0,0
+KZ,KZ,2023,864.0,934.0,364295.0,KZT,national_office,,,12169.0,0
+KZ,KZ,2024,936.0,1013.0,405416.0,KZT,national_office,,,13359.0,0
+KZ,KZ,2025,961.0,1086.0,443315.0,KZT,national_office,,,13146.0,0
+AL,Albania,2023,758.0,820.0,70530.0,ALL,national_office,,,7948.0,0
+AL,Albania,2024,900.0,974.0,77456.0,ALL,national_office,,,9191.0,0
+AL,Albania,2025,1020.0,1153.0,84100.0,ALL,national_office,,,9942.0,0
 AT,Austria,2000,2190.0,2023.0,2337.0,EUR,eurostat_d11emp,2337.0,2190.0,26510,0
 AT,Austria,2001,2221.0,1989.0,2384.0,EUR,eurostat_d11emp,2384.0,2221.0,27280,0
 AT,Austria,2002,2269.0,2146.0,2445.0,EUR,eurostat_d11emp,2445.0,2269.0,27850,0
@@ -1005,11 +1047,8 @@ RS,Serbia,2022,850.0,807.0,850.0,EUR,eurostat_d11emp,,850.0,9530,0
 RS,Serbia,2023,975.0,902.0,975.0,EUR,eurostat_d11emp,,975.0,11350,0
 RS,Serbia,2024,1119.0,1034.0,1119.0,EUR,eurostat_d11emp,,1119.0,12640,0
 RS,Serbia,2025,1255.0,1111.0,1255.0,EUR,eurostat_d11emp,,1255.0,13540,0
-AL,Albania,2025,884.0,,,EUR,wikipedia (2026 (Q1)),,,9942.0,0
 AD,Andorra,2025,2515.0,,,EUR,wikipedia (2024-09),,,48046.0,0
-AM,Armenia,2025,679.0,,,EUR,wikipedia (2026-06),,,8384.0,0
 AZ,Azerbaijan,2025,588.0,,,EUR,wikipedia (2026-06),,,6558.0,0
-KZ,KZ,2025,754.0,,,EUR,wikipedia (2026 (Q1)),,,13146.0,0
 XK,Kosovo,2025,713.0,,,EUR,wikipedia (2025),,,6991.0,0
 SM,San Marino,2025,2629.0,,,EUR,wikipedia (2024-10),,,58003.0,0
 TR,Turkey,2025,1474.0,,,EUR,wikipedia (2023),,,16470.0,0
@@ -1059,6 +1098,24 @@ GE,Georgia,2028,758.0,,,EUR,projected,,,12283.0,1
 GE,Georgia,2029,784.0,,,EUR,projected,,,13477.0,1
 GE,Georgia,2030,807.0,,,EUR,projected,,,14797.0,1
 GE,Georgia,2031,828.0,,,EUR,projected,,,16242.0,1
+AM,Armenia,2026,891.0,,,EUR,projected,,,9212.0,1
+AM,Armenia,2027,920.0,,,EUR,projected,,,9730.0,1
+AM,Armenia,2028,951.0,,,EUR,projected,,,10302.0,1
+AM,Armenia,2029,998.0,,,EUR,projected,,,11069.0,1
+AM,Armenia,2030,1048.0,,,EUR,projected,,,11919.0,1
+AM,Armenia,2031,1101.0,,,EUR,projected,,,12833.0,1
+KZ,KZ,2026,1077.0,,,EUR,projected,,,15489.0,1
+KZ,KZ,2027,1129.0,,,EUR,projected,,,16413.0,1
+KZ,KZ,2028,1177.0,,,EUR,projected,,,17295.0,1
+KZ,KZ,2029,1233.0,,,EUR,projected,,,18306.0,1
+KZ,KZ,2030,1289.0,,,EUR,projected,,,19351.0,1
+KZ,KZ,2031,1351.0,,,EUR,projected,,,20502.0,1
+AL,Albania,2026,1170.0,,,EUR,projected,,,11056.0,1
+AL,Albania,2027,1280.0,,,EUR,projected,,,11696.0,1
+AL,Albania,2028,1416.0,,,EUR,projected,,,12520.0,1
+AL,Albania,2029,1563.0,,,EUR,projected,,,13396.0,1
+AL,Albania,2030,1725.0,,,EUR,projected,,,14340.0,1
+AL,Albania,2031,1903.0,,,EUR,projected,,,15357.0,1
 AT,Austria,2026,4667.0,,,EUR,projected,,,59967.0,1
 AT,Austria,2027,4854.0,,,EUR,projected,,,61829.0,1
 AT,Austria,2028,5032.0,,,EUR,projected,,,63546.0,1

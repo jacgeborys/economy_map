@@ -74,7 +74,7 @@ COLORS = {
 
 # Countries where we have dedicated national office fetchers.
 # These override OECD for the same country.
-NATIONAL_OFFICE_COUNTRIES = {"DE", "PL", "RU", "BY", "UA", "MK", "GE"}
+NATIONAL_OFFICE_COUNTRIES = {"DE", "PL", "RU", "BY", "UA", "MK", "GE", "AM", "KZ", "AL"}
 
 # OECD data issues — countries to exclude from OECD
 # Turkey: methodology break in 2009 (values triple overnight), FX conversion unreliable
@@ -334,9 +334,10 @@ def fetch_ilostat_ukraine():
     return result
 
 
-def fetch_national_offices():
+def fetch_national_offices(fx_rates):
     """
     Fetch historical data from national statistical offices.
+    fx_rates: {currency: {year: rate}} — needed by non-ECB-covered currencies.
     Returns: {iso2: {year: {"local": value, "currency": code, "eur": value_or_None}}}
     """
     print(f"\n{'=' * 70}")
@@ -384,6 +385,21 @@ def fetch_national_offices():
     ge_data = fetch_georgia()
     if ge_data:
         results["GE"] = ge_data
+
+    # Armenia — Armstat time series Excel (AMD → USD via World Bank → EUR via ECB)
+    am_data = fetch_armenia(fx_rates)
+    if am_data:
+        results["AM"] = am_data
+
+    # Kazakhstan — Bureau of National Statistics Excel (KZT → USD → EUR)
+    kz_data = fetch_kazakhstan(fx_rates)
+    if kz_data:
+        results["KZ"] = kz_data
+
+    # Albania — INSTAT quarterly survey (ALL → USD → EUR)
+    al_data = fetch_albania(fx_rates)
+    if al_data:
+        results["AL"] = al_data
 
     return results
 
@@ -674,6 +690,221 @@ def fetch_georgia():
         print(f"  GE: {yrs[0]}-{yrs[-1]} ({len(yrs)} yrs), "
               f"latest={result[yrs[-1]]['local']:,.0f} GEL "
               f"= {result[yrs[-1]]['eur']:,.0f} EUR")
+    return result
+
+
+# ─── Armenia (Armstat time series) ────────────────────────────────────────────
+
+def fetch_armenia(fx_rates):
+    """
+    Average monthly nominal wages (AMD) from Armstat time series Excel.
+    URL: https://www.armstat.am/file/doc/99570263.xlsx
+    Sheet '1980-2025': col[1]=year, col[3]=avg monthly wage (AMD).
+    FX: World Bank PA.NUS.FCRF (AMD/USD) + ECB USD/EUR from fx_rates.
+    Returns {year: {"local": amd, "currency": "AMD", "eur": eur_or_none}}
+    """
+    import json as _json
+    import openpyxl
+    import urllib.request
+
+    path = os.path.join(DATA_DIR, "armstat_wages.xlsx")
+    if not os.path.exists(path):
+        url = "https://www.armstat.am/file/doc/99570263.xlsx"
+        print(f"  AM: downloading Armstat wages...")
+        urllib.request.urlretrieve(url, path)
+
+    wb = openpyxl.load_workbook(path, read_only=True)
+    ws = wb.active  # sheet '1980-2025'
+
+    amd_wages = {}
+    for row in ws.iter_rows(values_only=True):
+        yr = row[1] if row else None
+        wage = row[3] if len(row) > 3 else None
+        if not isinstance(yr, int) or yr < 1996 or yr > 2025:
+            continue
+        if wage is None:
+            continue
+        try:
+            v = float(str(wage).replace("\xa0", "").replace(",", "").strip())
+            if v > 0:
+                amd_wages[yr] = v
+        except (ValueError, TypeError):
+            pass
+
+    # World Bank official exchange rate: AMD per 1 USD
+    try:
+        wb_url = ("https://api.worldbank.org/v2/country/AM/indicator/PA.NUS.FCRF"
+                  "?format=json&per_page=50&mrv=50")
+        resp = urllib.request.urlopen(wb_url, timeout=15)
+        wb_data = _json.loads(resp.read())
+        amd_per_usd = {int(d["date"]): float(d["value"])
+                       for d in wb_data[1] if d["value"]}
+    except Exception as e:
+        print(f"  AM: World Bank FX failed: {e}")
+        amd_per_usd = {}
+
+    usd_per_eur = fx_rates.get("USD", {})
+
+    result = {}
+    for yr, amd in sorted(amd_wages.items()):
+        fx_amd_usd = amd_per_usd.get(yr) or amd_per_usd.get(yr - 1)
+        fx_usd_eur = usd_per_eur.get(yr)
+        if fx_amd_usd and fx_usd_eur:
+            eur = (amd / fx_amd_usd) * fx_usd_eur  # AMD → USD → EUR
+        else:
+            eur = None
+        result[yr] = {"local": amd, "currency": "AMD",
+                      "eur": round(eur, 0) if eur else None}
+
+    if result:
+        yrs = sorted(result)
+        latest = result[yrs[-1]]
+        print(f"  AM: {yrs[0]}-{yrs[-1]} ({len(yrs)} yrs), "
+              f"latest={latest['local']:,.0f} AMD = {latest['eur'] or 'n/a'} EUR")
+    return result
+
+
+# ─── Kazakhstan (Bureau of National Statistics) ───────────────────────────────
+
+def fetch_kazakhstan(fx_rates):
+    """
+    Average monthly nominal salary (KZT) from Kazakhstan Bureau of National Statistics.
+    URL: https://stat.gov.kz/api/iblock/element/469342/file/en/
+    Sheet has years 2015-2025 in row 6, 'Republic of Kazakhstan' totals in row 7.
+    FX: World Bank PA.NUS.FCRF (KZT/USD) + ECB USD/EUR from fx_rates.
+    Returns {year: {"local": kzt, "currency": "KZT", "eur": eur_or_none}}
+    """
+    import json as _json
+    import openpyxl
+    import urllib.request
+
+    path = os.path.join(DATA_DIR, "kazakhstan_wages.xlsx")
+    if not os.path.exists(path):
+        url = "https://stat.gov.kz/api/iblock/element/469342/file/en/"
+        print(f"  KZ: downloading stat.gov.kz wages...")
+        urllib.request.urlretrieve(url, path)
+
+    wb = openpyxl.load_workbook(path, read_only=True)
+    ws = wb.active
+
+    headers = None
+    kzt_wages = {}
+    for i, row in enumerate(ws.iter_rows(values_only=True)):
+        if i == 6:
+            headers = list(row)
+        elif i == 7 and headers is not None:
+            seen_years = set()
+            for j, val in enumerate(row):
+                yr = headers[j] if j < len(headers) else None
+                if isinstance(yr, int) and 2015 <= yr <= 2030 and yr not in seen_years:
+                    seen_years.add(yr)
+                    if val and val != "-":
+                        try:
+                            kzt_wages[yr] = float(val)
+                        except (ValueError, TypeError):
+                            pass
+            break
+
+    # World Bank official exchange rate: KZT per 1 USD
+    try:
+        wb_url = ("https://api.worldbank.org/v2/country/KZ/indicator/PA.NUS.FCRF"
+                  "?format=json&per_page=30&mrv=30")
+        resp = urllib.request.urlopen(wb_url, timeout=15)
+        wb_data = _json.loads(resp.read())
+        kzt_per_usd = {int(d["date"]): float(d["value"])
+                       for d in wb_data[1] if d["value"]}
+    except Exception as e:
+        print(f"  KZ: World Bank FX failed: {e}")
+        kzt_per_usd = {}
+
+    usd_per_eur = fx_rates.get("USD", {})
+
+    result = {}
+    for yr, kzt in sorted(kzt_wages.items()):
+        fx_kzt_usd = kzt_per_usd.get(yr) or kzt_per_usd.get(yr - 1)
+        fx_usd_eur = usd_per_eur.get(yr)
+        if fx_kzt_usd and fx_usd_eur:
+            eur = (kzt / fx_kzt_usd) * fx_usd_eur  # KZT → USD → EUR
+        else:
+            eur = None
+        result[yr] = {"local": kzt, "currency": "KZT",
+                      "eur": round(eur, 0) if eur else None}
+
+    if result:
+        yrs = sorted(result)
+        latest = result[yrs[-1]]
+        print(f"  KZ: {yrs[0]}-{yrs[-1]} ({len(yrs)} yrs), "
+              f"latest={latest['local']:,.0f} KZT = {latest['eur'] or 'n/a'} EUR")
+    return result
+
+
+# ─── Albania (INSTAT quarterly survey) ───────────────────────────────────────
+
+def fetch_albania(fx_rates):
+    """
+    Average monthly gross wage per employee (ALL) from INSTAT Albania quarterly survey.
+    URL: https://www.instat.gov.al/media/nnmcdq1f/paga-tatime-trm1_2023_trm1_2026-publikim.xlsx
+    Covers Q1 2023 – Q4 2025. Annual value = mean of 4 quarters.
+    FX: World Bank PA.NUS.FCRF (ALL/USD) + ECB USD/EUR from fx_rates.
+    Returns {year: {"local": all_val, "currency": "ALL", "eur": eur_or_none}}
+    """
+    import json as _json
+    import openpyxl
+    import urllib.request
+
+    path = os.path.join(DATA_DIR, "albania_wages.xlsx")
+    if not os.path.exists(path):
+        url = ("https://www.instat.gov.al/media/nnmcdq1f/"
+               "paga-tatime-trm1_2023_trm1_2026-publikim.xlsx")
+        print(f"  AL: downloading INSTAT wages...")
+        urllib.request.urlretrieve(url, path)
+
+    wb = openpyxl.load_workbook(path, read_only=True)
+    ws = wb.active
+
+    all_wages = {}
+    for i, row in enumerate(ws.iter_rows(values_only=True)):
+        if i == 5:  # "Average monthly gross wage per employee" row (0-indexed)
+            # Columns 1-4 = 2023 Q1-Q4; 5-8 = 2024 Q1-Q4; 9-12 = 2025 Q1-Q4
+            for yr_offset, base_yr in enumerate([2023, 2024, 2025]):
+                start = 1 + yr_offset * 4
+                quarters = [float(row[start + q])
+                            for q in range(4)
+                            if (start + q) < len(row) and row[start + q] is not None]
+                if len(quarters) == 4:
+                    all_wages[base_yr] = sum(quarters) / 4
+            break
+
+    # World Bank official exchange rate: ALL per 1 USD
+    try:
+        wb_url = ("https://api.worldbank.org/v2/country/AL/indicator/PA.NUS.FCRF"
+                  "?format=json&per_page=30&mrv=30")
+        resp = urllib.request.urlopen(wb_url, timeout=15)
+        wb_data = _json.loads(resp.read())
+        all_per_usd = {int(d["date"]): float(d["value"])
+                       for d in wb_data[1] if d["value"]}
+    except Exception as e:
+        print(f"  AL: World Bank FX failed: {e}")
+        all_per_usd = {}
+
+    usd_per_eur = fx_rates.get("USD", {})
+
+    result = {}
+    for yr, all_val in sorted(all_wages.items()):
+        fx_all_usd = all_per_usd.get(yr) or all_per_usd.get(yr - 1)
+        fx_usd_eur = usd_per_eur.get(yr)
+        if fx_all_usd and fx_usd_eur:
+            eur = (all_val / fx_all_usd) * fx_usd_eur  # ALL → USD → EUR
+        else:
+            eur = None
+        result[yr] = {"local": round(all_val, 0), "currency": "ALL",
+                      "eur": round(eur, 0) if eur else None}
+
+    if result:
+        yrs = sorted(result)
+        latest = result[yrs[-1]]
+        print(f"  AL: {yrs[0]}-{yrs[-1]} ({len(yrs)} yrs), "
+              f"latest={latest['local']:,.0f} ALL = {latest['eur'] or 'n/a'} EUR")
     return result
 
 
@@ -1660,7 +1891,7 @@ def main():
         print("WARNING: No FX rates, EUR conversion limited to eurozone only")
 
     # 2. National office fetchers (highest priority)
-    national = fetch_national_offices()
+    national = fetch_national_offices(fx_rates)
 
     # Apply FX conversion for non-EUR national office data
     for iso2, years_data in national.items():
