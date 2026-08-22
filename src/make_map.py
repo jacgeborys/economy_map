@@ -59,7 +59,7 @@ SMALL_LABEL_ISOS = {"ME", "XK", "LU", "SI", "AD", "SM", "MT", "LI",
 # representative_point() falls outside the visible map area
 LABEL_OVERRIDES = {
     "RU": (6_003_000, 3_962_000),  # Moscow area (pyproj-computed)
-    "NO": (4_360_000, 4_089_000),  # Oslo area (pyproj-computed)
+    "NO": (4_124_000, 4_372_000),  # Ålesund area — mid-body, west coast
     # GE (Georgia) and KZ (Kazakhstan) are outside BBOX_3035 — omitted
 }
 
@@ -202,10 +202,11 @@ for idx, (yr, step, is_proj, frame_wages) in enumerate(frame_seq):
     ax.set_facecolor(BG_COLOR)
     ax.axis("off")
 
-    # Missing countries
+    # Missing countries — dissolve into one blob so internal borders vanish;
+    # as each country gains data it "crystallises" out with its own colour.
     no_data = gdf[gdf["wage"].isna()]
     if not no_data.empty:
-        no_data.plot(ax=ax, color=MISSING_CLR, edgecolor=BORDER_CLR, linewidth=0.4)
+        no_data.dissolve().plot(ax=ax, color=MISSING_CLR, edgecolor=BORDER_CLR, linewidth=0.4)
 
     # Countries with data
     has_data = gdf[gdf["wage"].notna()].copy()
@@ -228,7 +229,7 @@ for idx, (yr, step, is_proj, frame_wages) in enumerate(frame_seq):
             txt = f"€{val:,}"
             small = iso2 in SMALL_LABEL_ISOS
             ax.text(pt.x, pt.y, txt,
-                    fontsize=5.0 if small else 7.5,
+                    fontsize=6.5 if small else 7.5,
                     color="white", ha="center", va="center",
                     alpha=0.82 if small else 0.93,
                     fontfamily=LABEL_FONT, fontweight="bold",
