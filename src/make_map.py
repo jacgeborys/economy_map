@@ -70,6 +70,13 @@ DPI          = 150
 CLOCK_FONT   = "Consolas"     # year/month counter — digital clock feel
 LABEL_FONT   = "DejaVu Sans"  # country value labels — clean, fast-reading numerals
 
+# Yugoslavia successor states: shown as one merged blob (coloured with RS data)
+# until each country's independence year, then crystallise out individually.
+YUGO_INDEPENDENCE = {
+    "SI": 1992, "HR": 1992, "BA": 1992, "MK": 1993,
+    "ME": 2006, "XK": 2008,
+}
+
 # ── 1. download Natural Earth boundaries ───────────────────────────────────
 GEO_PATH = os.path.join(DATA_DIR, "ne_50m_admin0.geojson")
 if not os.path.exists(GEO_PATH):
@@ -116,6 +123,19 @@ for _, row in world.iterrows():
         label_points[iso2] = Point(x, y)
     else:
         label_points[iso2] = row["geometry"].representative_point()
+
+# Pre-compute merged Yugoslavia blob geometry for each unique phase.
+# Phase changes only when a country crystallises out, so there are very few phases.
+from shapely.ops import unary_union as _uu
+_yugo_cache: dict = {}
+
+def yugo_blob(yr: int):
+    """Return (frozenset of blob isos, merged geometry) for year yr."""
+    blob = frozenset({"RS"} | {iso for iso, ind in YUGO_INDEPENDENCE.items() if yr < ind})
+    if blob not in _yugo_cache:
+        geoms = world.loc[world["iso2"].isin(blob), "geometry"]
+        _yugo_cache[blob] = _uu(geoms.values) if not geoms.empty else None
+    return blob, _yugo_cache[blob]
 
 # ── 3. load wage data → nested dict {iso2: {year: wage}} ──────────────────
 wages_df = pd.read_csv(os.path.join(DATA_DIR, "oecd_wages_europe.csv"))
@@ -192,7 +212,12 @@ sm.set_array([])
 print(f"\nRendering {total} frames...")
 
 for idx, (yr, step, is_proj, frame_wages) in enumerate(frame_seq):
-    gdf = world.copy()
+    # Yugoslavia blob: RS + any successor states not yet independent
+    blob_isos, blob_geom = yugo_blob(yr)
+    rs_wage = frame_wages.get("RS")
+
+    # Build gdf without blob countries (they're drawn as one merged polygon)
+    gdf = world[~world["iso2"].isin(blob_isos)].copy()
     gdf["wage"] = gdf["iso2"].map(frame_wages)
 
     fig = plt.figure(figsize=(FIG_W, FIG_H), facecolor=BG_COLOR)
@@ -202,13 +227,12 @@ for idx, (yr, step, is_proj, frame_wages) in enumerate(frame_seq):
     ax.set_facecolor(BG_COLOR)
     ax.axis("off")
 
-    # Missing countries — dissolve into one blob so internal borders vanish;
-    # as each country gains data it "crystallises" out with its own colour.
+    # Missing countries (non-blob) — dissolve so internal borders vanish
     no_data = gdf[gdf["wage"].isna()]
     if not no_data.empty:
         no_data.dissolve().plot(ax=ax, color=MISSING_CLR, edgecolor=BORDER_CLR, linewidth=0.4)
 
-    # Countries with data
+    # Countries with data (non-blob)
     has_data = gdf[gdf["wage"].notna()].copy()
     if not has_data.empty:
         has_data["color"] = has_data["wage"].apply(
@@ -217,12 +241,21 @@ for idx, (yr, step, is_proj, frame_wages) in enumerate(frame_seq):
         has_data.plot(ax=ax, color=has_data["color"].tolist(),
                       edgecolor=BORDER_CLR, linewidth=0.4)
 
+    # Yugoslavia/Serbia blob — one merged polygon coloured with RS wage
+    if blob_geom is not None:
+        blob_color = cmap(norm(min(rs_wage, VMAX))) if rs_wage is not None else MISSING_CLR
+        gpd.GeoDataFrame(geometry=[blob_geom], crs=CRS).plot(
+            ax=ax, color=blob_color, edgecolor=BORDER_CLR, linewidth=0.4)
+
     # Fix extent AFTER plot calls (geopandas resets limits to data bounds)
     ax.set_xlim(BBOX_3035[0], BBOX_3035[2])
     ax.set_ylim(BBOX_3035[1], BBOX_3035[3])
 
     # ── on-map wage labels — stock-ticker style ──
     for iso2, pt in label_points.items():
+        # Suppress labels for blob members (except RS — it represents the whole blob)
+        if iso2 in blob_isos and iso2 != "RS":
+            continue
         wage = frame_wages.get(iso2)
         if wage is not None:
             val = int(round(wage / 100) * 100)
