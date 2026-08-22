@@ -1,90 +1,82 @@
 # European Wage Convergence Map
 
-Dataset and (future) animated choropleth showing average monthly salary evolution
-across all European countries from 1990-2025, with optional forecast to 2030.
+Dataset and (future) animated choropleth showing average monthly gross salary
+evolution across all European countries from 1990-2025, with optional forecast to 2030.
 
 ## Status
 
-**Stage 1 (Schema):** Complete. DuckDB with tables: `regions` (55 countries/historical
-entities), `wages`, `fx_rates`, `gdp`. Derived view `wages_converted` computes
-EUR/USD wages at query time.
+**Data pipeline:** Complete. 48 countries covered (missing only Liechtenstein, Monaco).
+- 5 national office fetchers (DE, PL, RU, BY, UA)
+- 27 countries from OECD AV_AN_WAGE (SDMX API)
+- 2 countries from Eurostat earn_nt_net (CY, MT)
+- 14 countries from Wikipedia current snapshot
 
-**Stage 2 (Ingestion):** PoC complete for 9 countries: Poland, Germany, Czechia,
-Slovakia, Lithuania, Belarus, Ukraine, Serbia (Yugoslavia successor test case),
-and Russia via curated national stat office CSVs. FX rates (20 currency series)
-and GDP (IMF WEO) ingested. Eurostat API script scaffolded but not yet parsing.
+**Validation:** All latest values validated against Wikipedia (national office headlines).
+OECD/Eurostat series scaled where methodology divergence exceeds 15%.
 
-**Stage 3 (Cleaning):** Complete. Cubic spline interpolation from annual to monthly,
-with hard breaks at currency redenominations (PLZ->PLN 1995, RUR->RUB 1998,
-Serbian dinar changes) and Yugoslav breakup dates. Validation report flags
-discontinuities and coverage gaps.
+**Charts:** Three validation charts with population-weighted line thickness, end-of-line
+country labels, y-axis starting at 0.
 
-**Stage 4 (GDP correlation + forecast):** Not yet started.
-
-**Visualization:** Not yet started.
+**QGIS visualization:** Not yet started.
 
 ## Architecture
 
 ```
 src/
+  fetch_all_wages.py     Main pipeline: OECD + Eurostat + 5 national offices + Wikipedia
   schema.py              DuckDB schema + region seed data (55 European regions)
-  ingest_national.py     National stat office CSV ingestion (9 countries)
-  ingest_eurostat.py     Eurostat API scaffold
-  ingest_imf_weo.py      IMF WEO GDP ingestion
-  ingest_fx.py           FX rate ingestion (ECB/IMF)
-  clean.py               Interpolation (cubic spline, respects hard breaks)
-  validate.py            Coverage & discontinuity reports
-  run_pipeline.py        Full pipeline runner
+  run_pipeline.py        Old pipeline entry point (uses hand-curated CSVs, deprecated)
 
-data/raw/                Curated source CSVs
-output/wages.duckdb      Output database (~3MB)
+data/raw/
+  oecd_wages_europe.csv  Combined output (~1,071 rows, 48 countries)
+  wiki_wages.html        Cached Wikipedia page with source references
+  rosstat_tab3.xlsx      Cached Rosstat wage Excel
+
+data/
+  SOURCES_MAP.md         Source reference for all 48 countries
+
+output/charts/
+  oecd_01_poland_neighbors.png   Poland + neighbors (DE, AT, CZ, SK, LT, HU, BY, RU)
+  oecd_02_all_europe_eur.png     All 48 countries in EUR
+  oecd_03_ratio_germany.png      Wages as % of Germany
 ```
 
-## Current Coverage
+## Data Sources
 
-| Region | Actual Years | Interpolated Months | Currencies |
-|--------|-------------|-------------------|------------|
-| Germany | 1990-2025 | 363 | DEM, EUR |
-| Poland | 1990-2025 | 363 | PLZ, PLN |
-| Czechia | 1993-2025 | 352 | CZK |
-| Slovakia | 1993-2025 | 330 | SKK, EUR |
-| Lithuania | 1993-2025 | 330 | LTL, EUR |
-| Ukraine | 1996-2025 | 308 | UAH |
-| Belarus | 1995-2025 | 286 | BYB, BYR, BYN |
-| Russia | 1990-2025 | 352 | SUR, RUR, RUB |
-| Serbia | 2006-2025 | 209 | RSD |
-| Czechoslovakia | 1990-1992 | 22 | CSK |
-| Yugoslavia | 1990-2002 | 44 | YUD, YUN, YUM, CSD |
-| Serbia & Montenegro | 2003-2005 | 11 | RSD |
+| Source | Countries | Years | Notes |
+|--------|-----------|-------|-------|
+| OECD AV_AN_WAGE | 27 | 1990-2025 | SDMX API, filter PRICE_BASE!=Q |
+| Destatis (Germany) | 1 | 1991-2025 | HTML scraping |
+| GUS BDL (Poland) | 1 | 2002-2025 | REST API, variable 64428 |
+| Rosstat (Russia) | 1 | 2000-2025 | Excel parsing |
+| Belstat (Belarus) | 1 | 2020-2025 | Per-year Excel files |
+| ILOSTAT (Ukraine) | 1 | 1999-2022 | rplumber API |
+| Eurostat earn_nt_net | 2 (CY, MT) | 2005-2025 | JSON API |
+| Wikipedia | 14 | snapshot | Table 4, national office figures |
+| ECB FX rates | 44 currencies | 1999-2025 | + fallbacks for ISK, RUB, UAH, BYN |
 
 ## Key Design Decisions
 
-- **Wages stored in local currency only** — EUR/USD computed via `wages_converted` view
-  using FX rates, never stored redundantly
-- **Yugoslavia handled via temporal regions** — `date_from`/`date_to` on regions table,
-  with `parent_region_id` linking successor states to predecessors
-- **Currency redenominations are hard breaks** — no interpolation across PLZ->PLN,
-  RUR->RUB, or Serbian dinar changes
-- **All data tagged with `data_type`** — actuals, interpolated, and forecasts
-  are never silently mixed
+- **Nominal wages only** — EUR conversion via ECB market exchange rates, not PPP
+- **All data fetched programmatically** — no hand-curated CSVs
+- **One source per country** — no mixing sources within a time series
+- **Source hierarchy:** national_office > OECD > Eurostat > Wikipedia
+- **Wikipedia validation:** OECD/Eurostat values scaled when >15% off national office headlines
+- **FX fallbacks:** ISK (2009-2017), RUB (2022+), UAH, BYN from national central banks
 
 ## Running
 
 ```bash
 # Setup
 uv venv .venv
-uv pip install duckdb pandas requests scipy
+uv pip install requests matplotlib openpyxl
 
-# Run full pipeline
-.venv/Scripts/python src/run_pipeline.py
-
-# Validation only
-.venv/Scripts/python src/validate.py
+# Run full pipeline (fetches data, generates CSV + charts)
+.venv/Scripts/python src/fetch_all_wages.py
 ```
 
 ## Next Steps
 
-1. Scale ingestion to remaining European countries (Eurostat API for EU members,
-   curated CSVs for non-EU)
-2. Stage 4: GDP correlation and wage forecasting to 2030
-3. Visualization layer (QGIS temporal controller or web-based animated choropleth)
+1. Add national office fetchers for remaining Wikipedia-only countries (RS, BA, ME, MK, AL, GE, MD)
+2. Build GPKG for QGIS temporal animation
+3. Stage 4: GDP correlation, forecast to 2030
