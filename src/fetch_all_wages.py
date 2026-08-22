@@ -1635,19 +1635,17 @@ def main():
         if iso3_match and iso3_match[0] in OECD_EXCLUDE:
             continue
         oecd_eur = float(r["wage_monthly_eur"]) if r["wage_monthly_eur"] else None
-        usd      = float(r["wage_monthly_usd"]) if r["wage_monthly_usd"] else None
         d11emp   = d11emp_data.get(iso2, {}).get(r["year"], "")
-        # Use D11/headcount if available for this year.
-        # If D11/headcount exists for this country at all, only fall back to OECD
-        # for the years before D11/headcount starts (avoids mid-series discontinuity).
         has_d11emp_series = bool(d11emp_data.get(iso2))
         if d11emp:
             primary, source = d11emp, "eurostat_d11emp"
+            # USD must be derived from the same D11/headcount EUR value
+            ecb_usd = fx_rates.get("USD", {}).get(r["year"])
+            usd = round(d11emp * ecb_usd, 0) if ecb_usd else None
         elif not has_d11emp_series:
             primary, source = oecd_eur or "", "oecd"
+            usd = float(r["wage_monthly_usd"]) if r["wage_monthly_usd"] else None
         else:
-            # D11/headcount exists for country but not this year — skip row
-            # to avoid discontinuity (OECD D1/FTE spliced into D11/headcount series)
             continue
         rows.append(_row(iso2, r["country"], r["year"], primary, usd,
                          float(r["wage_monthly_local"]) if r["wage_monthly_local"] else "",
