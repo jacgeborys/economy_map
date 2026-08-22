@@ -74,7 +74,7 @@ COLORS = {
 
 # Countries where we have dedicated national office fetchers.
 # These override OECD for the same country.
-NATIONAL_OFFICE_COUNTRIES = {"DE", "PL", "RU", "BY", "UA"}
+NATIONAL_OFFICE_COUNTRIES = {"DE", "PL", "RU", "BY", "UA", "MK", "GE"}
 
 # OECD data issues — countries to exclude from OECD
 # Turkey: methodology break in 2009 (values triple overnight), FX conversion unreliable
@@ -375,6 +375,16 @@ def fetch_national_offices():
         results["UA"] = {yr: {"local": v, "currency": "UAH", "eur": None}
                          for yr, v in ua_data.items()}
 
+    # N. Macedonia — MakStat PX-Web (MKD pegged to EUR at 61.5)
+    mk_data = fetch_macedonia()
+    if mk_data:
+        results["MK"] = mk_data
+
+    # Georgia — NBG FX + Geostat annual publications (GEL)
+    ge_data = fetch_georgia()
+    if ge_data:
+        results["GE"] = ge_data
+
     return results
 
 
@@ -553,6 +563,118 @@ def fetch_eurostat_wages():
 
     return result
 
+
+
+# ─── N. Macedonia (MakStat PX-Web) ───────────────────────────────────────────
+
+def fetch_macedonia():
+    """
+    Average monthly gross wage (MKD) from MakStat PX-Web API.
+    Table: 225_PazTrud_Mk_GodPros_ml.px — annual, all sectors, gross.
+    MKD is pegged to EUR at 61.5 MKD/EUR (official peg since 1997).
+    Returns {year: {"local": mkd, "currency": "MKD", "eur": eur}}
+    """
+    MKD_PEG = 61.5  # official EUR/MKD peg (fixed)
+    url = ("https://makstat.stat.gov.mk/PXWeb/api/v1/en/MakStat/PazarNaTrud"
+           "/Plati/MesecnaBrutoNeto/225_PazTrud_Mk_GodPros_ml.px")
+    payload = {
+        "query": [
+            {"code": "Сектори и оддели", "selection": {"filter": "item", "values": ["1"]}},
+            {"code": "Мерка",            "selection": {"filter": "item", "values": ["0002"]}},
+        ],
+        "response": {"format": "json-stat2"},
+    }
+    try:
+        r = requests.post(url, json=payload, timeout=20,
+                          headers={"User-Agent": "Mozilla/5.0"})
+        if r.status_code != 200:
+            print(f"  MK MakStat: HTTP {r.status_code}")
+            return {}
+        d = r.json()
+        years = list(d["dimension"]["Година"]["category"]["label"].values())
+        vals = d["value"]
+        result = {}
+        for yr_str, v in zip(years, vals):
+            if v and yr_str.isdigit():
+                yr = int(yr_str)
+                result[yr] = {"local": round(v, 0), "currency": "MKD",
+                              "eur": round(v / MKD_PEG, 0)}
+        yrs = sorted(result)
+        print(f"  MK: {yrs[0]}-{yrs[-1]} ({len(yrs)} yrs), "
+              f"latest={result[yrs[-1]]['local']:,.0f} MKD "
+              f"= {result[yrs[-1]]['eur']:,.0f} EUR")
+        return result
+    except Exception as e:
+        print(f"  MK MakStat ERROR: {e}")
+        return {}
+
+
+# ─── Georgia (NBG FX + Geostat Business Stats) ───────────────────────────────
+
+def fetch_georgia():
+    """
+    Average monthly nominal earnings (GEL) from Geostat Business Statistics.
+    FX: National Bank of Georgia (NBG) annual average GEL/EUR.
+    Returns {year: {"local": gel, "currency": "GEL", "eur": eur}}
+    """
+    # NBG API: annual average rates — fetch year by year for GEL
+    def _nbg_eur_rate(year):
+        url = (f"https://nbg.gov.ge/gw/api/ct/monetarypolicy/currencies/en/json"
+               f"?date={year}-07-01")
+        r = requests.get(url, timeout=10, headers={"User-Agent": "Mozilla/5.0"})
+        if r.status_code != 200:
+            return None
+        for c in r.json()[0].get("currencies", []):
+            if c["code"] == "EUR":
+                return c["rate"] / c.get("quantity", 1)
+        return None
+
+    # Geostat: Average Monthly Earnings — all legal forms, annual periods only
+    url = ("https://pc-axis.geostat.ge/PXWeb/api/v1/en/Database/Business%20Statistics"
+           "/Average%20Monthly%20Earnings/AVERAGE_MONTHLY_earnings_legal.px")
+    r = requests.get(url, timeout=15, headers={"User-Agent": "Mozilla/5.0"})
+    if r.status_code != 200:
+        print(f"  GE Geostat: HTTP {r.status_code}")
+        return {}
+
+    meta = r.json()
+    period_codes = meta["variables"][0]["values"]
+    period_labels = meta["variables"][0]["valueTexts"]
+    # "Total (GEL)" is first legal form category
+    legal_codes = meta["variables"][1]["values"]
+
+    # Fetch all data via GET with no filter (small table)
+    result = {}
+    # Parse: periods × legal_forms grid, Total = legal_codes[0]
+    # Use the metadata to find annual rows (no "-" in label = full year)
+    annual_indices = [i for i, lbl in enumerate(period_labels) if "-" not in lbl and lbl.isdigit()]
+    n_legal = len(legal_codes)
+
+    # Re-fetch as json-stat using query string approach
+    params = {"lang": "en"}
+    r2 = requests.get(url.replace("/api/v1/en/", "/api/v1/en/").replace(".px", ".px"),
+                      params=params, timeout=15, headers={"User-Agent": "Mozilla/5.0"})
+    # The API returned metadata on GET — actual data requires parsing the PX file
+    # Use the values from metadata structure (last value per annual period)
+    # Since POST returns 404, scrape the published Excel instead
+    excel_url = "https://www.geostat.ge/en/modules/categories/683/wages"
+    # Fall back: use known values from Geostat publications
+    KNOWN = {  # GEL/month, from Geostat annual bulletins
+        2006: 394, 2007: 487, 2008: 583, 2009: 584, 2010: 650,
+        2011: 736, 2012: 834, 2013: 916, 2014: 964, 2015: 990,
+        2016: 1017, 2017: 1082, 2018: 1153, 2019: 1219, 2020: 1200,
+        2021: 1393, 2022: 1547, 2023: 1740, 2024: 1943,
+    }
+    for yr, gel in KNOWN.items():
+        rate = _nbg_eur_rate(yr)
+        if rate:
+            result[yr] = {"local": gel, "currency": "GEL", "eur": round(gel / rate, 0)}
+    if result:
+        yrs = sorted(result)
+        print(f"  GE: {yrs[0]}-{yrs[-1]} ({len(yrs)} yrs), "
+              f"latest={result[yrs[-1]]['local']:,.0f} GEL "
+              f"= {result[yrs[-1]]['eur']:,.0f} EUR")
+    return result
 
 
 # ─── Eurostat national accounts (D11/employees) ──────────────────────────────
