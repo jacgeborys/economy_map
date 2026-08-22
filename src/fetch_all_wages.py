@@ -1390,7 +1390,7 @@ def plot_focus(rows, focus_codes, filename, title_suffix=""):
         ax.set_xlabel("Year", fontsize=12)
         ax.set_ylabel(f"Avg Monthly Wage ({label} nominal)", fontsize=12)
         ax.set_title(f"Average Monthly Gross Wages ({label}){title_suffix}\n"
-                     f"Source: OECD AV_AN_WAGE, ECB rates", fontsize=12)
+                     f"Source: Eurostat D11/employees, national offices, ECB rates", fontsize=12)
         ax.grid(True, alpha=0.3)
         ax.set_xlim(1990, 2029)
         ax.set_ylim(bottom=0)
@@ -1482,7 +1482,7 @@ def plot_ratio_germany(rows, focus_codes, filename):
     ax.set_xlabel("Year", fontsize=12)
     ax.set_ylabel("% of German Average Wage (EUR nominal)", fontsize=12)
     ax.set_title("Wages as % of Germany (EUR nominal)\n"
-                 "Source: OECD AV_AN_WAGE, ECB rates", fontsize=13)
+                 "Source: Eurostat D11/employees, national offices, ECB rates", fontsize=13)
     ax.grid(True, alpha=0.3)
     ax.set_xlim(1995, 2029)
     ax.set_ylim(0, 120)
@@ -1624,7 +1624,8 @@ def main():
                              d["currency"], "national_office", d11emp_eur=d11emp))
         source_summary["national_office"].append(iso2)
 
-    # 8b. OECD (countries without national office fetchers)
+    # 8b. OECD countries — D11/headcount preferred as primary; OECD kept as reference
+    # For years before D11/headcount starts (pre-1995), fall back to OECD.
     oecd_rows = build_wage_table(oecd_data, fx_rates)
     for r in oecd_rows:
         iso2 = r["iso2"]
@@ -1633,21 +1634,47 @@ def main():
         iso3_match = [k for k, v in EUROPEAN.items() if v[0] == iso2]
         if iso3_match and iso3_match[0] in OECD_EXCLUDE:
             continue
-        eur = float(r["wage_monthly_eur"]) if r["wage_monthly_eur"] else None
-        usd = float(r["wage_monthly_usd"]) if r["wage_monthly_usd"] else None
-        d11emp = d11emp_data.get(iso2, {}).get(r["year"], "")
-        rows.append(_row(iso2, r["country"], r["year"], eur or "", usd,
+        oecd_eur = float(r["wage_monthly_eur"]) if r["wage_monthly_eur"] else None
+        usd      = float(r["wage_monthly_usd"]) if r["wage_monthly_usd"] else None
+        d11emp   = d11emp_data.get(iso2, {}).get(r["year"], "")
+        # Use D11/headcount if available for this year.
+        # If D11/headcount exists for this country at all, only fall back to OECD
+        # for the years before D11/headcount starts (avoids mid-series discontinuity).
+        has_d11emp_series = bool(d11emp_data.get(iso2))
+        if d11emp:
+            primary, source = d11emp, "eurostat_d11emp"
+        elif not has_d11emp_series:
+            primary, source = oecd_eur or "", "oecd"
+        else:
+            # D11/headcount exists for country but not this year — skip row
+            # to avoid discontinuity (OECD D1/FTE spliced into D11/headcount series)
+            continue
+        rows.append(_row(iso2, r["country"], r["year"], primary, usd,
                          float(r["wage_monthly_local"]) if r["wage_monthly_local"] else "",
-                         r["currency"], "oecd", oecd_eur=eur, d11emp_eur=d11emp))
+                         r["currency"], source, oecd_eur=oecd_eur, d11emp_eur=d11emp))
         if iso2 not in [x for xs in source_summary.values() for x in xs]:
-            source_summary["oecd"].append(iso2)
+            source_summary[source].append(iso2)
 
-    # 8c. Eurostat earn_nt_net (CY, MT — not in OECD)
+    # 8c. Eurostat D11/headcount for non-OECD countries (HR, RO, BG, RS, CY, MT...)
+    covered = set(r["iso2"] for r in rows)
+    for iso2, ydata in d11emp_data.items():
+        if iso2 in covered:
+            continue
+        name = ISO2_TO_NAME.get(iso2, iso2)
+        if not name:
+            continue
+        for year in sorted(ydata.keys()):
+            eur = ydata[year]
+            usd = eur / fx_rates["USD"].get(year, 1.1) if "USD" in fx_rates else None
+            rows.append(_row(iso2, name, year, eur, usd, eur, "EUR",
+                             "eurostat_d11emp", d11emp_eur=eur))
+        source_summary["eurostat_d11emp"].append(iso2)
+
+    # 8d. Eurostat earn_nt_net fallback (legacy)
+    covered = set(r["iso2"] for r in rows)
     oecd_exclude_iso2 = {ISO3_TO_ISO2.get(k, "") for k in OECD_EXCLUDE}
     for iso2, years_data in eurostat_earn.items():
-        if iso2 in national or iso2 in oecd_exclude_iso2:
-            continue
-        if iso2 in [r["iso2"] for r in rows]:
+        if iso2 in covered or iso2 in oecd_exclude_iso2:
             continue
         name = ISO2_TO_NAME.get(iso2, iso2)
         if not name or iso2 == name:
@@ -1660,7 +1687,7 @@ def main():
                              "eurostat_earn", d11emp_eur=d11emp))
         source_summary["eurostat_earn"].append(iso2)
 
-    # 8d. Wikipedia snapshot for remaining countries
+    # 8e. Wikipedia snapshot for remaining countries
     covered = set(r["iso2"] for r in rows)
     for iso2, wd in wiki.items():
         if iso2 in covered:
@@ -1749,7 +1776,8 @@ def main():
     plot_all_europe(rows, "oecd_02_all_europe_eur.png")
 
     plot_ratio_germany(rows,
-                       ["PL", "CZ", "SK", "LT", "HU", "EE", "LV", "PT", "GR", "ES"],
+                       ["PL", "CZ", "SK", "LT", "HU", "EE", "LV", "RO", "BG", "HR",
+                        "PT", "GR", "ES", "RS"],
                        "oecd_03_ratio_germany.png")
 
     plot_gdp_wage_scatter(rows, gdp_data, "oecd_04_gdp_wage_correlation.png")
