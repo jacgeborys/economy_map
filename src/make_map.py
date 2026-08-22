@@ -42,8 +42,13 @@ HOLD_SECS    = 3            # seconds to hold on final frame (2031)
 MONTHS = ["Jan","Feb","Mar","Apr","May","Jun",
           "Jul","Aug","Sep","Oct","Nov","Dec"]
 
-# Europe bounding box (lon_min, lat_min, lon_max, lat_max)
-BBOX = (-27, 33, 46, 72)
+# Europe clip bbox in WGS84 — used only for initial geographic filter
+BBOX_WGS84 = (-27, 33, 46, 72)
+
+# Display extent in EPSG:3035 (Lambert Azimuthal Equal Area, metres)
+# Symmetric 5M × 5M square centred on ~(9.5°E, 52.5°N) → Europe fills the frame
+BBOX_3035  = (1_800_000, 800_000, 6_800_000, 5_800_000)
+CRS        = "EPSG:3035"
 
 # Fixed canvas size — 960×960 (both divisible by 16 for codec)
 FIG_W = FIG_H = 9.6      # 960×960 px — square, both divisible by 16
@@ -80,8 +85,9 @@ for name in EXCLUDE_NAMES:
     world = world[~world["NAME"].str.contains(name, case=False, na=False)]
 
 world = world[["iso2", "NAME", "geometry"]]
-world = world.cx[BBOX[0]:BBOX[2], BBOX[1]:BBOX[3]].copy()
-print(f"  {len(world)} country polygons in Europe bbox")
+world = world.cx[BBOX_WGS84[0]:BBOX_WGS84[2], BBOX_WGS84[1]:BBOX_WGS84[3]].copy()
+world = world.to_crs(CRS)
+print(f"  {len(world)} country polygons in Europe bbox (EPSG:3035)")
 
 # ── 3. load wage data → nested dict {iso2: {year: wage}} ──────────────────
 wages_df = pd.read_csv(os.path.join(DATA_DIR, "oecd_wages_europe.csv"))
@@ -95,9 +101,10 @@ for _, row in wages_df.iterrows():
     if pd.notna(w):
         wage_lookup.setdefault(iso2, {})[yr] = float(w)
 
-forecast_years = set(
-    wages_df.loc[wages_df["is_forecast"] == 1, "year"].astype(int).unique()
-)
+# Years where the majority of data is projected (IMF WEO boundary).
+# Individual countries (UA, TR) may project earlier but we don't label
+# the whole map as "PROJECTED" until the IMF WEO horizon kicks in.
+FORECAST_START = 2026
 
 # ── 3b. fill intra-series annual gaps by linear interpolation ─────────────
 # Prevents countries (e.g. Ukraine 2001) from going gray when a single year
@@ -135,7 +142,7 @@ for i, yr in enumerate(years):
                 frame_wages[iso2] = w0
             # else: no data this period → stays gray
 
-        is_proj = (yr in forecast_years) or (next_yr in forecast_years and alpha > 0)
+        is_proj = yr >= FORECAST_START
         frame_seq.append((yr, step, is_proj, frame_wages))
 
 # Hold the very last frame for HOLD_SECS
@@ -182,8 +189,8 @@ for idx, (yr, step, is_proj, frame_wages) in enumerate(frame_seq):
                       edgecolor=BORDER_CLR, linewidth=0.4)
 
     # Fix extent AFTER plot calls (geopandas resets limits to data bounds)
-    ax.set_xlim(BBOX[0], BBOX[2])
-    ax.set_ylim(BBOX[1], BBOX[3])
+    ax.set_xlim(BBOX_3035[0], BBOX_3035[2])
+    ax.set_ylim(BBOX_3035[1], BBOX_3035[3])
 
     # ── colorbar — drawn into pre-positioned fixed axes ──
     cbar = fig.colorbar(sm, cax=cbar_ax)
