@@ -1741,7 +1741,7 @@ def main():
     print("CHARTS")
     print("=" * 70)
 
-    plot_focus(all_rows,
+    plot_focus(rows,
                ["DE", "PL", "CZ", "SK", "LT", "HU", "AT", "BY", "RU"],
                "oecd_01_poland_neighbors.png",
                " — Poland + Neighbors")
