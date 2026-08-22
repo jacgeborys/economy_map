@@ -2278,9 +2278,8 @@ def main():
     plot_all_europe(rows, "europe_02_all_europe_eur.png")
 
     plot_ratio_germany(rows, all_rows,
-                       ["AT", "BY", "UA", "RU",
-                        "PL", "CZ", "SK", "LT", "EE", "RO", "BG", "HR",
-                        "PT", "GR", "ES", "RS", "FR", "GB", "IT"],
+                       ["PL", "CZ", "SK", "LT", "AT", "BY", "UA", "RU",
+                        "FR", "GB", "GR", "ES", "IT"],
                        "europe_03_ratio_germany.png")
 
     plot_gdp_wage_scatter(rows, gdp_data, "europe_04_gdp_wage_correlation.png")
