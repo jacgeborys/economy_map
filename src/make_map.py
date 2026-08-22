@@ -55,9 +55,20 @@ SMALL_LABEL_ISOS = {"ME", "XK", "LU", "SI", "AD", "SM", "MT", "LI",
                     "CY", "MD", "MK", "BA", "RS", "HR", "SK", "EE",
                     "LV", "LT", "AL", "GE", "AM", "AZ", "IS"}
 
-# Fixed canvas size — 960×960 (both divisible by 16 for codec)
-FIG_W = FIG_H = 9.6      # 960×960 px — square, both divisible by 16
-DPI          = 100
+# Manual label positions in EPSG:3035 (metres) for countries whose
+# representative_point() falls outside the visible map area
+LABEL_OVERRIDES = {
+    "RU": (5_350_000, 3_700_000),  # over European Russia / Moscow region
+    "NO": (3_700_000, 4_650_000),  # central Norway (avoids elongated northern tip)
+    "GE": (6_200_000, 2_050_000),  # Georgia, pulled slightly west from edge
+    "KZ": (6_600_000, 2_700_000),  # Kazakhstan — only western sliver visible
+}
+
+# Fixed canvas size — 1440×1440 (both divisible by 16 for codec)
+FIG_W = FIG_H = 9.6      # inches; at DPI=150 → 1440 px each (90 × 16 ✓)
+DPI          = 150
+
+LABEL_FONT   = "Consolas"   # narrow, elegant, Windows-native monospace
 
 # ── 1. download Natural Earth boundaries ───────────────────────────────────
 GEO_PATH = os.path.join(DATA_DIR, "ne_50m_admin0.geojson")
@@ -95,10 +106,16 @@ world = world.to_crs(CRS)
 print(f"  {len(world)} country polygons in Europe bbox (EPSG:3035)")
 
 # Pre-compute label anchor points for ALL countries (representative_point = always inside polygon)
+# Manual overrides for countries whose centroid falls outside the visible map area
+from shapely.geometry import Point
 label_points = {}
 for _, row in world.iterrows():
     iso2 = row["iso2"]
-    label_points[iso2] = row["geometry"].representative_point()
+    if iso2 in LABEL_OVERRIDES:
+        x, y = LABEL_OVERRIDES[iso2]
+        label_points[iso2] = Point(x, y)
+    else:
+        label_points[iso2] = row["geometry"].representative_point()
 
 # ── 3. load wage data → nested dict {iso2: {year: wage}} ──────────────────
 wages_df = pd.read_csv(os.path.join(DATA_DIR, "oecd_wages_europe.csv"))
@@ -211,10 +228,10 @@ for idx, (yr, step, is_proj, frame_wages) in enumerate(frame_seq):
             txt = f"€{val:,}"
             small = iso2 in SMALL_LABEL_ISOS
             ax.text(pt.x, pt.y, txt,
-                    fontsize=5.5 if small else 7.5,
+                    fontsize=5.0 if small else 7.5,
                     color="white", ha="center", va="center",
-                    alpha=0.85 if small else 0.92,
-                    fontfamily="monospace", fontweight="bold",
+                    alpha=0.82 if small else 0.93,
+                    fontfamily=LABEL_FONT, fontweight="bold",
                     bbox=dict(boxstyle="round,pad=0.1", facecolor=BG_COLOR,
                               alpha=0.35, linewidth=0))
 
@@ -230,11 +247,11 @@ for idx, (yr, step, is_proj, frame_wages) in enumerate(frame_seq):
     ax.text(0.015, 0.07, str(yr),
             transform=ax.transAxes,
             fontsize=46, fontweight="bold", color=year_color,
-            alpha=0.95, va="bottom", fontfamily="monospace")
+            alpha=0.95, va="bottom", fontfamily=LABEL_FONT)
     ax.text(0.015, 0.065, MONTHS[step],
             transform=ax.transAxes,
             fontsize=13, color=year_color, alpha=0.75, va="top",
-            fontfamily="monospace")
+            fontfamily=LABEL_FONT)
 
     if is_proj:
         ax.text(0.015, 0.048, "PROJECTED  (IMF WEO Apr 2026)",
