@@ -608,6 +608,33 @@ def rows_to_series(rows, value_key="wage_monthly_eur"):
     return series
 
 
+# ─── Population (for line thickness) ─────────────────────────────────────────
+
+# Approximate 2024 population in millions (Eurostat / World Bank)
+POPULATION = {
+    "AL": 2.8, "AD": 0.08, "AM": 3.0, "AT": 9.1, "AZ": 10.2,
+    "BY": 9.2, "BE": 11.7, "BA": 3.2, "BG": 6.5, "HR": 3.9,
+    "CY": 1.3, "CZ": 10.9, "DK": 5.9, "EE": 1.4, "FI": 5.6,
+    "FR": 68.2, "GE": 3.7, "DE": 84.5, "GR": 10.4, "HU": 9.6,
+    "IS": 0.4, "IE": 5.2, "IT": 58.9, "XK": 1.8, "LV": 1.8,
+    "LI": 0.04, "LT": 2.9, "LU": 0.67, "MT": 0.54, "MD": 2.5,
+    "MC": 0.04, "ME": 0.62, "NL": 17.9, "MK": 1.8, "NO": 5.5,
+    "PL": 37.6, "PT": 10.3, "RO": 19.0, "RU": 144.0, "SM": 0.03,
+    "RS": 6.6, "SK": 5.4, "SI": 2.1, "ES": 48.0, "SE": 10.5,
+    "CH": 8.8, "TR": 85.3, "UA": 37.0, "GB": 67.7, "KZ": 19.8,
+}
+
+import math
+
+def _line_width(iso2, min_w=0.7, max_w=4.5):
+    """Line width proportional to log(population)."""
+    pop = POPULATION.get(iso2, 1.0)
+    # log scale: Montenegro 0.62M → Russia 144M
+    log_min, log_max = math.log(0.03), math.log(144.0)
+    t = (math.log(max(pop, 0.03)) - log_min) / (log_max - log_min)
+    return min_w + t * (max_w - min_w)
+
+
 # ─── Charts ──────────────────────────────────────────────────────────────────
 
 def plot_focus(rows, focus_codes, filename, title_suffix=""):
@@ -627,10 +654,11 @@ def plot_focus(rows, focus_codes, filename, title_suffix=""):
             s = series[iso2]
             years = sorted(s.keys())
             values = [s[y] for y in years]
+            lw = _line_width(iso2)
             ax.plot(years, values, '-o',
                     color=COLORS.get(iso2, "#888888"),
                     label=ISO2_TO_NAME.get(iso2, iso2),
-                    markersize=3, linewidth=2)
+                    markersize=3, linewidth=lw)
 
         ax.set_xlabel("Year", fontsize=12)
         ax.set_ylabel(f"Avg Monthly Wage ({label} nominal)", fontsize=12)
@@ -669,8 +697,9 @@ def plot_all_europe(rows, filename):
         values = [s[y] for y in years]
         name = ISO2_TO_NAME.get(iso2, iso2)
         val = latest[iso2]
+        lw = _line_width(iso2)
         ax.plot(years, values, '-', color=cmap(i % 20),
-                label=f"{name} ({val:,.0f})", linewidth=1.5, alpha=0.85)
+                label=f"{name} ({val:,.0f})", linewidth=lw, alpha=0.85)
 
     ax.set_xlabel("Year", fontsize=12)
     ax.set_ylabel("Avg Monthly Wage (EUR nominal)", fontsize=12)
@@ -705,8 +734,9 @@ def plot_ratio_germany(rows, focus_codes, filename):
         if not common:
             continue
         ratios = [(s[y] / de[y]) * 100 for y in common]
+        lw = _line_width(iso2)
         ax.plot(common, ratios, '-o', color=COLORS.get(iso2, "#888"),
-                label=ISO2_TO_NAME.get(iso2, iso2), markersize=3, linewidth=2)
+                label=ISO2_TO_NAME.get(iso2, iso2), markersize=3, linewidth=lw)
 
     ax.axhline(y=100, color='gray', linestyle='--', alpha=0.5, label='Germany = 100%')
     ax.set_xlabel("Year", fontsize=12)
