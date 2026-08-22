@@ -45,8 +45,8 @@ MONTHS = ["Jan","Feb","Mar","Apr","May","Jun",
 # Europe bounding box (lon_min, lat_min, lon_max, lat_max)
 BBOX = (-27, 33, 46, 72)
 
-# Fixed canvas size — 1600×912 (both divisible by 16 for codec)
-FIG_W, FIG_H = 16, 9.12
+# Fixed canvas size — 960×960 (both divisible by 16 for codec)
+FIG_W = FIG_H = 9.6      # 960×960 px — square, both divisible by 16
 DPI          = 100
 
 # ── 1. download Natural Earth boundaries ───────────────────────────────────
@@ -99,6 +99,19 @@ forecast_years = set(
     wages_df.loc[wages_df["is_forecast"] == 1, "year"].astype(int).unique()
 )
 
+# ── 3b. fill intra-series annual gaps by linear interpolation ─────────────
+# Prevents countries (e.g. Ukraine 2001) from going gray when a single year
+# is missing between two known values.
+for iso2, yr_data in wage_lookup.items():
+    known = sorted(yr_data.keys())
+    for i in range(len(known) - 1):
+        y0, y1 = known[i], known[i + 1]
+        if y1 - y0 > 1:
+            w0, w1 = yr_data[y0], yr_data[y1]
+            for y in range(y0 + 1, y1):
+                a = (y - y0) / (y1 - y0)
+                yr_data[y] = w0 * (1.0 - a) + w1 * a
+
 # ── 4. build interpolated frame list ──────────────────────────────────────
 # Each entry: (display_year, display_month_idx, is_proj, {iso2: wage})
 print("Building interpolated frame sequence...")
@@ -149,8 +162,8 @@ for idx, (yr, step, is_proj, frame_wages) in enumerate(frame_seq):
 
     fig = plt.figure(figsize=(FIG_W, FIG_H), facecolor=BG_COLOR)
     # Fixed axes positions in figure coords — never change between frames
-    ax      = fig.add_axes([0.01, 0.02, 0.84, 0.96])
-    cbar_ax = fig.add_axes([0.87, 0.15, 0.015, 0.62])
+    ax      = fig.add_axes([0.01, 0.02, 0.83, 0.96])
+    cbar_ax = fig.add_axes([0.87, 0.18, 0.025, 0.58])
     ax.set_facecolor(BG_COLOR)
     ax.axis("off")
 
