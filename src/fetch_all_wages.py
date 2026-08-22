@@ -554,6 +554,247 @@ def fetch_eurostat_wages():
     return result
 
 
+
+# ─── Eurostat national accounts (D11/employees) ──────────────────────────────
+
+def fetch_eurostat_nataccounts():
+    """
+    Fetch D11 (wages & salaries) and SAL_DC (employees) from Eurostat national accounts.
+    D11/employees gives average monthly wage per employee (headcount, not FTE-adjusted).
+    Excludes employer social contributions — unlike OECD AV_AN_WAGE which uses total D1.
+
+    Returns: (wages_d11emp, ratios_d11d1)
+      wages_d11emp : {iso2: {year: monthly_eur}}
+      ratios_d11d1 : {iso2: {year: D11/D1}}
+    """
+    import json
+    GEO_FIX = {"EL": "GR", "UK": "GB"}
+
+    print(f"\n{'=' * 70}")
+    print("EUROSTAT NATIONAL ACCOUNTS (D11 wages / SAL_DC employees)")
+    print("=" * 70)
+
+    def _parse(resp):
+        d = json.loads(resp.text)
+        dims = d["id"]; sizes = d["size"]; values = d.get("value", {})
+        dim_rev = {}
+        for dn in dims:
+            cats = d["dimension"][dn]["category"]["index"]
+            dim_rev[dn] = {v: k for k, v in cats.items()}
+        result = {}
+        for fk, val in values.items():
+            idx = int(fk); rem = idx; idxs = []
+            for s in reversed(sizes):
+                idxs.append(rem % s); rem //= s
+            idxs.reverse()
+            dv = {dn: dim_rev[dn].get(di, "") for dn, di in zip(dims, idxs)}
+            geo = GEO_FIX.get(dv.get("geo", ""), dv.get("geo", ""))
+            t = dv.get("time", "")
+            if len(geo) == 2 and t.isdigit():
+                result.setdefault(geo, {})[int(t)] = val
+        return result
+
+    base = "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data"
+    r_d11 = requests.get(f"{base}/nama_10_a10",
+                         params={"format": "JSON", "nace_r2": "TOTAL", "unit": "CP_MEUR",
+                                 "na_item": "D11", "sinceTimePeriod": "2000"}, timeout=60)
+    r_d1  = requests.get(f"{base}/nama_10_a10",
+                         params={"format": "JSON", "nace_r2": "TOTAL", "unit": "CP_MEUR",
+                                 "na_item": "D1",  "sinceTimePeriod": "2000"}, timeout=60)
+    r_emp = requests.get(f"{base}/nama_10_a10_e",
+                         params={"format": "JSON", "nace_r2": "TOTAL", "unit": "THS_PER",
+                                 "na_item": "SAL_DC", "sinceTimePeriod": "2000"}, timeout=60)
+
+    if any(r.status_code != 200 for r in [r_d11, r_d1, r_emp]):
+        print(f"  FAILED: D11={r_d11.status_code} D1={r_d1.status_code} EMP={r_emp.status_code}")
+        return {}, {}
+
+    d11 = _parse(r_d11)
+    d1  = _parse(r_d1)
+    emp = _parse(r_emp)
+
+    wages_out = {}
+    ratios_out = {}
+    for geo in d11:
+        for yr in sorted(d11[geo]):
+            e = emp.get(geo, {}).get(yr)
+            if not e or e <= 0:
+                continue
+            monthly = (d11[geo][yr] * 1e6) / (e * 1e3) / 12
+            wages_out.setdefault(geo, {})[yr] = round(monthly, 0)
+            d1v = d1.get(geo, {}).get(yr)
+            if d1v and d1v > 0:
+                ratios_out.setdefault(geo, {})[yr] = round(d11[geo][yr] / d1v, 4)
+
+    print(f"  {len(wages_out)} countries with D11/SAL_DC data")
+    for iso2 in sorted(wages_out):
+        yrs = sorted(wages_out[iso2])
+        r = ratios_out.get(iso2, {}).get(yrs[-1], 0)
+        print(f"    {iso2}: {yrs[0]}-{yrs[-1]} ({len(yrs)} yrs), "
+              f"latest={wages_out[iso2][yrs[-1]]:,.0f} EUR/month  D11/D1={r:.3f}")
+    return wages_out, ratios_out
+
+
+def fetch_gdp_per_capita(fx_rates):
+    """
+    GDP per capita (EUR, current prices).
+    - Eurostat nama_10_pc (B1GQ, CP_EUR_HAB): 1975-2025, ~40 European countries
+    - World Bank NY.GDP.PCAP.CD (USD->EUR via ECB): remaining (RU,BY,UA,GE,AM,AZ,KZ...)
+
+    Returns: {iso2: {year: gdp_pc_eur}}
+    """
+    import json
+    GEO_FIX = {"EL": "GR", "UK": "GB"}
+
+    print(f"\n{'=' * 70}")
+    print("GDP PER CAPITA (EUR current prices)")
+    print("=" * 70)
+
+    result = {}
+
+    # Eurostat
+    resp = requests.get(
+        "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/nama_10_pc",
+        params={"format": "JSON", "na_item": "B1GQ", "unit": "CP_EUR_HAB",
+                "sinceTimePeriod": "1990"},
+        timeout=60)
+    if resp.status_code == 200:
+        d = json.loads(resp.text)
+        dims = d["id"]; sizes = d["size"]; values = d.get("value", {})
+        dim_rev = {}
+        for dn in dims:
+            cats = d["dimension"][dn]["category"]["index"]
+            dim_rev[dn] = {v: k for k, v in cats.items()}
+        for fk, val in values.items():
+            idx = int(fk); rem = idx; idxs = []
+            for s in reversed(sizes):
+                idxs.append(rem % s); rem //= s
+            idxs.reverse()
+            dv = {dn: dim_rev[dn].get(di, "") for dn, di in zip(dims, idxs)}
+            geo = GEO_FIX.get(dv.get("geo", ""), dv.get("geo", ""))
+            t = dv.get("time", "")
+            if len(geo) == 2 and t.isdigit() and geo in ISO2_TO_NAME:
+                result.setdefault(geo, {})[int(t)] = round(val, 0)
+        print(f"  Eurostat: {len(result)} countries, 1990-2025")
+    else:
+        print(f"  Eurostat FAILED: HTTP {resp.status_code}")
+
+    # World Bank for non-Eurostat countries
+    missing = {v[0] for v in EUROPEAN.values()} - set(result.keys()) - {"LI", "MC"}
+    if missing:
+        iso2_list = ";".join(sorted(missing))
+        wb = requests.get(
+            f"https://api.worldbank.org/v2/country/{iso2_list}/indicator/NY.GDP.PCAP.CD",
+            params={"format": "json", "per_page": "1000", "date": "1990:2025"},
+            timeout=30)
+        if wb.status_code == 200:
+            wb_data = wb.json()
+            usd_eur = fx_rates.get("USD", {})
+            covered = set()
+            if len(wb_data) > 1 and wb_data[1]:
+                for entry in wb_data[1]:
+                    iso2 = entry.get("country", {}).get("id", "")
+                    yr_str = entry.get("date", "")
+                    val = entry.get("value")
+                    if iso2 and yr_str.isdigit() and val and iso2 in ISO2_TO_NAME:
+                        yr = int(yr_str)
+                        rate = usd_eur.get(yr)
+                        if rate and rate > 0:
+                            result.setdefault(iso2, {})[yr] = round(val / rate, 0)
+                            covered.add(iso2)
+            print(f"  World Bank: {sorted(covered)}")
+        else:
+            print(f"  World Bank FAILED: HTTP {wb.status_code}")
+
+    print(f"  Total GDP coverage: {len(result)} countries")
+    return result
+
+
+def _linreg(xs, ys):
+    """OLS linear regression. Returns (slope, intercept, r2)."""
+    n = len(xs)
+    if n < 2:
+        return 0.0, ys[0] if ys else 0.0, 0.0
+    xm = sum(xs) / n; ym = sum(ys) / n
+    ssxy = sum((x - xm) * (y - ym) for x, y in zip(xs, ys))
+    ssxx = sum((x - xm) ** 2 for x in xs)
+    if ssxx == 0:
+        return 0.0, ym, 0.0
+    b = ssxy / ssxx; a = ym - b * xm
+    ss_res = sum((y - (a + b * x)) ** 2 for x, y in zip(xs, ys))
+    ss_tot = sum((y - ym) ** 2 for y in ys)
+    r2 = 1 - ss_res / ss_tot if ss_tot > 0 else 1.0
+    return b, a, r2
+
+
+def project_wages(rows, gdp_data, horizon=2031):
+    """
+    Project wages from last actual year to `horizon`.
+
+    Method for each country:
+    1. Fit log(GDP_pc) ~ year on last 5 observed years -> exponential GDP extrapolation
+    2. Fit wage/GDP_monthly ratio ~ year on last 5 years -> linear ratio extrapolation
+    3. projected_wage = projected_ratio * projected_gdp_pc / 12
+
+    Returns list of rows with source='projected', is_forecast=1.
+    """
+    from math import log, exp
+
+    wages_series = {}
+    for r in rows:
+        iso2 = r["iso2"]
+        yr = r["year"]
+        w = r.get("wage_monthly_eur", "")
+        if w and w != "":
+            wages_series.setdefault(iso2, {})[yr] = float(w)
+
+    projected = []
+    n_countries = 0
+
+    for iso2, wages in wages_series.items():
+        gdp = gdp_data.get(iso2, {})
+        if not gdp:
+            continue
+        common = sorted(set(wages) & set(gdp))
+        if len(common) < 3:
+            continue
+
+        fit_yrs = common[-5:]
+        last_yr = fit_yrs[-1]
+
+        # GDP trend (exponential)
+        log_gdps = [log(max(gdp[y], 1)) for y in fit_yrs]
+        g_slope, g_intcpt, _ = _linreg(fit_yrs, log_gdps)
+
+        # Wage/GDP monthly ratio trend
+        ratios = [wages[y] / (gdp[y] / 12) for y in fit_yrs]
+        r_slope, r_intcpt, _ = _linreg(fit_yrs, ratios)
+
+        name = ISO2_TO_NAME.get(iso2, iso2)
+        n_countries += 1
+
+        for yr in range(last_yr + 1, horizon + 1):
+            proj_gdp = exp(g_intcpt + g_slope * yr)
+            proj_ratio = r_intcpt + r_slope * yr
+            proj_ratio = max(0.2, min(1.5, proj_ratio))
+            proj_wage = proj_ratio * (proj_gdp / 12)
+            projected.append({
+                "iso2": iso2, "country": name, "year": yr,
+                "wage_monthly_eur": round(proj_wage, 0),
+                "wage_monthly_usd": "",
+                "wage_monthly_local": "",
+                "currency": "EUR",
+                "source": "projected",
+                "wage_oecd_eur": "",
+                "wage_d11emp_eur": "",
+                "gdp_pc_eur": round(proj_gdp, 0),
+                "is_forecast": 1,
+            })
+
+    print(f"  Projected {n_countries} countries to {horizon}")
+    return projected
+
+
 # ─── Phase 1: OECD ──────────────────────────────────────────────────────────
 
 def fetch_oecd_wages():
@@ -903,6 +1144,153 @@ def _add_end_labels(ax, labels, fontsize=8, x_pad=0.5):
                     annotation_clip=False)
 
 
+def plot_gdp_wage_scatter(rows, gdp_data, filename):
+    """
+    Scatter: log(GDP per capita EUR) vs log(monthly wage EUR).
+    One point per (country, year) for available years, 2025 highlighted.
+    Regression line + R² for 2024/2025 cross-section.
+    """
+    import math
+
+    fig, ax = plt.subplots(figsize=(14, 10))
+
+    # Collect all historical points
+    wage_series = rows_to_series(rows, "wage_monthly_eur")
+    all_pts = []  # (gdp, wage, iso2, year)
+    for r in rows:
+        iso2 = r["iso2"]
+        yr = r["year"]
+        w = r.get("wage_monthly_eur", "")
+        g = r.get("gdp_pc_eur", "")
+        if w and g and w != "" and g != "" and r.get("is_forecast", 0) == 0:
+            try:
+                all_pts.append((float(g), float(w), iso2, yr))
+            except (ValueError, TypeError):
+                pass
+
+    if not all_pts:
+        plt.close(fig)
+        return
+
+    # Plot all years as small grey points
+    for gdp, wage, iso2, yr in all_pts:
+        if yr < 2024:
+            ax.scatter(gdp, wage, s=6, color="#cccccc", alpha=0.4, zorder=1)
+
+    # Plot 2024/2025 highlighted per country (latest available)
+    latest_pts = {}
+    for gdp, wage, iso2, yr in all_pts:
+        if yr >= 2020:
+            if iso2 not in latest_pts or yr > latest_pts[iso2][2]:
+                latest_pts[iso2] = (gdp, wage, yr)
+
+    cmap = plt.colormaps["tab20"]
+    iso2_list = sorted(latest_pts)
+    for i, iso2 in enumerate(iso2_list):
+        gdp, wage, yr = latest_pts[iso2]
+        color = COLORS.get(iso2, cmap(i % 20))
+        ax.scatter(gdp, wage, s=60, color=color, zorder=3, alpha=0.9)
+        name = ISO2_TO_NAME.get(iso2, iso2)
+        ax.annotate(name, (gdp, wage), textcoords="offset points",
+                    xytext=(4, 2), fontsize=6.5, color=color)
+
+    # Regression on latest cross-section (log-log)
+    if len(latest_pts) >= 5:
+        log_g = [math.log(v[0]) for v in latest_pts.values() if v[0] > 0 and v[1] > 0]
+        log_w = [math.log(v[1]) for v in latest_pts.values() if v[0] > 0 and v[1] > 0]
+        slope, intercept, r2 = _linreg(log_g, log_w)
+        xs = sorted(log_g)
+        ys = [intercept + slope * x for x in xs]
+        ax.plot([math.exp(x) for x in xs], [math.exp(y) for y in ys],
+                "k--", linewidth=1.2, alpha=0.6, zorder=2)
+        ax.text(0.05, 0.95,
+                f"Latest cross-section (N={len(latest_pts)})\n"
+                f"R² = {r2:.3f}   elasticity = {slope:.3f}\n"
+                f"(elasticity>1: wages grow faster than GDP per capita)",
+                transform=ax.transAxes, fontsize=9, va="top",
+                bbox=dict(boxstyle="round", fc="white", alpha=0.8))
+
+    ax.set_xscale("log"); ax.set_yscale("log")
+    ax.set_xlabel("GDP per capita (EUR, current prices, log scale)", fontsize=12)
+    ax.set_ylabel("Avg Monthly Gross Wage (EUR, log scale)", fontsize=12)
+    ax.set_title("GDP per Capita vs Average Monthly Wage — European Countries\n"
+                 "Grey: historical (pre-2020). Coloured: latest available. Log-log scale.",
+                 fontsize=12)
+    ax.grid(True, alpha=0.3, which="both")
+
+    plt.tight_layout()
+    path = os.path.join(OUT_DIR, filename)
+    fig.savefig(path, dpi=150)
+    plt.close(fig)
+    print(f"  Saved: {path}")
+
+
+def plot_projection(all_rows, focus_codes, filename):
+    """Historical + projected wages to 2031. Projected portion as dashed line."""
+    eur_series = rows_to_series(all_rows, "wage_monthly_eur")
+
+    # Split historical vs projected
+    hist = {}; proj = {}
+    for r in all_rows:
+        iso2 = r["iso2"]
+        yr = r["year"]
+        w = r.get("wage_monthly_eur", "")
+        if not w or w == "":
+            continue
+        if r.get("is_forecast", 0) == 1:
+            proj.setdefault(iso2, {})[yr] = float(w)
+        else:
+            hist.setdefault(iso2, {})[yr] = float(w)
+
+    fig, ax = plt.subplots(figsize=(14, 9))
+    end_labels = []
+
+    for iso2 in focus_codes:
+        color = COLORS.get(iso2, "#888888")
+        name = ISO2_TO_NAME.get(iso2, iso2)
+        lw = _line_width(iso2)
+
+        # Historical
+        if iso2 in hist:
+            h = hist[iso2]
+            yrs = sorted(h)
+            ax.plot(yrs, [h[y] for y in yrs], "-", color=color, linewidth=lw)
+
+            # Bridge: connect last historical to first projected
+            if iso2 in proj:
+                p = proj[iso2]
+                p_yrs = sorted(p)
+                bridge_x = [yrs[-1]] + p_yrs
+                bridge_y = [h[yrs[-1]]] + [p[y] for y in p_yrs]
+                ax.plot(bridge_x, bridge_y, "--", color=color, linewidth=lw,
+                        alpha=0.7)
+                end_labels.append((p_yrs[-1], p[p_yrs[-1]], f"{name} (proj.)", color))
+            else:
+                end_labels.append((yrs[-1], h[yrs[-1]], name, color))
+
+    # Shaded projection zone
+    ax.axvspan(2025.5, 2031.5, alpha=0.05, color="gray")
+    ax.axvline(x=2025.5, color="gray", linestyle=":", linewidth=1, alpha=0.5)
+    ax.text(2026, ax.get_ylim()[1] if ax.get_ylim()[1] > 0 else 1000,
+            "← actual  projected →", fontsize=8, color="gray", ha="center")
+
+    ax.set_xlabel("Year", fontsize=12)
+    ax.set_ylabel("Avg Monthly Gross Wage (EUR nominal)", fontsize=12)
+    ax.set_title("Wage Convergence + Projection to 2031\n"
+                 "Method: GDP trend (exponential) × wage/GDP ratio trend (linear)",
+                 fontsize=12)
+    ax.grid(True, alpha=0.3)
+    ax.set_xlim(1995, 2033)
+    ax.set_ylim(bottom=0)
+    _add_end_labels(ax, end_labels, fontsize=9)
+
+    plt.tight_layout()
+    path = os.path.join(OUT_DIR, filename)
+    fig.savefig(path, dpi=150)
+    plt.close(fig)
+    print(f"  Saved: {path}")
+
+
 def plot_focus(rows, focus_codes, filename, title_suffix=""):
     """Validation chart for a specific set of countries."""
     eur_series = rows_to_series(rows, "wage_monthly_eur")
@@ -1095,17 +1483,24 @@ def main():
         print("ERROR: No OECD data fetched")
         sys.exit(1)
 
-    # 4. Eurostat (fills EU countries not in OECD)
-    eurostat = fetch_eurostat_wages()
+    # 4. Eurostat earn_nt_net (fills CY, MT — only EU countries not in OECD)
+    eurostat_earn = fetch_eurostat_wages()
 
-    # 5. Wikipedia current snapshot (fills remaining countries)
+    # 5. Eurostat national accounts: D11/employees and D11/D1 ratio
+    d11emp_data, d11d1_ratios = fetch_eurostat_nataccounts()
+
+    # 6. GDP per capita (Eurostat + World Bank)
+    gdp_data = fetch_gdp_per_capita(fx_rates)
+
+    # 7. Wikipedia current snapshot (fills remaining countries)
     print(f"\n{'=' * 70}")
     print("WIKIPEDIA CURRENT SNAPSHOT")
     print("=" * 70)
     wiki = parse_wikipedia_current()
     print(f"  Parsed {len(wiki)} countries from Wikipedia")
 
-    # 6. Combine: national > oecd > eurostat > wikipedia
+    # 8. Combine: national_office > oecd > eurostat_earn > wikipedia
+    #    No scaling applied — raw values from each source.
     print(f"\n{'=' * 70}")
     print("BUILDING COMBINED WAGE TABLE")
     print("=" * 70)
@@ -1113,156 +1508,153 @@ def main():
     rows = []
     source_summary = defaultdict(list)
 
-    # 5a. National office data
+    def _row(iso2, name, year, eur, usd, local, currency, source, oecd_eur="", d11emp_eur=""):
+        gdp = gdp_data.get(iso2, {}).get(year, "")
+        return {
+            "iso2": iso2, "country": name, "year": year,
+            "wage_monthly_eur": round(eur, 0) if eur != "" and eur is not None else "",
+            "wage_monthly_usd": round(usd, 0) if usd else "",
+            "wage_monthly_local": round(local, 0) if local != "" and local is not None else "",
+            "currency": currency,
+            "source": source,
+            "wage_oecd_eur": round(oecd_eur, 0) if oecd_eur != "" and oecd_eur is not None else "",
+            "wage_d11emp_eur": round(d11emp_eur, 0) if d11emp_eur != "" and d11emp_eur is not None else "",
+            "gdp_pc_eur": round(gdp, 0) if gdp else "",
+            "is_forecast": 0,
+        }
+
+    # 8a. National office data
     for iso2, years_data in national.items():
         name = ISO2_TO_NAME.get(iso2, iso2)
         for year in sorted(years_data.keys()):
             d = years_data[year]
             eur = d["eur"]
-            # Compute USD from EUR
             usd = None
             if eur and "USD" in fx_rates and year in fx_rates["USD"]:
                 usd = eur * fx_rates["USD"][year]
-            rows.append({
-                "iso2": iso2, "country": name, "year": year,
-                "wage_monthly_eur": round(eur, 0) if eur else "",
-                "wage_monthly_usd": round(usd, 0) if usd else "",
-                "wage_monthly_local": round(d["local"], 0),
-                "currency": d["currency"],
-                "source": "national_office",
-            })
+            d11emp = d11emp_data.get(iso2, {}).get(year, "")
+            rows.append(_row(iso2, name, year, eur or "", usd, d["local"],
+                             d["currency"], "national_office", d11emp_eur=d11emp))
         source_summary["national_office"].append(iso2)
 
-    # 5b. OECD data (for countries NOT in national office data)
+    # 8b. OECD (countries without national office fetchers)
     oecd_rows = build_wage_table(oecd_data, fx_rates)
     for r in oecd_rows:
         iso2 = r["iso2"]
         if iso2 in national:
-            continue  # national office takes priority
+            continue
         iso3_match = [k for k, v in EUROPEAN.items() if v[0] == iso2]
         if iso3_match and iso3_match[0] in OECD_EXCLUDE:
-            continue  # excluded (e.g. Turkey)
-        rows.append(r)
+            continue
+        eur = float(r["wage_monthly_eur"]) if r["wage_monthly_eur"] else None
+        usd = float(r["wage_monthly_usd"]) if r["wage_monthly_usd"] else None
+        d11emp = d11emp_data.get(iso2, {}).get(r["year"], "")
+        rows.append(_row(iso2, r["country"], r["year"], eur or "", usd,
+                         float(r["wage_monthly_local"]) if r["wage_monthly_local"] else "",
+                         r["currency"], "oecd", oecd_eur=eur, d11emp_eur=d11emp))
         if iso2 not in [x for xs in source_summary.values() for x in xs]:
             source_summary["oecd"].append(iso2)
 
-    # 6c. Eurostat data (for countries NOT in national office or OECD)
+    # 8c. Eurostat earn_nt_net (CY, MT — not in OECD)
     oecd_exclude_iso2 = {ISO3_TO_ISO2.get(k, "") for k in OECD_EXCLUDE}
-    for iso2, years_data in eurostat.items():
+    for iso2, years_data in eurostat_earn.items():
         if iso2 in national or iso2 in oecd_exclude_iso2:
             continue
         if iso2 in [r["iso2"] for r in rows]:
             continue
         name = ISO2_TO_NAME.get(iso2, iso2)
         if not name or iso2 == name:
-            continue  # skip non-European countries
+            continue
         for year in sorted(years_data.keys()):
             eur = years_data[year]
-            usd = None
-            if "USD" in fx_rates and year in fx_rates["USD"]:
-                usd = eur * fx_rates["USD"][year]
-            rows.append({
-                "iso2": iso2, "country": name, "year": year,
-                "wage_monthly_eur": round(eur, 0),
-                "wage_monthly_usd": round(usd, 0) if usd else "",
-                "wage_monthly_local": round(eur, 0),
-                "currency": "EUR",
-                "source": "eurostat",
-            })
-        source_summary["eurostat"].append(iso2)
+            usd = eur * fx_rates["USD"].get(year, 1.1) if "USD" in fx_rates else None
+            d11emp = d11emp_data.get(iso2, {}).get(year, "")
+            rows.append(_row(iso2, name, year, eur, usd, eur, "EUR",
+                             "eurostat_earn", d11emp_eur=d11emp))
+        source_summary["eurostat_earn"].append(iso2)
 
-    # 6d. Wikipedia snapshot for remaining countries
+    # 8d. Wikipedia snapshot for remaining countries
     covered = set(r["iso2"] for r in rows)
-    wiki_year = 2025  # approximate — most Wikipedia values are 2025-2026
     for iso2, wd in wiki.items():
         if iso2 in covered:
             continue
         name = ISO2_TO_NAME.get(iso2, iso2)
-        rows.append({
-            "iso2": iso2, "country": name, "year": wiki_year,
-            "wage_monthly_eur": round(wd["gross_eur"], 0),
-            "wage_monthly_usd": "",
-            "wage_monthly_local": "",
-            "currency": "EUR",
-            "source": f"wikipedia ({wd['date']})",
-        })
+        d11emp = d11emp_data.get(iso2, {}).get(2024, "")
+        rows.append(_row(iso2, name, 2025, wd["gross_eur"], "", "",
+                         "EUR", f"wikipedia ({wd['date']})", d11emp_eur=d11emp))
         source_summary["wikipedia"].append(iso2)
 
     print(f"  Total rows: {len(rows):,}")
-    print(f"  National office ({len(source_summary['national_office'])}): "
-          f"{sorted(source_summary['national_office'])}")
-    print(f"  OECD ({len(source_summary['oecd'])}): "
-          f"{sorted(source_summary['oecd'])}")
-    print(f"  Eurostat ({len(source_summary['eurostat'])}): "
-          f"{sorted(source_summary['eurostat'])}")
-    print(f"  Wikipedia only ({len(source_summary['wikipedia'])}): "
-          f"{sorted(source_summary['wikipedia'])}")
+    for src, countries in sorted(source_summary.items()):
+        print(f"  {src} ({len(countries)}): {sorted(countries)}")
 
-    # 6e. Validate against Wikipedia and correct outliers
-    # OECD/Eurostat use different methodology (FTE national-accounts wage bill)
-    # which can diverge 10-70% from national office headlines (Wikipedia).
-    # For countries where the divergence is >15%, scale the entire series.
-    CORRECTION_THRESHOLD = 0.15
-    print(f"\n  --- Wikipedia validation (threshold {CORRECTION_THRESHOLD:.0%}) ---")
-
-    # Build latest value per country from our rows
+    # 8e. Wikipedia validation — compare, DO NOT correct. Just report.
+    print(f"\n  --- Wikipedia validation (raw divergences, no correction) ---")
     latest_ours = {}
     for r in rows:
-        iso2 = r["iso2"]
-        yr = r["year"]
-        eur = r["wage_monthly_eur"]
+        iso2 = r["iso2"]; yr = r["year"]; eur = r.get("wage_monthly_eur", "")
         if eur and eur != "":
-            eur = float(eur)
             if iso2 not in latest_ours or yr > latest_ours[iso2][0]:
-                latest_ours[iso2] = (yr, eur, r["source"])
-
-    corrections = {}
-    for iso2, wd in wiki.items():
+                latest_ours[iso2] = (yr, float(eur), r["source"])
+    for iso2, wd in sorted(wiki.items()):
         if iso2 not in latest_ours:
             continue
         our_yr, our_val, our_src = latest_ours[iso2]
-        wiki_val = wd["gross_eur"]
         if our_src.startswith("wikipedia"):
-            continue  # already from Wikipedia
-        ratio = our_val / wiki_val
-        if abs(ratio - 1.0) > CORRECTION_THRESHOLD:
-            factor = wiki_val / our_val
-            corrections[iso2] = factor
-            print(f"    {iso2}: ours={our_val:,.0f} wiki={wiki_val:,.0f} "
-                  f"ratio={ratio:.2f} -> factor={factor:.3f}")
+            continue
+        ratio = our_val / wd["gross_eur"]
+        flag = " <-- LARGE DIVERGENCE" if abs(ratio - 1.0) > 0.20 else ""
+        print(f"    {iso2}: {our_src}={our_val:,.0f} wiki={wd['gross_eur']:,.0f} "
+              f"ratio={ratio:.2f}x{flag}")
 
-    if corrections:
-        for r in rows:
-            iso2 = r["iso2"]
-            if iso2 in corrections:
-                f = corrections[iso2]
-                for key in ("wage_monthly_eur", "wage_monthly_usd"):
-                    if r[key] and r[key] != "":
-                        r[key] = round(float(r[key]) * f, 0)
-        print(f"  Corrected {len(corrections)} countries: "
-              f"{sorted(corrections.keys())}")
-    else:
-        print("  No corrections needed")
+    # 9. Projection to 2031
+    print(f"\n{'=' * 70}")
+    print("PROJECTIONS TO 2031")
+    print("=" * 70)
+    projected = project_wages(rows, gdp_data, horizon=2031)
+    all_rows = rows + projected
+    # Backfill gdp_pc_eur for historical rows that have it
+    for r in all_rows:
+        if not r.get("gdp_pc_eur") or r["gdp_pc_eur"] == "":
+            g = gdp_data.get(r["iso2"], {}).get(r["year"], "")
+            r["gdp_pc_eur"] = round(g, 0) if g else ""
 
-    # 6. Save
+    # 10. Save
+    FIELDS = ["iso2", "country", "year", "wage_monthly_eur", "wage_monthly_usd",
+              "wage_monthly_local", "currency", "source",
+              "wage_oecd_eur", "wage_d11emp_eur", "gdp_pc_eur", "is_forecast"]
     csv_path = os.path.join(DATA_DIR, "oecd_wages_europe.csv")
     with open(csv_path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=[
-            "iso2", "country", "year", "wage_monthly_eur",
-            "wage_monthly_usd", "wage_monthly_local", "currency", "source"])
+        writer = csv.DictWriter(f, fieldnames=FIELDS, extrasaction="ignore")
         writer.writeheader()
-        writer.writerows(rows)
-    print(f"  Saved: {csv_path}")
+        writer.writerows(all_rows)
+    print(f"  Saved: {csv_path} ({len(all_rows):,} rows incl. projections)")
 
-    # 7. Validate
-    print_validation(rows)
+    # 11. Validate
+    print_validation(rows)  # historical only
 
-    # 8. Charts
+    # 12. Correlation: log(GDP) vs log(wage)
+    print(f"\n  --- GDP-Wage correlation (2024 cross-section) ---")
+    import math
+    corr_pts = []
+    for r in rows:
+        if r["year"] == 2024 and r.get("gdp_pc_eur") and r.get("wage_monthly_eur"):
+            g = float(r["gdp_pc_eur"]); w = float(r["wage_monthly_eur"])
+            if g > 0 and w > 0:
+                corr_pts.append((math.log(g), math.log(w), r["iso2"]))
+    if corr_pts:
+        log_gdp = [p[0] for p in corr_pts]
+        log_wage = [p[1] for p in corr_pts]
+        slope, intercept, r2 = _linreg(log_gdp, log_wage)
+        print(f"    2024: N={len(corr_pts)}, R²={r2:.3f}, elasticity={slope:.3f}")
+        print(f"    (elasticity>1 means wages grow faster than GDP per capita)")
+
+    # 13. Charts
     print(f"\n{'=' * 70}")
     print("CHARTS")
     print("=" * 70)
 
-    plot_focus(rows,
+    plot_focus(all_rows,
                ["DE", "PL", "CZ", "SK", "LT", "HU", "AT", "BY", "RU"],
                "oecd_01_poland_neighbors.png",
                " — Poland + Neighbors")
@@ -1273,7 +1665,13 @@ def main():
                        ["PL", "CZ", "SK", "LT", "HU", "EE", "LV", "PT", "GR", "ES"],
                        "oecd_03_ratio_germany.png")
 
-    # 9. Coverage
+    plot_gdp_wage_scatter(rows, gdp_data, "oecd_04_gdp_wage_correlation.png")
+
+    plot_projection(all_rows,
+                    ["DE", "PL", "CZ", "SK", "LT", "HU", "AT", "BY", "RU"],
+                    "oecd_05_wage_projection.png")
+
+    # 14. Coverage
     final_covered = set(r["iso2"] for r in rows)
     all_european = set(v[0] for v in EUROPEAN.values())
     missing = all_european - final_covered
