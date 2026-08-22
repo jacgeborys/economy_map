@@ -283,6 +283,90 @@ def parse_wikipedia_current():
     return results
 
 
+# ─── Eurostat ────────────────────────────────────────────────────────────────
+
+def fetch_eurostat_wages():
+    """
+    Fetch gross annual earnings from Eurostat earn_nt_net for EU countries.
+    Uses the "single person, 100% of AW" concept in EUR.
+    Values are ~20% below national headlines (modelled average worker).
+    Only used for countries NOT covered by OECD or national offices.
+
+    Returns: {iso2: {year: wage_monthly_eur}}
+    """
+    import json
+
+    print(f"\n{'=' * 70}")
+    print("EUROSTAT earn_nt_net (gross annual, single worker 100% AW)")
+    print("=" * 70)
+
+    url = "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/earn_nt_net"
+    params = {
+        "currency": "EUR",
+        "estruct": "GRS",
+        "ecase": "P1_NCH_AW100",
+        "sinceTimePeriod": "2000",
+        "format": "JSON",
+    }
+
+    resp = requests.get(url, params=params, timeout=60)
+    if resp.status_code != 200:
+        print(f"  FAILED: HTTP {resp.status_code}")
+        return {}
+
+    d = json.loads(resp.text)
+    dims = d["id"]
+    sizes = d["size"]
+    values = d.get("value", {})
+
+    # Build reverse index for each dimension
+    dim_reverse = {}
+    for dim_name in dims:
+        cats = d["dimension"][dim_name]["category"]["index"]
+        dim_reverse[dim_name] = {v: k for k, v in cats.items()}
+
+    # Eurostat uses "EL" for Greece, we need "GR"
+    EUROSTAT_GEO_FIX = {"EL": "GR", "UK": "GB"}
+
+    result = {}
+    for flat_key, val in values.items():
+        idx = int(flat_key)
+        remaining = idx
+        indices = []
+        for s in reversed(sizes):
+            indices.append(remaining % s)
+            remaining //= s
+        indices.reverse()
+
+        dim_values = {}
+        for dim_name, dim_idx in zip(dims, indices):
+            dim_values[dim_name] = dim_reverse[dim_name].get(dim_idx, "")
+
+        geo = dim_values.get("geo", "")
+        year_str = dim_values.get("time", "")
+
+        # Skip aggregates
+        if len(geo) != 2 or not year_str.isdigit():
+            continue
+
+        geo = EUROSTAT_GEO_FIX.get(geo, geo)
+        year = int(year_str)
+        monthly = val / 12.0
+
+        if geo not in result:
+            result[geo] = {}
+        result[geo][year] = round(monthly, 0)
+
+    print(f"  Parsed {len(result)} countries")
+    for iso2 in sorted(result):
+        years = sorted(result[iso2].keys())
+        latest = result[iso2][years[-1]]
+        print(f"    {iso2}: {years[0]}-{years[-1]} ({len(years)} yrs), "
+              f"latest={latest:,.0f} EUR/month")
+
+    return result
+
+
 # ─── Phase 1: OECD ──────────────────────────────────────────────────────────
 
 def fetch_oecd_wages():
@@ -700,14 +784,17 @@ def main():
         print("ERROR: No OECD data fetched")
         sys.exit(1)
 
-    # 4. Wikipedia current snapshot (fills non-OECD countries)
+    # 4. Eurostat (fills EU countries not in OECD)
+    eurostat = fetch_eurostat_wages()
+
+    # 5. Wikipedia current snapshot (fills remaining countries)
     print(f"\n{'=' * 70}")
     print("WIKIPEDIA CURRENT SNAPSHOT")
     print("=" * 70)
     wiki = parse_wikipedia_current()
     print(f"  Parsed {len(wiki)} countries from Wikipedia")
 
-    # 5. Combine: national > oecd > wikipedia
+    # 6. Combine: national > oecd > eurostat > wikipedia
     print(f"\n{'=' * 70}")
     print("BUILDING COMBINED WAGE TABLE")
     print("=" * 70)
@@ -748,7 +835,32 @@ def main():
         if iso2 not in [x for xs in source_summary.values() for x in xs]:
             source_summary["oecd"].append(iso2)
 
-    # 5c. Wikipedia snapshot for remaining countries
+    # 6c. Eurostat data (for countries NOT in national office or OECD)
+    oecd_exclude_iso2 = {ISO3_TO_ISO2.get(k, "") for k in OECD_EXCLUDE}
+    for iso2, years_data in eurostat.items():
+        if iso2 in national or iso2 in oecd_exclude_iso2:
+            continue
+        if iso2 in [r["iso2"] for r in rows]:
+            continue
+        name = ISO2_TO_NAME.get(iso2, iso2)
+        if not name or iso2 == name:
+            continue  # skip non-European countries
+        for year in sorted(years_data.keys()):
+            eur = years_data[year]
+            usd = None
+            if "USD" in fx_rates and year in fx_rates["USD"]:
+                usd = eur * fx_rates["USD"][year]
+            rows.append({
+                "iso2": iso2, "country": name, "year": year,
+                "wage_monthly_eur": round(eur, 0),
+                "wage_monthly_usd": round(usd, 0) if usd else "",
+                "wage_monthly_local": round(eur, 0),
+                "currency": "EUR",
+                "source": "eurostat",
+            })
+        source_summary["eurostat"].append(iso2)
+
+    # 6d. Wikipedia snapshot for remaining countries
     covered = set(r["iso2"] for r in rows)
     wiki_year = 2025  # approximate — most Wikipedia values are 2025-2026
     for iso2, wd in wiki.items():
@@ -770,6 +882,8 @@ def main():
           f"{sorted(source_summary['national_office'])}")
     print(f"  OECD ({len(source_summary['oecd'])}): "
           f"{sorted(source_summary['oecd'])}")
+    print(f"  Eurostat ({len(source_summary['eurostat'])}): "
+          f"{sorted(source_summary['eurostat'])}")
     print(f"  Wikipedia only ({len(source_summary['wikipedia'])}): "
           f"{sorted(source_summary['wikipedia'])}")
 

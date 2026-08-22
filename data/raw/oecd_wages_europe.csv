@@ -966,17 +966,49 @@ HR,Croatia,2021,1644.0,1945.0,1644.0,EUR,OECD
 HR,Croatia,2022,1463.0,1540.0,1463.0,EUR,OECD
 HR,Croatia,2023,1642.0,1776.0,1642.0,EUR,OECD
 HR,Croatia,2024,1907.0,2064.0,1907.0,EUR,OECD
+CY,Cyprus,2005,1387.0,1726.0,1387.0,EUR,eurostat
+CY,Cyprus,2006,1482.0,1861.0,1482.0,EUR,eurostat
+CY,Cyprus,2007,1563.0,2142.0,1563.0,EUR,eurostat
+CY,Cyprus,2014,1726.0,2293.0,1726.0,EUR,eurostat
+CY,Cyprus,2017,1766.0,1995.0,1766.0,EUR,eurostat
+CY,Cyprus,2018,1822.0,2152.0,1822.0,EUR,eurostat
+CY,Cyprus,2019,1861.0,2083.0,1861.0,EUR,eurostat
+CY,Cyprus,2020,1870.0,2136.0,1870.0,EUR,eurostat
+CY,Cyprus,2021,1937.0,2291.0,1937.0,EUR,eurostat
+CY,Cyprus,2022,2118.0,2230.0,2118.0,EUR,eurostat
+CY,Cyprus,2023,2290.0,2476.0,2290.0,EUR,eurostat
+CY,Cyprus,2024,2229.0,2413.0,2229.0,EUR,eurostat
+CY,Cyprus,2025,2308.0,2608.0,2308.0,EUR,eurostat
+MT,Malta,2005,1220.0,1518.0,1220.0,EUR,eurostat
+MT,Malta,2006,1265.0,1588.0,1265.0,EUR,eurostat
+MT,Malta,2007,1295.0,1775.0,1295.0,EUR,eurostat
+MT,Malta,2008,1398.0,2056.0,1398.0,EUR,eurostat
+MT,Malta,2009,1427.0,1990.0,1427.0,EUR,eurostat
+MT,Malta,2010,1496.0,1983.0,1496.0,EUR,eurostat
+MT,Malta,2011,1642.0,2286.0,1642.0,EUR,eurostat
+MT,Malta,2012,1704.0,2189.0,1704.0,EUR,eurostat
+MT,Malta,2013,1754.0,2330.0,1754.0,EUR,eurostat
+MT,Malta,2014,1708.0,2269.0,1708.0,EUR,eurostat
+MT,Malta,2015,1745.0,1936.0,1745.0,EUR,eurostat
+MT,Malta,2016,1821.0,2016.0,1821.0,EUR,eurostat
+MT,Malta,2017,1869.0,2111.0,1869.0,EUR,eurostat
+MT,Malta,2018,1944.0,2296.0,1944.0,EUR,eurostat
+MT,Malta,2019,2089.0,2339.0,2089.0,EUR,eurostat
+MT,Malta,2020,2158.0,2465.0,2158.0,EUR,eurostat
+MT,Malta,2021,1996.0,2361.0,1996.0,EUR,eurostat
+MT,Malta,2022,2184.0,2300.0,2184.0,EUR,eurostat
+MT,Malta,2023,2279.0,2464.0,2279.0,EUR,eurostat
+MT,Malta,2024,2661.0,2880.0,2661.0,EUR,eurostat
+MT,Malta,2025,2769.0,3129.0,2769.0,EUR,eurostat
 AL,Albania,2025,884.0,,,EUR,wikipedia (2026 (Q1))
 AD,Andorra,2025,2515.0,,,EUR,wikipedia (2024-09)
 AM,Armenia,2025,679.0,,,EUR,wikipedia (2026-06)
 AZ,Azerbaijan,2025,588.0,,,EUR,wikipedia (2026-06)
 BY,Belarus,2025,861.0,,,EUR,wikipedia (2026-06)
 BA,Bosnia & Herz.,2025,1359.0,,,EUR,wikipedia (2026-05)
-CY,Cyprus,2025,2932.0,,,EUR,wikipedia (2025 (Q4))
 GE,Georgia,2025,734.0,,,EUR,wikipedia (2026 (Q1))
 KZ,KZ,2025,754.0,,,EUR,wikipedia (2026 (Q1))
 XK,Kosovo,2025,713.0,,,EUR,wikipedia (2025)
-MT,Malta,2025,1833.0,,,EUR,wikipedia (2024 (Q4))
 MD,Moldova,2025,783.0,,,EUR,wikipedia (2026 (Q1))
 ME,Montenegro,2025,1234.0,,,EUR,wikipedia (2026-05)
 MK,N. Macedonia,2025,1160.0,,,EUR,wikipedia (2026-05)
