@@ -710,6 +710,73 @@ def fetch_gdp_per_capita(fx_rates):
     return result
 
 
+def fetch_imf_weo(filepath, fx_rates):
+    """
+    Parse IMF WEO Excel (WEOApr2026all.xlsx).
+    Extracts NGDPDPC (GDP per capita, current prices, USD) for European countries.
+    Converts to EUR: ECB historical rates for past years, last known rate for forecasts.
+    Returns: {iso2: {year: gdp_pc_eur}}
+    """
+    import openpyxl
+
+    # WEO ISO3 codes not in the OECD mapping
+    WEO_EXTRA = {
+        "AND": "AD",  # Andorra
+        "ARM": "AM",  # Armenia
+        "KAZ": "KZ",  # Kazakhstan
+        "ALB": "AL",  # Albania
+    }
+
+    wb = openpyxl.load_workbook(filepath, read_only=True)
+    ws = wb["Countries"]
+
+    usd_eur = fx_rates.get("USD", {})
+    last_hist_yr = max((y for y in usd_eur if y <= 2025), default=2024)
+    fallback_rate = usd_eur.get(last_hist_yr, 1.08)
+
+    headers = None
+    year_cols = {}
+    result = {}
+
+    for i, row in enumerate(ws.iter_rows(values_only=True)):
+        if i == 0:
+            headers = row
+            for j, h in enumerate(headers):
+                if isinstance(h, int) and 1990 <= h <= 2031:
+                    year_cols[j] = h
+            continue
+        if row[4] != "NGDPDPC":
+            continue
+        iso3 = row[2]
+        iso2 = ISO3_TO_ISO2.get(iso3) or WEO_EXTRA.get(iso3)
+        if not iso2:
+            continue
+        country_data = {}
+        for j, yr in year_cols.items():
+            val = row[j]
+            if val is None or val == "":
+                continue
+            try:
+                val = float(val)
+            except (ValueError, TypeError):
+                continue
+            if val <= 0:
+                continue
+            rate = usd_eur.get(yr, fallback_rate)
+            country_data[yr] = round(val / rate, 0)
+        if country_data:
+            result[iso2] = country_data
+
+    wb.close()
+    print(f"  IMF WEO: {len(result)} European countries, forecasts to 2031")
+    for iso2 in sorted(result):
+        yrs = sorted(result[iso2])
+        print(f"    {iso2}: {yrs[0]}-{yrs[-1]}  "
+              f"2025={result[iso2].get(2025, 0):,.0f} EUR  "
+              f"2031={result[iso2].get(2031, 0):,.0f} EUR")
+    return result
+
+
 def _linreg(xs, ys):
     """OLS linear regression. Returns (slope, intercept, r2)."""
     n = len(xs)
@@ -774,7 +841,11 @@ def project_wages(rows, gdp_data, horizon=2031):
         n_countries += 1
 
         for yr in range(last_yr + 1, horizon + 1):
-            proj_gdp = exp(g_intcpt + g_slope * yr)
+            # Use IMF forecast GDP if available; fall back to extrapolated trend
+            if yr in gdp:
+                proj_gdp = gdp[yr]
+            else:
+                proj_gdp = exp(g_intcpt + g_slope * yr)
             proj_ratio = r_intcpt + r_slope * yr
             proj_ratio = max(0.2, min(1.5, proj_ratio))
             proj_wage = proj_ratio * (proj_gdp / 12)
@@ -1491,6 +1562,22 @@ def main():
 
     # 6. GDP per capita (Eurostat + World Bank)
     gdp_data = fetch_gdp_per_capita(fx_rates)
+
+    # IMF WEO: adds GDP forecasts 2026-2031 (and fills any historical gaps)
+    weo_path = os.path.join(DATA_DIR, "WEOApr2026all.xlsx")
+    if os.path.exists(weo_path):
+        print(f"\n{'=' * 70}")
+        print("IMF WEO GDP FORECASTS")
+        print("=" * 70)
+        imf_gdp = fetch_imf_weo(weo_path, fx_rates)
+        # Merge: Eurostat/WorldBank preferred for historical; IMF for 2026+
+        for iso2, ydata in imf_gdp.items():
+            gdp_data.setdefault(iso2, {})
+            for yr, val in ydata.items():
+                if yr > 2025 or yr not in gdp_data[iso2]:
+                    gdp_data[iso2][yr] = val
+    else:
+        print(f"\n  IMF WEO file not found at {weo_path} — using extrapolated GDP")
 
     # 7. Wikipedia current snapshot (fills remaining countries)
     print(f"\n{'=' * 70}")
