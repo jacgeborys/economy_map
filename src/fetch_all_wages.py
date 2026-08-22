@@ -404,8 +404,13 @@ def fetch_oecd_wages():
         measure = row.get("MEASURE", "")
         period = row.get("TIME_PERIOD", "")
         val = row.get("OBS_VALUE", "")
+        price_base = row.get("PRICE_BASE", "")
 
         if not (ref and period and val):
+            continue
+
+        # Skip constant-price series — we want nominal (current prices)
+        if price_base == "Q":
             continue
 
         measures_seen.add(measure)
