@@ -73,7 +73,7 @@ COLORS = {
 
 # Countries where we have dedicated national office fetchers.
 # These override OECD for the same country.
-NATIONAL_OFFICE_COUNTRIES = {"DE", "PL"}
+NATIONAL_OFFICE_COUNTRIES = {"DE", "PL", "RU", "BY", "UA"}
 
 # OECD data issues — countries to exclude from OECD
 # Turkey: methodology break in 2009 (values triple overnight), FX conversion unreliable
@@ -173,6 +173,166 @@ def fetch_gus():
     return result
 
 
+def fetch_rosstat():
+    """
+    Fetch Russian avg monthly nominal wages from Rosstat Excel.
+    Source: https://rosstat.gov.ru/labor_market_employment_salaries
+    Two sheets: "2000-2016 гг." and "с 2017 г." — row "Всего" (Total).
+    Returns: {year: wage_rub}
+    """
+    import openpyxl
+
+    print("  RU: Rosstat Excel (tab3-zpl)...")
+    url = "https://rosstat.gov.ru/storage/mediabank/tab3-zpl-2025.xlsx"
+    try:
+        resp = requests.get(url, timeout=30,
+                            headers={"User-Agent": "Mozilla/5.0"}, verify=False)
+    except Exception as e:
+        print(f"    FAILED: {e}")
+        return {}
+    if resp.status_code != 200:
+        print(f"    FAILED: HTTP {resp.status_code}")
+        return {}
+
+    wb = openpyxl.load_workbook(io.BytesIO(resp.content))
+    result = {}
+
+    for sheet_name in wb.sheetnames:
+        ws = wb[sheet_name]
+        # Find header row (years) and "Всего" (Total) row
+        years_row = None
+        total_row = None
+        for row in ws.iter_rows(values_only=False):
+            cells = [c.value for c in row]
+            # Header row: contains year-like values (2000, 2017, etc.)
+            str_cells = [str(c).strip() if c else "" for c in cells]
+            year_matches = [c for c in str_cells
+                            if c[:4].isdigit() and 1990 <= int(c[:4]) <= 2030]
+            if len(year_matches) >= 3:
+                years_row = str_cells
+            # Total row: starts with "Всего"
+            if any(str(c).strip().startswith("Всего") for c in cells if c):
+                total_row = cells
+
+        if years_row and total_row:
+            for i, yr_str in enumerate(years_row):
+                if not yr_str or not yr_str[:4].isdigit():
+                    continue
+                year = int(yr_str[:4])
+                if i < len(total_row) and total_row[i] is not None:
+                    try:
+                        val = float(str(total_row[i]).replace(",", ".").strip())
+                        result[year] = val
+                    except ValueError:
+                        pass
+
+    if result:
+        print(f"    Got {len(result)} years: {min(result)}-{max(result)}, "
+              f"latest={max(result)}: {result[max(result)]:,.0f} RUB")
+    else:
+        print("    No data parsed")
+    return result
+
+
+def fetch_belstat():
+    """
+    Fetch Belarusian avg monthly nominal wages from Belstat Excel files.
+    Source: https://www.belstat.gov.by/.../godovye-dannye/
+    Downloads per-year Excel files (2020-2025), reads "Всего" (Total) row.
+    Currency: BYN (post-2016 redenomination).
+    Returns: {year: wage_byn}
+    """
+    import openpyxl
+
+    print("  BY: Belstat Excel files...")
+    base = ("https://www.belstat.gov.by/upload-belstat/upload-belstat-excel/"
+            "Oficial_statistika/")
+
+    # Year-specific file patterns
+    files = {
+        2025: "Nominal_nach_sr_zp-2025g.xlsx",
+        2024: "Nominal_nach_sr_zp-2024g.xlsx",
+        2023: "Nominal_nach_sr_zp-2023g.xlsx",
+        2022: "Nominal_nach_sr_zp-2022g.xlsx",
+        2021: "Nominal_nach_sr_zp-2021g.xlsx",
+        2020: "Nominal_nach_sr_zp-2020g-1.xlsx",
+    }
+
+    result = {}
+    for year, fname in sorted(files.items()):
+        url = base + fname
+        try:
+            resp = requests.get(url, timeout=15,
+                                headers={"User-Agent": "Mozilla/5.0"})
+            if resp.status_code != 200:
+                continue
+            wb = openpyxl.load_workbook(io.BytesIO(resp.content))
+            ws = wb.active
+            for row in ws.iter_rows(values_only=True):
+                cells = [str(c).strip() if c else "" for c in row]
+                if any(c.startswith("Всего") for c in cells):
+                    # "Республика Беларусь" column = national total
+                    for c in cells:
+                        c_clean = c.replace("\xa0", "").replace(",", ".")
+                        try:
+                            val = float(c_clean)
+                            if val > 100:  # skip small values (could be index)
+                                result[year] = val
+                                break
+                        except ValueError:
+                            pass
+                    break
+        except Exception:
+            continue
+
+    if result:
+        print(f"    Got {len(result)} years: {min(result)}-{max(result)}, "
+              f"latest={max(result)}: {result[max(result)]:,.1f} BYN")
+    else:
+        print("    No data parsed")
+    return result
+
+
+def fetch_ilostat_ukraine():
+    """
+    Fetch Ukrainian avg monthly wages from ILOSTAT (Ukrstat website is down).
+    Source: ILO rplumber API, indicator EAR_EMTA_SEX_CUR_NB_A.
+    Data comes from Ukraine's enterprise survey — values match Ukrstat closely.
+    Returns: {year: wage_uah} (from 1999 onwards, post-hryvnia stabilization)
+    """
+    print("  UA: ILOSTAT (enterprise survey)...")
+    url = ("https://rplumber.ilo.org/data/indicator/"
+           "?id=EAR_EMTA_SEX_CUR_NB_A&ref_area=UKR&sex=SEX_T"
+           "&classif1=CUR_TYPE_LCU&timefrom=1999&timeto=2026"
+           "&type=both&format=.csv")
+    try:
+        resp = requests.get(url, timeout=60)
+    except Exception as e:
+        print(f"    FAILED: {e}")
+        return {}
+    if resp.status_code != 200:
+        print(f"    FAILED: HTTP {resp.status_code}")
+        return {}
+
+    reader = csv.DictReader(io.StringIO(resp.text))
+    result = {}
+    for row in reader:
+        year = row.get("time", "")
+        val = row.get("obs_value", "")
+        if year and val:
+            try:
+                result[int(year)] = float(val)
+            except ValueError:
+                pass
+
+    if result:
+        print(f"    Got {len(result)} years: {min(result)}-{max(result)}, "
+              f"latest={max(result)}: {result[max(result)]:,.0f} UAH")
+    else:
+        print("    No data parsed")
+    return result
+
+
 def fetch_national_offices():
     """
     Fetch historical data from national statistical offices.
@@ -195,6 +355,24 @@ def fetch_national_offices():
     if pl_data:
         results["PL"] = {yr: {"local": v, "currency": "PLN", "eur": None}
                          for yr, v in pl_data.items()}
+
+    # Russia — Rosstat (values in RUB)
+    ru_data = fetch_rosstat()
+    if ru_data:
+        results["RU"] = {yr: {"local": v, "currency": "RUB", "eur": None}
+                         for yr, v in ru_data.items()}
+
+    # Belarus — Belstat (values in BYN)
+    by_data = fetch_belstat()
+    if by_data:
+        results["BY"] = {yr: {"local": v, "currency": "BYN", "eur": None}
+                         for yr, v in by_data.items()}
+
+    # Ukraine — ILOSTAT (values in UAH, Ukrstat website is down)
+    ua_data = fetch_ilostat_ukraine()
+    if ua_data:
+        results["UA"] = {yr: {"local": v, "currency": "UAH", "eur": None}
+                         for yr, v in ua_data.items()}
 
     return results
 
@@ -513,9 +691,40 @@ def fetch_ecb_fx_rates():
         print(f"  ISK: filled {len(ISK_FALLBACK)} missing years (2009-2017) "
               f"from Central Bank of Iceland")
 
+    # RUB: ECB stops after 2021 (sanctions). Fill 2022-2025 from CBR/market.
+    RUB_FALLBACK = {
+        2022: 73.95, 2023: 92.37, 2024: 98.55, 2025: 93.00,
+    }
+    if "RUB" not in rates:
+        rates["RUB"] = {}
+    for yr, rate in RUB_FALLBACK.items():
+        if yr not in rates["RUB"]:
+            rates["RUB"][yr] = rate
+    print(f"  RUB: filled {len(RUB_FALLBACK)} post-sanctions years (2022-2025)")
+
+    # UAH: ECB never published. Annual averages from NBU/market data.
+    rates["UAH"] = {
+        1999: 4.39, 2000: 4.82, 2001: 4.81, 2002: 5.03, 2003: 6.02,
+        2004: 6.61, 2005: 6.39, 2006: 6.34, 2007: 6.92, 2008: 7.71,
+        2009: 10.87, 2010: 10.53, 2011: 11.09, 2012: 10.27, 2013: 10.61,
+        2014: 15.72, 2015: 24.23, 2016: 28.29, 2017: 30.00, 2018: 32.14,
+        2019: 28.95, 2020: 30.79, 2021: 32.29, 2022: 38.42, 2023: 40.22,
+        2024: 43.20, 2025: 45.00,
+    }
+    print(f"  UAH: added {len(rates['UAH'])} years (1999-2025) from NBU data")
+
+    # BYN: ECB never published. Annual averages from NBRB/market data.
+    # Pre-2016 redenomination: 1 BYN = 10,000 BYR. All values here in BYN.
+    rates["BYN"] = {
+        2016: 2.20, 2017: 2.24, 2018: 2.36, 2019: 2.33, 2020: 2.79,
+        2021: 2.99, 2022: 2.93, 2023: 3.24, 2024: 3.53, 2025: 3.60,
+    }
+    print(f"  BYN: added {len(rates['BYN'])} years (2016-2025) from NBRB data")
+
     # Which currencies we care about
     needed = {"PLN", "CZK", "HUF", "GBP", "DKK", "SEK", "NOK", "CHF",
-              "ISK", "TRY", "BGN", "RON", "USD", "HRK"}
+              "ISK", "TRY", "BGN", "RON", "USD", "HRK",
+              "RUB", "BYN", "UAH"}
     found = set(rates.keys()) & needed
     print(f"  Currencies found: {len(rates)} total, {len(found)} needed")
     for curr in sorted(found):
