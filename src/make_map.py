@@ -147,8 +147,10 @@ for idx, (yr, step, is_proj, frame_wages) in enumerate(frame_seq):
     gdf = world.copy()
     gdf["wage"] = gdf["iso2"].map(frame_wages)
 
-    fig, ax = plt.subplots(figsize=(FIG_W, FIG_H), facecolor=BG_COLOR)
-    fig.subplots_adjust(left=0.01, right=0.91, top=0.97, bottom=0.02)
+    fig = plt.figure(figsize=(FIG_W, FIG_H), facecolor=BG_COLOR)
+    # Fixed axes positions in figure coords — never change between frames
+    ax      = fig.add_axes([0.01, 0.02, 0.84, 0.96])
+    cbar_ax = fig.add_axes([0.87, 0.15, 0.015, 0.62])
     ax.set_facecolor(BG_COLOR)
     ax.axis("off")
 
@@ -170,12 +172,12 @@ for idx, (yr, step, is_proj, frame_wages) in enumerate(frame_seq):
     ax.set_xlim(BBOX[0], BBOX[2])
     ax.set_ylim(BBOX[1], BBOX[3])
 
-    # ── colorbar ──
-    cbar = fig.colorbar(sm, ax=ax, orientation="vertical",
-                        fraction=0.018, pad=0.01, shrink=0.7, location="right")
+    # ── colorbar — drawn into pre-positioned fixed axes ──
+    cbar = fig.colorbar(sm, cax=cbar_ax)
     cbar.set_label("Monthly gross wage (EUR)", color="white", fontsize=9)
-    cbar.ax.yaxis.set_tick_params(color="white")
-    plt.setp(cbar.ax.yaxis.get_ticklabels(), color="white", fontsize=8)
+    cbar_ax.yaxis.set_tick_params(color="white")
+    plt.setp(cbar_ax.yaxis.get_ticklabels(), color="white", fontsize=8)
+    cbar_ax.set_facecolor(BG_COLOR)
 
     # ── year + month label ──
     year_color = "#ffdd44" if is_proj else "white"

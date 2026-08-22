@@ -240,8 +240,8 @@ def fetch_belstat():
     Fetch Belarusian avg monthly nominal wages from Belstat Excel files.
     Source: https://www.belstat.gov.by/.../godovye-dannye/
     Downloads per-year Excel files (2020-2025), reads "Всего" (Total) row.
-    Currency: BYN (post-2016 redenomination).
-    Returns: {year: wage_byn}
+    Currency: BYN (post-2016 redenomination). Tries 2016-2025.
+    Returns: {year: (wage_byn, "BYN")}
     """
     import openpyxl
 
@@ -249,7 +249,7 @@ def fetch_belstat():
     base = ("https://www.belstat.gov.by/upload-belstat/upload-belstat-excel/"
             "Oficial_statistika/")
 
-    # Year-specific file patterns
+    # Year-specific file patterns (try 2016-2025; pre-2016 uses BYR old ruble)
     files = {
         2025: "Nominal_nach_sr_zp-2025g.xlsx",
         2024: "Nominal_nach_sr_zp-2024g.xlsx",
@@ -257,10 +257,16 @@ def fetch_belstat():
         2022: "Nominal_nach_sr_zp-2022g.xlsx",
         2021: "Nominal_nach_sr_zp-2021g.xlsx",
         2020: "Nominal_nach_sr_zp-2020g-1.xlsx",
+        2019: "Nominal_nach_sr_zp-2019g.xlsx",
+        2018: "Nominal_nach_sr_zp-2018g.xlsx",
+        2017: "Nominal_nach_sr_zp-2017g.xlsx",
+        2016: "Nominal_nach_sr_zp-2016g.xlsx",
     }
 
+    # {year: (wage_local, currency)}
     result = {}
     for year, fname in sorted(files.items()):
+        currency = "BYN"  # all Belstat files are in BYN (post-2016 redenomination)
         url = base + fname
         try:
             resp = requests.get(url, timeout=15,
@@ -272,13 +278,12 @@ def fetch_belstat():
             for row in ws.iter_rows(values_only=True):
                 cells = [str(c).strip() if c else "" for c in row]
                 if any(c.startswith("Всего") for c in cells):
-                    # "Республика Беларусь" column = national total
                     for c in cells:
                         c_clean = c.replace("\xa0", "").replace(",", ".")
                         try:
                             val = float(c_clean)
-                            if val > 100:  # skip small values (could be index)
-                                result[year] = val
+                            if val > 100:
+                                result[year] = (val, currency)
                                 break
                         except ValueError:
                             pass
@@ -287,10 +292,54 @@ def fetch_belstat():
             continue
 
     if result:
-        print(f"    Got {len(result)} years: {min(result)}-{max(result)}, "
-              f"latest={max(result)}: {result[max(result)]:,.1f} BYN")
+        yrs = sorted(result)
+        print(f"    Got {len(result)} years: {yrs[0]}-{yrs[-1]}, "
+              f"latest={yrs[-1]}: {result[yrs[-1]][0]:,.1f} BYN")
     else:
         print("    No data parsed")
+    return result
+
+
+def fetch_ilostat_belarus():
+    """
+    Fetch Belarus avg monthly wages from ILOSTAT for years not covered by Belstat.
+    Pre-2016 values are typically in BYR (old ruble, 1 BYN = 10,000 BYR).
+    Returns: {year: (wage_local, currency)}
+    """
+    print("  BY (ILOSTAT fallback for pre-2016)...")
+    url = ("https://rplumber.ilo.org/data/indicator/"
+           "?id=EAR_EMTA_SEX_CUR_NB_A&ref_area=BLR&sex=SEX_T"
+           "&classif1=CUR_TYPE_LCU&timefrom=2000&timeto=2015"
+           "&type=both&format=.csv")
+    try:
+        resp = requests.get(url, timeout=60)
+    except Exception as e:
+        print(f"    FAILED: {e}")
+        return {}
+    if resp.status_code != 200:
+        print(f"    FAILED: HTTP {resp.status_code}")
+        return {}
+
+    reader = csv.DictReader(io.StringIO(resp.text))
+    result = {}
+    for row in reader:
+        year = row.get("time", "")
+        val  = row.get("obs_value", "")
+        if year and val:
+            try:
+                yr  = int(year)
+                v   = float(val)
+                # Detect BYR vs BYN by magnitude: BYR wages are ~millions pre-2016
+                cur = "BYR" if v > 50_000 else "BYN"
+                result[yr] = (v, cur)
+            except ValueError:
+                pass
+
+    if result:
+        yrs = sorted(result)
+        print(f"    Got {len(result)} years: {yrs[0]}-{yrs[-1]}")
+    else:
+        print("    No data from ILOSTAT")
     return result
 
 
@@ -364,11 +413,13 @@ def fetch_national_offices(fx_rates):
         results["RU"] = {yr: {"local": v, "currency": "RUB", "eur": None}
                          for yr, v in ru_data.items()}
 
-    # Belarus — Belstat (values in BYN)
-    by_data = fetch_belstat()
-    if by_data:
-        results["BY"] = {yr: {"local": v, "currency": "BYN", "eur": None}
-                         for yr, v in by_data.items()}
+    # Belarus — Belstat (2016-2025, BYN) + ILOSTAT fallback for pre-2016 (BYR)
+    by_belstat = fetch_belstat()       # {year: (wage, currency)}
+    by_ilo     = fetch_ilostat_belarus()  # {year: (wage, currency)}
+    by_merged  = {**by_ilo, **by_belstat}  # Belstat wins on overlap
+    if by_merged:
+        results["BY"] = {yr: {"local": v, "currency": cur, "eur": None}
+                         for yr, (v, cur) in by_merged.items()}
 
     # Ukraine — ILOSTAT (values in UAH, Ukrstat website is down)
     ua_data = fetch_ilostat_ukraine()
@@ -518,7 +569,7 @@ def fetch_eurostat_wages():
         "currency": "EUR",
         "estruct": "GRS",
         "ecase": "P1_NCH_AW100",
-        "sinceTimePeriod": "2000",
+        "sinceTimePeriod": "1990",
         "format": "JSON",
     }
 
@@ -950,13 +1001,13 @@ def fetch_eurostat_nataccounts():
     base = "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data"
     r_d11 = requests.get(f"{base}/nama_10_a10",
                          params={"format": "JSON", "nace_r2": "TOTAL", "unit": "CP_MEUR",
-                                 "na_item": "D11", "sinceTimePeriod": "2000"}, timeout=60)
+                                 "na_item": "D11", "sinceTimePeriod": "1990"}, timeout=60)
     r_d1  = requests.get(f"{base}/nama_10_a10",
                          params={"format": "JSON", "nace_r2": "TOTAL", "unit": "CP_MEUR",
-                                 "na_item": "D1",  "sinceTimePeriod": "2000"}, timeout=60)
+                                 "na_item": "D1",  "sinceTimePeriod": "1990"}, timeout=60)
     r_emp = requests.get(f"{base}/nama_10_a10_e",
                          params={"format": "JSON", "nace_r2": "TOTAL", "unit": "THS_PER",
-                                 "na_item": "SAL_DC", "sinceTimePeriod": "2000"}, timeout=60)
+                                 "na_item": "SAL_DC", "sinceTimePeriod": "1990"}, timeout=60)
 
     if any(r.status_code != 200 for r in [r_d11, r_d1, r_emp]):
         print(f"  FAILED: D11={r_d11.status_code} D1={r_d1.status_code} EMP={r_emp.status_code}")
@@ -1393,10 +1444,21 @@ def fetch_ecb_fx_rates():
     }
     print(f"  BYN: added {len(rates['BYN'])} years (2016-2025) from NBRB data")
 
+    # BYR: old Belarusian ruble (pre-2016). Annual average BYR per 1 EUR.
+    # Source: NBRB annual statistical reports. 1 BYN = 10,000 BYR.
+    if "BYR" not in rates:
+        rates["BYR"] = {
+            2000: 1113,  2001: 1455,  2002: 1959,  2003: 2508,  2004: 2669,
+            2005: 2844,  2006: 2954,  2007: 3072,  2008: 3130,  2009: 3862,
+            2010: 3946,  2011: 7101,  2012: 10777, 2013: 11860, 2014: 13777,
+            2015: 18797,
+        }
+        print(f"  BYR: added {len(rates['BYR'])} years (2000-2015) from NBRB hardcoded")
+
     # Which currencies we care about
     needed = {"PLN", "CZK", "HUF", "GBP", "DKK", "SEK", "NOK", "CHF",
               "ISK", "TRY", "BGN", "RON", "USD", "HRK",
-              "RUB", "BYN", "UAH"}
+              "RUB", "BYN", "BYR", "UAH"}
     found = set(rates.keys()) & needed
     print(f"  Currencies found: {len(rates)} total, {len(found)} needed")
     for curr in sorted(found):
@@ -2029,6 +2091,12 @@ def main():
             usd = round(d11emp * ecb_usd, 0) if ecb_usd else None
         elif not has_d11emp_series:
             primary, source = oecd_eur or "", "oecd"
+            usd = float(r["wage_monthly_usd"]) if r["wage_monthly_usd"] else None
+        elif r["year"] < 2000 and oecd_eur:
+            # Pre-2000: D11 series exists but has no data yet — backfill from OECD.
+            # Note: OECD D1/FTE is ~15-30% above D11/headcount; level documented in
+            # wage_oecd_eur column. Source marked "oecd" so it's distinguishable.
+            primary, source = oecd_eur, "oecd"
             usd = float(r["wage_monthly_usd"]) if r["wage_monthly_usd"] else None
         else:
             continue
