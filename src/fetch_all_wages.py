@@ -129,6 +129,14 @@ def fetch_destatis():
             except ValueError:
                 pass
 
+    # Destatis sometimes skips a year — interpolate gaps
+    years = sorted(result.keys())
+    for i in range(len(years) - 1):
+        if years[i+1] - years[i] == 2:
+            gap_year = years[i] + 1
+            result[gap_year] = round((result[years[i]] + result[years[i+1]]) / 2)
+            print(f"    Interpolated {gap_year}: {result[gap_year]:,.0f} EUR")
+
     print(f"    Got {len(result)} years: {min(result)}-{max(result)}, "
           f"latest={max(result)}: {result[max(result)]:,.0f} EUR")
     return result
@@ -491,6 +499,20 @@ def fetch_ecb_fx_rates():
             except ValueError:
                 pass
 
+    # ECB suspended ISK rates during Iceland's capital controls (2009-2017).
+    # Fill from Central Bank of Iceland annual averages.
+    ISK_FALLBACK = {
+        2009: 172.15, 2010: 161.62, 2011: 161.20, 2012: 160.73,
+        2013: 162.07, 2014: 154.13, 2015: 145.27, 2016: 133.31,
+        2017: 121.32,
+    }
+    if "ISK" in rates:
+        for yr, rate in ISK_FALLBACK.items():
+            if yr not in rates["ISK"]:
+                rates["ISK"][yr] = rate
+        print(f"  ISK: filled {len(ISK_FALLBACK)} missing years (2009-2017) "
+              f"from Central Bank of Iceland")
+
     # Which currencies we care about
     needed = {"PLN", "CZK", "HUF", "GBP", "DKK", "SEK", "NOK", "CHF",
               "ISK", "TRY", "BGN", "RON", "USD", "HRK"}
@@ -642,6 +664,33 @@ def _line_width(iso2, min_w=0.3, max_w=4.5):
 
 # ─── Charts ──────────────────────────────────────────────────────────────────
 
+def _add_end_labels(ax, labels, fontsize=8, x_pad=0.5):
+    """
+    Add country names at end of lines, nudging vertically to avoid overlap.
+    labels: list of (x, y, name, color) sorted by y descending.
+    """
+    if not labels:
+        return
+    labels.sort(key=lambda t: -t[1])  # top to bottom
+
+    # Get axis data range for minimum spacing
+    ymin, ymax = ax.get_ylim()
+    # Min gap in data units — proportional to axis range
+    min_gap = (ymax - ymin) * 0.018
+
+    # Nudge overlapping labels
+    placed = []
+    for x, y, name, color in labels:
+        nudged = y
+        for _, py in placed:
+            if abs(nudged - py) < min_gap:
+                nudged = py - min_gap
+        placed.append((x, nudged))
+        ax.annotate(name, xy=(x, y), xytext=(x + x_pad, nudged),
+                    fontsize=fontsize, color=color, va="center",
+                    annotation_clip=False)
+
+
 def plot_focus(rows, focus_codes, filename, title_suffix=""):
     """Validation chart for a specific set of countries."""
     eur_series = rows_to_series(rows, "wage_monthly_eur")
@@ -653,6 +702,7 @@ def plot_focus(rows, focus_codes, filename, title_suffix=""):
         (axes[0], eur_series, "EUR"),
         (axes[1], usd_series, "USD"),
     ]:
+        end_labels = []
         for iso2 in focus_codes:
             if iso2 not in series:
                 continue
@@ -660,18 +710,19 @@ def plot_focus(rows, focus_codes, filename, title_suffix=""):
             years = sorted(s.keys())
             values = [s[y] for y in years]
             lw = _line_width(iso2)
-            ax.plot(years, values, '-o',
-                    color=COLORS.get(iso2, "#888888"),
-                    label=ISO2_TO_NAME.get(iso2, iso2),
+            color = COLORS.get(iso2, "#888888")
+            name = ISO2_TO_NAME.get(iso2, iso2)
+            ax.plot(years, values, '-o', color=color,
                     markersize=3, linewidth=lw)
+            end_labels.append((years[-1], values[-1], name, color))
 
         ax.set_xlabel("Year", fontsize=12)
         ax.set_ylabel(f"Avg Monthly Wage ({label} nominal)", fontsize=12)
         ax.set_title(f"Average Monthly Gross Wages ({label}){title_suffix}\n"
                      f"Source: OECD AV_AN_WAGE, ECB rates", fontsize=12)
-        ax.legend(loc="upper left", fontsize=10)
         ax.grid(True, alpha=0.3)
-        ax.set_xlim(1990, 2026)
+        ax.set_xlim(1990, 2029)
+        _add_end_labels(ax, end_labels, fontsize=10)
 
     plt.tight_layout()
     path = os.path.join(OUT_DIR, filename)
@@ -684,7 +735,7 @@ def plot_all_europe(rows, filename):
     """Overview chart: all European countries in EUR."""
     eur_series = rows_to_series(rows, "wage_monthly_eur")
 
-    fig, ax = plt.subplots(figsize=(16, 10))
+    fig, ax = plt.subplots(figsize=(18, 11))
 
     # Rank by latest value
     latest = {}
@@ -696,6 +747,7 @@ def plot_all_europe(rows, filename):
     ranked = sorted(latest.keys(), key=lambda x: latest[x], reverse=True)
     cmap = plt.colormaps["tab20"]
 
+    end_labels = []
     for i, iso2 in enumerate(ranked):
         s = eur_series[iso2]
         years = sorted(s.keys())
@@ -703,16 +755,20 @@ def plot_all_europe(rows, filename):
         name = ISO2_TO_NAME.get(iso2, iso2)
         val = latest[iso2]
         lw = _line_width(iso2)
-        ax.plot(years, values, '-', color=cmap(i % 20),
-                label=f"{name} ({val:,.0f})", linewidth=lw, alpha=0.85)
+        color = cmap(i % 20)
+        ax.plot(years, values, '-', color=color,
+                linewidth=lw, alpha=0.85)
+        end_labels.append((years[-1], values[-1],
+                           f"{name} ({val:,.0f})", color))
 
     ax.set_xlabel("Year", fontsize=12)
     ax.set_ylabel("Avg Monthly Wage (EUR nominal)", fontsize=12)
-    ax.set_title("Average Monthly Gross Wages in EUR — All European OECD Countries\n"
-                 "Source: OECD AV_AN_WAGE, ECB exchange rates", fontsize=13)
-    ax.legend(loc="upper left", fontsize=7, ncol=2)
+    ax.set_title("Average Monthly Gross Wages in EUR — All European Countries\n"
+                 "Source: OECD AV_AN_WAGE + Eurostat + national offices, "
+                 "ECB exchange rates", fontsize=13)
     ax.grid(True, alpha=0.3)
-    ax.set_xlim(1990, 2026)
+    ax.set_xlim(1990, 2032)
+    _add_end_labels(ax, end_labels, fontsize=7, x_pad=0.3)
 
     plt.tight_layout()
     path = os.path.join(OUT_DIR, filename)
@@ -731,6 +787,7 @@ def plot_ratio_germany(rows, focus_codes, filename):
 
     fig, ax = plt.subplots(figsize=(14, 8))
 
+    end_labels = []
     for iso2 in focus_codes:
         if iso2 == "DE" or iso2 not in eur_series:
             continue
@@ -740,18 +797,23 @@ def plot_ratio_germany(rows, focus_codes, filename):
             continue
         ratios = [(s[y] / de[y]) * 100 for y in common]
         lw = _line_width(iso2)
-        ax.plot(common, ratios, '-o', color=COLORS.get(iso2, "#888"),
-                label=ISO2_TO_NAME.get(iso2, iso2), markersize=3, linewidth=lw)
+        color = COLORS.get(iso2, "#888")
+        name = ISO2_TO_NAME.get(iso2, iso2)
+        ax.plot(common, ratios, '-o', color=color,
+                markersize=3, linewidth=lw)
+        end_labels.append((common[-1], ratios[-1], name, color))
 
-    ax.axhline(y=100, color='gray', linestyle='--', alpha=0.5, label='Germany = 100%')
+    ax.axhline(y=100, color='gray', linestyle='--', alpha=0.5)
+    ax.annotate("Germany = 100%", xy=(2026, 100), fontsize=9,
+                color='gray', va='bottom')
     ax.set_xlabel("Year", fontsize=12)
     ax.set_ylabel("% of German Average Wage (EUR nominal)", fontsize=12)
     ax.set_title("Wages as % of Germany (EUR nominal)\n"
                  "Source: OECD AV_AN_WAGE, ECB rates", fontsize=13)
-    ax.legend(loc="upper left", fontsize=10)
     ax.grid(True, alpha=0.3)
-    ax.set_xlim(1995, 2026)
+    ax.set_xlim(1995, 2029)
     ax.set_ylim(0, 120)
+    _add_end_labels(ax, end_labels, fontsize=10)
 
     plt.tight_layout()
     path = os.path.join(OUT_DIR, filename)
