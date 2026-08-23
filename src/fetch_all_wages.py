@@ -1062,6 +1062,42 @@ def fetch_eurostat_nataccounts():
     return wages_out, ratios_out
 
 
+def fetch_oecd_hours():
+    """
+    Average Annual Hours Actually Worked per Worker (OECD ANHRS dataset).
+    Returns: {iso2: {year: annual_hours}}  — 33 European countries, 1990-2025.
+    Countries not covered keep wage_norm_eur = wage_monthly_eur (no adjustment).
+    """
+    ISO3_TO_ISO2 = {
+        "AUT":"AT","BEL":"BE","BGR":"BG","HRV":"HR","CYP":"CY","CZE":"CZ",
+        "DNK":"DK","EST":"EE","FIN":"FI","FRA":"FR","DEU":"DE","GRC":"GR",
+        "HUN":"HU","IRL":"IE","ISL":"IS","ITA":"IT","LVA":"LV","LTU":"LT",
+        "LUX":"LU","MLT":"MT","NLD":"NL","NOR":"NO","POL":"PL","PRT":"PT",
+        "ROU":"RO","SVK":"SK","SVN":"SI","ESP":"ES","SWE":"SE","CHE":"CH",
+        "TUR":"TR","GBR":"GB","RUS":"RU",
+    }
+    url = ("https://stats.oecd.org/SDMX-JSON/data/ANHRS/.AVH/all"
+           "?startTime=1990&endTime=2025&contentType=csv")
+    try:
+        r = requests.get(url, timeout=60, headers={"User-Agent": "Mozilla/5.0"})
+        r.raise_for_status()
+    except Exception as e:
+        print(f"  [hours] OECD ANHRS fetch failed: {e}")
+        return {}
+    import io as _io, csv as _csv
+    result = {}
+    for row in _csv.DictReader(_io.StringIO(r.text)):
+        iso2 = ISO3_TO_ISO2.get(row["REF_AREA"])
+        if not iso2:
+            continue
+        try:
+            result.setdefault(iso2, {})[int(row["TIME_PERIOD"])] = float(row["OBS_VALUE"])
+        except (ValueError, KeyError):
+            pass
+    print(f"  [hours] OECD ANHRS: {len(result)} countries")
+    return result
+
+
 def fetch_gdp_per_capita(fx_rates):
     """
     GDP per capita (EUR, current prices).
@@ -2031,6 +2067,7 @@ def main():
     d11emp_data, d11d1_ratios = fetch_eurostat_nataccounts()
 
     # 6. GDP per capita (Eurostat + World Bank)
+    hours_data = fetch_oecd_hours()   # {iso2: {year: annual_hours}}
     gdp_data = fetch_gdp_per_capita(fx_rates)
 
     # IMF WEO: adds GDP forecasts 2026-2031 (and fills any historical gaps)
@@ -2234,9 +2271,32 @@ def main():
             g = gdp_data.get(r["iso2"], {}).get(r["year"], "")
             r["gdp_pc_eur"] = round(g, 0) if g else ""
 
-    # 10. Save
-    FIELDS = ["iso2", "country", "year", "wage_monthly_eur", "wage_monthly_usd",
-              "wage_monthly_local", "currency", "source",
+    # 10. Normalise wages to a standard 40h/week using OECD annual hours data.
+    # wage_norm_eur = wage_monthly_eur × (2080 / annual_hours)
+    # where 2080 = 40h × 52 weeks.  Falls back to wage_monthly_eur when no hours data.
+    STANDARD_HOURS = 2080  # 40h × 52 weeks
+    for r in all_rows:
+        w = r.get("wage_monthly_eur")
+        if not w or w == "":
+            r["wage_norm_eur"] = ""
+            continue
+        iso2 = r["iso2"]
+        yr   = int(r["year"])
+        iso_hours = hours_data.get(iso2, {})
+        # Use exact year if available, else nearest year within ±3 years
+        h = iso_hours.get(yr)
+        if h is None:
+            candidates = {y: v for y, v in iso_hours.items() if abs(y - yr) <= 3}
+            if candidates:
+                h = candidates[min(candidates, key=lambda y: abs(y - yr))]
+        if h and h > 0:
+            r["wage_norm_eur"] = round(float(w) * STANDARD_HOURS / h, 0)
+        else:
+            r["wage_norm_eur"] = round(float(w), 0)  # no hours data → pass through
+
+    # 11. Save
+    FIELDS = ["iso2", "country", "year", "wage_monthly_eur", "wage_norm_eur",
+              "wage_monthly_usd", "wage_monthly_local", "currency", "source",
               "wage_oecd_eur", "wage_d11emp_eur", "gdp_pc_eur", "is_forecast"]
     csv_path = os.path.join(DATA_DIR, "oecd_wages_europe.csv")
     with open(csv_path, "w", newline="", encoding="utf-8") as f:
@@ -2245,10 +2305,10 @@ def main():
         writer.writerows(all_rows)
     print(f"  Saved: {csv_path} ({len(all_rows):,} rows incl. projections)")
 
-    # 11. Validate
+    # 12. Validate
     print_validation(rows)  # historical only
 
-    # 12. Correlation: log(GDP) vs log(wage)
+    # 13. Correlation: log(GDP) vs log(wage)
     print(f"\n  --- GDP-Wage correlation (2024 cross-section) ---")
     import math
     corr_pts = []

@@ -31,7 +31,7 @@ START_YEAR   = 1995
 END_YEAR     = 2031
 CMAP         = "plasma"     # alternatives: inferno, hot, magma
 VMIN         = 0
-VMAX         = 7000         # EUR — Switzerland saturates slightly, rest spread well
+VMAX         = 10000        # EUR — normalised wages: CH ~11.8k, DE ~7.8k, rest spread well
 BG_COLOR     = "#0d0d1a"
 MISSING_CLR  = "#2a2a3a"
 BORDER_CLR   = "#555577"
@@ -141,12 +141,14 @@ def yugo_blob(yr: int):
 wages_df = pd.read_csv(os.path.join(DATA_DIR, "oecd_wages_europe.csv"))
 
 # Historical only for the time series; projected rows already present
+# Use hours-normalised wage (40h/week standard) where available, else raw monthly.
 wage_lookup = {}   # iso2 -> {year: wage_eur}
 for _, row in wages_df.iterrows():
     iso2 = row["iso2"]
     yr   = int(row["year"])
-    w    = row["wage_monthly_eur"]
-    if pd.notna(w):
+    norm = row.get("wage_norm_eur")
+    w    = norm if (norm is not None and pd.notna(norm) and norm != "") else row["wage_monthly_eur"]
+    if pd.notna(w) and w != "":
         wage_lookup.setdefault(iso2, {})[yr] = float(w)
 
 # Years where the majority of data is projected (IMF WEO boundary).

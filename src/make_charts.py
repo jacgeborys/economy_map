@@ -26,13 +26,18 @@ for r in all_rows:
     for col in ("year", "is_forecast"):
         if r.get(col) not in (None, ""):
             r[col] = int(float(r[col]))
-    for col in ("wage_monthly_eur", "wage_monthly_usd", "wage_monthly_local",
+    for col in ("wage_monthly_eur", "wage_norm_eur", "wage_monthly_usd", "wage_monthly_local",
                 "wage_oecd_eur", "wage_d11emp_eur", "gdp_pc_eur"):
         v = r.get(col)
         r[col] = float(v) if v not in (None, "") else None
 
 rows = [r for r in all_rows if r["is_forecast"] == 0]
 print(f"  {len(all_rows)} total rows, {len(rows)} historical")
+
+# Use hours-normalised wage as primary value where available
+for r in all_rows:
+    if r.get("wage_norm_eur") not in (None, ""):
+        r["wage_monthly_eur"] = r["wage_norm_eur"]
 
 # Rebuild gdp_data dict for the scatter chart
 gdp_data = {}
