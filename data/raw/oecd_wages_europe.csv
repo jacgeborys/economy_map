@@ -1,87 +1,87 @@
 iso2,country,year,wage_monthly_eur,wage_norm_eur,wage_monthly_usd,wage_monthly_local,currency,source,wage_oecd_eur,wage_d11emp_eur,gdp_pc_eur,is_forecast
-DE,Germany,1991,1832.0,2577.0,,1832.0,EUR,national_office,,1600.0,18980,0
-DE,Germany,1992,2003.0,2797.0,,2003.0,EUR,national_office,,1791.0,20560,0
-DE,Germany,1993,2103.0,2996.0,,2103.0,EUR,national_office,,1951.0,21930,0
-DE,Germany,1994,2185.0,3128.0,,2185.0,EUR,national_office,,2001.0,23020,0
-DE,Germany,1995,2281.0,3282.0,,2281.0,EUR,national_office,,2119.0,24390,0
-DE,Germany,1996,2344.0,3407.0,,2344.0,EUR,national_office,,2103.0,24250,0
-DE,Germany,1997,2389.0,3501.0,,2389.0,EUR,national_office,,2046.0,24030,0
-DE,Germany,1998,2447.0,3595.0,,2447.0,EUR,national_office,,2059.0,24660,0
-DE,Germany,1999,2518.0,3737.0,2684.0,2518.0,EUR,national_office,,2098.0,25510,0
-DE,Germany,2000,2551.0,3853.0,2356.0,2551.0,EUR,national_office,,2125.0,26140,0
-DE,Germany,2001,2617.0,3969.0,2344.0,2617.0,EUR,national_office,,2173.0,26930,0
-DE,Germany,2002,2701.0,4119.0,2554.0,2701.0,EUR,national_office,,2206.0,27250,0
-DE,Germany,2003,2783.0,4259.0,3148.0,2783.0,EUR,national_office,,2242.0,27480,0
-DE,Germany,2004,2846.0,4357.0,3540.0,2846.0,EUR,national_office,,2258.0,28150,0
-DE,Germany,2005,2901.0,4473.0,3609.0,2901.0,EUR,national_office,,2266.0,28590,0
-DE,Germany,2006,2950.0,4466.0,3704.0,2950.0,EUR,national_office,,2289.0,29890,0
-DE,Germany,2007,3023.0,4565.0,4143.0,3023.0,EUR,national_office,,2323.0,31390,0
-DE,Germany,2008,3103.0,4707.0,4564.0,3103.0,EUR,national_office,,2382.0,32060,0
-DE,Germany,2009,3141.0,4920.0,4381.0,3141.0,EUR,national_office,,2385.0,30990,0
-DE,Germany,2010,3227.0,4972.0,4278.0,3227.0,EUR,national_office,,2446.0,32580,0
-DE,Germany,2011,3311.0,5085.0,4609.0,3311.0,EUR,national_office,,2530.0,34220,0
-DE,Germany,2012,3391.0,5285.0,4357.0,3391.0,EUR,national_office,,2604.0,34820,0
-DE,Germany,2013,3449.0,5408.0,4581.0,3449.0,EUR,national_office,,2665.0,35600,0
-DE,Germany,2014,3527.0,5500.0,4686.0,3527.0,EUR,national_office,,2747.0,36960,0
-DE,Germany,2015,3612.0,5615.0,4008.0,3612.0,EUR,national_office,,2829.0,37950,0
-DE,Germany,2016,3703.0,5770.0,4099.0,3703.0,EUR,national_office,,2902.0,39030,0
-DE,Germany,2017,3771.0,5894.0,4260.0,3771.0,EUR,national_office,,2982.0,40630,0
-DE,Germany,2018,3880.0,6085.0,4582.0,3880.0,EUR,national_office,,3082.0,41800,0
-DE,Germany,2019,3994.0,6291.0,4471.0,3994.0,EUR,national_office,,3178.0,43030,0
-DE,Germany,2020,3975.0,6504.0,4540.0,3975.0,EUR,national_office,,3171.0,42020,0
-DE,Germany,2021,4100.0,6566.0,4849.0,4100.0,EUR,national_office,,3276.0,44910,0
-DE,Germany,2022,4284,6849.0,4511.0,4284,EUR,national_office,,3421.0,48340,0
-DE,Germany,2023,4468.0,7150.0,4831.0,4468.0,EUR,national_office,,3644.0,50660,0
-DE,Germany,2024,4691.0,7518.0,5077.0,4691.0,EUR,national_office,,3833.0,51830,0
-DE,Germany,2025,4851.0,7774.0,5482.0,4851.0,EUR,national_office,,4009.0,53520,0
-PL,Poland,2002,581.0,651.0,549.0,2240.0,PLN,national_office,,596.0,5520,0
-PL,Poland,2003,526.0,588.0,595.0,2315.0,PLN,national_office,,531.0,5060,0
-PL,Poland,2004,532.0,595.0,662.0,2410.0,PLN,national_office,,529.0,5420,0
-PL,Poland,2005,623.0,698.0,775.0,2507.0,PLN,national_office,,608.0,6470,0
-PL,Poland,2006,677.0,758.0,850.0,2637.0,PLN,national_office,,646.0,7230,0
-PL,Poland,2007,757.0,849.0,1038.0,2866.0,PLN,national_office,,702.0,8250,0
-PL,Poland,2008,899.0,1067.0,1323.0,3158.0,PLN,national_office,,829.0,9640,0
-PL,Poland,2009,766.0,869.0,1069.0,3315.0,PLN,national_office,,692.0,8330,0
-PL,Poland,2010,860.0,978.0,1140.0,3435.0,PLN,national_office,,820.0,9490,0
-PL,Poland,2011,880.0,1003.0,1225.0,3625.0,PLN,national_office,,839.0,9970,0
-PL,Poland,2012,895.0,1023.0,1150.0,3744.0,PLN,national_office,,844.0,10190,0
-PL,Poland,2013,924.0,1058.0,1227.0,3877.0,PLN,national_office,,854.0,10260,0
-PL,Poland,2014,957.0,1092.0,1271.0,4004.0,PLN,national_office,,876.0,10750,0
-PL,Poland,2015,992.0,1128.0,1101.0,4151.0,PLN,national_office,,896.0,11390,0
-PL,Poland,2016,983.0,1116.0,1088.0,4291.0,PLN,national_office,,900.0,11270,0
-PL,Poland,2017,1064.0,1222.0,1202.0,4528.0,PLN,national_office,,978.0,12360,0
-PL,Poland,2018,1135.0,1321.0,1340.0,4835.0,PLN,national_office,,1056.0,13280,0
-PL,Poland,2019,1206.0,1396.0,1350.0,5182.0,PLN,national_office,,1106.0,14190,0
-PL,Poland,2020,1243.0,1453.0,1420.0,5523.0,PLN,national_office,,1124.0,14310,0
-PL,Poland,2021,1315.0,1496.0,1555.0,6001.0,PLN,national_office,,1149.0,15770,0
-PL,Poland,2022,1431.0,1637.0,1507.0,6706.0,PLN,national_office,,1259.0,17520,0
-PL,Poland,2023,1672.0,1925.0,1808.0,7595.0,PLN,national_office,,1481.0,19980,0
-PL,Poland,2024,2004.0,2465.0,2169.0,8630.0,PLN,national_office,,1762.0,22710,0
-PL,Poland,2025,2212.0,2736.0,2500.0,9379.0,PLN,national_office,,1939.0,24680,0
-RU,Russia,2000,85.0,89.0,79.0,2223.0,RUB,national_office,,,1918.0,0
-RU,Russia,2001,124.0,129.0,111.0,3240.0,RUB,national_office,,,2345.0,0
-RU,Russia,2002,147.0,154.0,139.0,4360.0,RUB,national_office,,,2514.0,0
-RU,Russia,2003,159.0,165.0,179.0,5498.0,RUB,national_office,,,2630.0,0
-RU,Russia,2004,188.0,196.0,234.0,6740.0,RUB,national_office,,,3298.0,0
-RU,Russia,2005,243.0,251.0,302.0,8555.0,RUB,national_office,,,4279.0,0
-RU,Russia,2006,312.0,325.0,391.0,10634.0,RUB,national_office,,,5511.0,0
-RU,Russia,2007,388.0,400.0,532.0,13593.0,RUB,national_office,,,6641.0,0
-RU,Russia,2008,475.0,495.0,698.0,17290.0,RUB,national_office,,,7911.0,0
-RU,Russia,2009,422.0,440.0,589.0,18638.0,RUB,national_office,,,6139.0,0
-RU,Russia,2010,520.0,547.0,690.0,20952.0,RUB,national_office,,,8052.0,0
-RU,Russia,2011,572.0,595.0,796.0,23369.0,RUB,national_office,,,10277.0,0
-RU,Russia,2012,667.0,700.0,857.0,26629.0,RUB,national_office,,,11988.0,0
-RU,Russia,2013,704.0,731.0,935.0,29792.0,RUB,national_office,,,12003.0,0
-RU,Russia,2014,638.0,669.0,847.0,32495.0,RUB,national_office,,,10580.0,0
-RU,Russia,2015,500.0,521.0,555.0,34030.0,RUB,national_office,,,8362.0,0
-RU,Russia,2016,495.0,522.0,548.0,36709.0,RUB,national_office,,,7826.0,0
-RU,Russia,2017,594.0,620.0,671.0,39167.0,RUB,national_office,,,9435.0,0
-RU,Russia,2018,591.0,624.0,697.0,43724.0,RUB,national_office,,,9494.0,0
-RU,Russia,2019,661.0,693.0,740.0,47867.0,RUB,national_office,,,10226.0,0
-RU,Russia,2020,621.0,689.0,709.0,51344.0,RUB,national_office,,,8850.0,0
-RU,Russia,2021,657.0,729.0,777.0,57244.0,RUB,national_office,,,10505.0,0
-RU,Russia,2022,884.0,981.0,930.0,65338.0,RUB,national_office,,,14838.0,0
-RU,Russia,2023,810.0,899.0,876.0,74854.0,RUB,national_office,,,12936.0,0
+DE,Germany,1991,1832.0,1832.0,,1832.0,EUR,national_office,,1600.0,18980,0
+DE,Germany,1992,2003.0,2003.0,,2003.0,EUR,national_office,,1791.0,20560,0
+DE,Germany,1993,2103.0,2103.0,,2103.0,EUR,national_office,,1951.0,21930,0
+DE,Germany,1994,2185.0,2185.0,,2185.0,EUR,national_office,,2001.0,23020,0
+DE,Germany,1995,2281.0,2281.0,,2281.0,EUR,national_office,,2119.0,24390,0
+DE,Germany,1996,2344.0,2344.0,,2344.0,EUR,national_office,,2103.0,24250,0
+DE,Germany,1997,2389.0,2389.0,,2389.0,EUR,national_office,,2046.0,24030,0
+DE,Germany,1998,2447.0,2447.0,,2447.0,EUR,national_office,,2059.0,24660,0
+DE,Germany,1999,2518.0,2518.0,2684.0,2518.0,EUR,national_office,,2098.0,25510,0
+DE,Germany,2000,2551.0,2551.0,2356.0,2551.0,EUR,national_office,,2125.0,26140,0
+DE,Germany,2001,2617.0,2617.0,2344.0,2617.0,EUR,national_office,,2173.0,26930,0
+DE,Germany,2002,2701.0,2701.0,2554.0,2701.0,EUR,national_office,,2206.0,27250,0
+DE,Germany,2003,2783.0,2783.0,3148.0,2783.0,EUR,national_office,,2242.0,27480,0
+DE,Germany,2004,2846.0,2846.0,3540.0,2846.0,EUR,national_office,,2258.0,28150,0
+DE,Germany,2005,2901.0,2901.0,3609.0,2901.0,EUR,national_office,,2266.0,28590,0
+DE,Germany,2006,2950.0,2950.0,3704.0,2950.0,EUR,national_office,,2289.0,29890,0
+DE,Germany,2007,3023.0,3023.0,4143.0,3023.0,EUR,national_office,,2323.0,31390,0
+DE,Germany,2008,3103.0,3103.0,4564.0,3103.0,EUR,national_office,,2382.0,32060,0
+DE,Germany,2009,3141.0,3141.0,4381.0,3141.0,EUR,national_office,,2385.0,30990,0
+DE,Germany,2010,3227.0,3227.0,4278.0,3227.0,EUR,national_office,,2446.0,32580,0
+DE,Germany,2011,3311.0,3311.0,4609.0,3311.0,EUR,national_office,,2530.0,34220,0
+DE,Germany,2012,3391.0,3391.0,4357.0,3391.0,EUR,national_office,,2604.0,34820,0
+DE,Germany,2013,3449.0,3449.0,4581.0,3449.0,EUR,national_office,,2665.0,35600,0
+DE,Germany,2014,3527.0,3527.0,4686.0,3527.0,EUR,national_office,,2747.0,36960,0
+DE,Germany,2015,3612.0,3612.0,4008.0,3612.0,EUR,national_office,,2829.0,37950,0
+DE,Germany,2016,3703.0,3703.0,4099.0,3703.0,EUR,national_office,,2902.0,39030,0
+DE,Germany,2017,3771.0,3771.0,4260.0,3771.0,EUR,national_office,,2982.0,40630,0
+DE,Germany,2018,3880.0,3880.0,4582.0,3880.0,EUR,national_office,,3082.0,41800,0
+DE,Germany,2019,3994.0,3994.0,4471.0,3994.0,EUR,national_office,,3178.0,43030,0
+DE,Germany,2020,3975.0,3975.0,4540.0,3975.0,EUR,national_office,,3171.0,42020,0
+DE,Germany,2021,4100.0,4100.0,4849.0,4100.0,EUR,national_office,,3276.0,44910,0
+DE,Germany,2022,4284,4284.0,4511.0,4284,EUR,national_office,,3421.0,48340,0
+DE,Germany,2023,4468.0,4468.0,4831.0,4468.0,EUR,national_office,,3644.0,50660,0
+DE,Germany,2024,4691.0,4691.0,5077.0,4691.0,EUR,national_office,,3833.0,51830,0
+DE,Germany,2025,4851.0,4851.0,5482.0,4851.0,EUR,national_office,,4009.0,53520,0
+PL,Poland,2002,581.0,581.0,549.0,2240.0,PLN,national_office,,596.0,5520,0
+PL,Poland,2003,526.0,526.0,595.0,2315.0,PLN,national_office,,531.0,5060,0
+PL,Poland,2004,532.0,532.0,662.0,2410.0,PLN,national_office,,529.0,5420,0
+PL,Poland,2005,623.0,623.0,775.0,2507.0,PLN,national_office,,608.0,6470,0
+PL,Poland,2006,677.0,677.0,850.0,2637.0,PLN,national_office,,646.0,7230,0
+PL,Poland,2007,757.0,757.0,1038.0,2866.0,PLN,national_office,,702.0,8250,0
+PL,Poland,2008,899.0,899.0,1323.0,3158.0,PLN,national_office,,829.0,9640,0
+PL,Poland,2009,766.0,766.0,1069.0,3315.0,PLN,national_office,,692.0,8330,0
+PL,Poland,2010,860.0,860.0,1140.0,3435.0,PLN,national_office,,820.0,9490,0
+PL,Poland,2011,880.0,880.0,1225.0,3625.0,PLN,national_office,,839.0,9970,0
+PL,Poland,2012,895.0,895.0,1150.0,3744.0,PLN,national_office,,844.0,10190,0
+PL,Poland,2013,924.0,924.0,1227.0,3877.0,PLN,national_office,,854.0,10260,0
+PL,Poland,2014,957.0,957.0,1271.0,4004.0,PLN,national_office,,876.0,10750,0
+PL,Poland,2015,992.0,992.0,1101.0,4151.0,PLN,national_office,,896.0,11390,0
+PL,Poland,2016,983.0,983.0,1088.0,4291.0,PLN,national_office,,900.0,11270,0
+PL,Poland,2017,1064.0,1064.0,1202.0,4528.0,PLN,national_office,,978.0,12360,0
+PL,Poland,2018,1135.0,1135.0,1340.0,4835.0,PLN,national_office,,1056.0,13280,0
+PL,Poland,2019,1206.0,1206.0,1350.0,5182.0,PLN,national_office,,1106.0,14190,0
+PL,Poland,2020,1243.0,1243.0,1420.0,5523.0,PLN,national_office,,1124.0,14310,0
+PL,Poland,2021,1315.0,1315.0,1555.0,6001.0,PLN,national_office,,1149.0,15770,0
+PL,Poland,2022,1431.0,1431.0,1507.0,6706.0,PLN,national_office,,1259.0,17520,0
+PL,Poland,2023,1672.0,1672.0,1808.0,7595.0,PLN,national_office,,1481.0,19980,0
+PL,Poland,2024,2004.0,2004.0,2169.0,8630.0,PLN,national_office,,1762.0,22710,0
+PL,Poland,2025,2212.0,2212.0,2500.0,9379.0,PLN,national_office,,1939.0,24680,0
+RU,Russia,2000,85.0,85.0,79.0,2223.0,RUB,national_office,,,1918.0,0
+RU,Russia,2001,124.0,124.0,111.0,3240.0,RUB,national_office,,,2345.0,0
+RU,Russia,2002,147.0,147.0,139.0,4360.0,RUB,national_office,,,2514.0,0
+RU,Russia,2003,159.0,159.0,179.0,5498.0,RUB,national_office,,,2630.0,0
+RU,Russia,2004,188.0,188.0,234.0,6740.0,RUB,national_office,,,3298.0,0
+RU,Russia,2005,243.0,243.0,302.0,8555.0,RUB,national_office,,,4279.0,0
+RU,Russia,2006,312.0,312.0,391.0,10634.0,RUB,national_office,,,5511.0,0
+RU,Russia,2007,388.0,388.0,532.0,13593.0,RUB,national_office,,,6641.0,0
+RU,Russia,2008,475.0,475.0,698.0,17290.0,RUB,national_office,,,7911.0,0
+RU,Russia,2009,422.0,422.0,589.0,18638.0,RUB,national_office,,,6139.0,0
+RU,Russia,2010,520.0,520.0,690.0,20952.0,RUB,national_office,,,8052.0,0
+RU,Russia,2011,572.0,572.0,796.0,23369.0,RUB,national_office,,,10277.0,0
+RU,Russia,2012,667.0,667.0,857.0,26629.0,RUB,national_office,,,11988.0,0
+RU,Russia,2013,704.0,704.0,935.0,29792.0,RUB,national_office,,,12003.0,0
+RU,Russia,2014,638.0,638.0,847.0,32495.0,RUB,national_office,,,10580.0,0
+RU,Russia,2015,500.0,500.0,555.0,34030.0,RUB,national_office,,,8362.0,0
+RU,Russia,2016,495.0,495.0,548.0,36709.0,RUB,national_office,,,7826.0,0
+RU,Russia,2017,594.0,594.0,671.0,39167.0,RUB,national_office,,,9435.0,0
+RU,Russia,2018,591.0,591.0,697.0,43724.0,RUB,national_office,,,9494.0,0
+RU,Russia,2019,661.0,661.0,740.0,47867.0,RUB,national_office,,,10226.0,0
+RU,Russia,2020,621.0,621.0,709.0,51344.0,RUB,national_office,,,8850.0,0
+RU,Russia,2021,657.0,657.0,777.0,57244.0,RUB,national_office,,,10505.0,0
+RU,Russia,2022,884.0,884.0,930.0,65338.0,RUB,national_office,,,14838.0,0
+RU,Russia,2023,810.0,810.0,876.0,74854.0,RUB,national_office,,,12936.0,0
 RU,Russia,2024,904.0,904.0,978.0,89069.0,RUB,national_office,,,13823.0,0
 RU,Russia,2025,1094.0,1094.0,1237.0,101784.0,RUB,national_office,,,15528.0,0
 BY,Belarus,2000,53.0,53.0,49.0,59397.0,BYR,national_office,,,1382.0,0
@@ -217,9 +217,9 @@ PL,Poland,2000,508.0,569.0,550.0,508.0,EUR,eurostat_d11emp,,508.0,4900,0
 PL,Poland,2001,609.0,681.0,680.0,609.0,EUR,eurostat_d11emp,,609.0,5590,0
 AT,Austria,1990,1713.0,1713.0,,1713.0,EUR,oecd,1713.0,,19211.0,0
 AT,Austria,1991,1823.0,1823.0,,1823.0,EUR,oecd,1823.0,,19910.0,0
-AT,Austria,1992,1922.0,2592.0,,1922.0,EUR,oecd,1922.0,,22063.0,0
-AT,Austria,1993,1997.0,2693.0,,1997.0,EUR,oecd,1997.0,,21257.0,0
-AT,Austria,1994,2063.0,2782.0,,2063.0,EUR,oecd,2063.0,,22642.0,0
+AT,Austria,1992,1922.0,1922.0,,1922.0,EUR,oecd,1922.0,,22063.0,0
+AT,Austria,1993,1997.0,1997.0,,1997.0,EUR,oecd,1997.0,,21257.0,0
+AT,Austria,1994,2063.0,2063.0,,2063.0,EUR,oecd,2063.0,,22642.0,0
 AT,Austria,1995,2095.0,2825.0,,2126.0,EUR,eurostat_d11emp,2126.0,2095.0,23100,0
 AT,Austria,1996,2072.0,2755.0,,2142.0,EUR,eurostat_d11emp,2142.0,2072.0,23360,0
 AT,Austria,1997,2027.0,2692.0,,2156.0,EUR,eurostat_d11emp,2156.0,2027.0,23460,0
@@ -251,11 +251,11 @@ AT,Austria,2022,3633.0,5531.0,3826.0,4104.0,EUR,eurostat_d11emp,4104.0,3633.0,49
 AT,Austria,2023,3893.0,5932.0,4209.0,4400.0,EUR,eurostat_d11emp,4400.0,3893.0,52330,0
 AT,Austria,2024,4174.0,6352.0,4518.0,4729.0,EUR,eurostat_d11emp,4729.0,4174.0,53830,0
 AT,Austria,2025,4331.0,6556.0,4894.0,4896.0,EUR,eurostat_d11emp,4896.0,4331.0,55870,0
-BE,Belgium,1990,1804.0,2256.0,,1804.0,EUR,oecd,1804.0,,17806.0,0
-BE,Belgium,1991,1936.0,2476.0,,1936.0,EUR,oecd,1936.0,,18198.0,0
-BE,Belgium,1992,2035.0,2640.0,,2035.0,EUR,oecd,2035.0,,20198.0,0
-BE,Belgium,1993,2131.0,2843.0,,2131.0,EUR,oecd,2131.0,,19225.0,0
-BE,Belgium,1994,2221.0,2963.0,,2221.0,EUR,oecd,2221.0,,20907.0,0
+BE,Belgium,1990,1804.0,1804.0,,1804.0,EUR,oecd,1804.0,,17806.0,0
+BE,Belgium,1991,1936.0,1936.0,,1936.0,EUR,oecd,1936.0,,18198.0,0
+BE,Belgium,1992,2035.0,2035.0,,2035.0,EUR,oecd,2035.0,,20198.0,0
+BE,Belgium,1993,2131.0,2131.0,,2131.0,EUR,oecd,2131.0,,19225.0,0
+BE,Belgium,1994,2221.0,2221.0,,2221.0,EUR,oecd,2221.0,,20907.0,0
 BE,Belgium,1995,2164.0,3111.0,,2248.0,EUR,eurostat_d11emp,2248.0,2164.0,21730,0
 BE,Belgium,1996,2159.0,3114.0,,2291.0,EUR,eurostat_d11emp,2291.0,2159.0,21660,0
 BE,Belgium,1997,2145.0,3079.0,,2352.0,EUR,eurostat_d11emp,2352.0,2145.0,21910,0
@@ -287,7 +287,7 @@ BE,Belgium,2022,4039.0,5810.0,4253.0,4441.0,EUR,eurostat_d11emp,4441.0,4039.0,48
 BE,Belgium,2023,4340.0,6239.0,4693.0,4789.0,EUR,eurostat_d11emp,4789.0,4340.0,51090,0
 BE,Belgium,2024,4469.0,6446.0,4837.0,4944.0,EUR,eurostat_d11emp,4944.0,4469.0,52310,0
 BE,Belgium,2025,4615.0,6652.0,5215.0,5146.0,EUR,eurostat_d11emp,5146.0,4615.0,53930,0
-EE,Estonia,1995,163.0,163.0,,162.0,EUR,eurostat_d11emp,162.0,163.0,2060,0
+EE,Estonia,1995,163.0,185.0,,162.0,EUR,eurostat_d11emp,162.0,163.0,2060,0
 EE,Estonia,1996,206.0,233.0,,208.0,EUR,eurostat_d11emp,208.0,206.0,2650,0
 EE,Estonia,1997,240.0,272.0,,249.0,EUR,eurostat_d11emp,249.0,240.0,3240,0
 EE,Estonia,1998,272.0,308.0,,284.0,EUR,eurostat_d11emp,284.0,272.0,3640,0
@@ -421,11 +421,11 @@ GR,Greece,2022,1322.0,1636.0,1392.0,1390.0,EUR,eurostat_d11emp,1390.0,1322.0,195
 GR,Greece,2023,1377.0,1685.0,1489.0,1438.0,EUR,eurostat_d11emp,1438.0,1377.0,21300,0
 GR,Greece,2024,1455.0,1788.0,1575.0,1519.0,EUR,eurostat_d11emp,1519.0,1455.0,22480,0
 GR,Greece,2025,1511.0,1872.0,1707.0,1567.0,EUR,eurostat_d11emp,1567.0,1511.0,23570,0
-IE,Ireland,1990,1184.0,1207.0,,1184.0,EUR,oecd,1184.0,,12079.0,0
-IE,Ireland,1991,1266.0,1313.0,,1266.0,EUR,oecd,1266.0,,12171.0,0
-IE,Ireland,1992,1358.0,1443.0,,1358.0,EUR,oecd,1358.0,,13572.0,0
-IE,Ireland,1993,1456.0,1568.0,,1456.0,EUR,oecd,1456.0,,12626.0,0
-IE,Ireland,1994,1505.0,1620.0,,1505.0,EUR,oecd,1505.0,,13682.0,0
+IE,Ireland,1990,1184.0,1184.0,,1184.0,EUR,oecd,1184.0,,12079.0,0
+IE,Ireland,1991,1266.0,1266.0,,1266.0,EUR,oecd,1266.0,,12171.0,0
+IE,Ireland,1992,1358.0,1358.0,,1358.0,EUR,oecd,1358.0,,13572.0,0
+IE,Ireland,1993,1456.0,1456.0,,1456.0,EUR,oecd,1456.0,,12626.0,0
+IE,Ireland,1994,1505.0,1505.0,,1505.0,EUR,oecd,1505.0,,13682.0,0
 IE,Ireland,1995,1387.0,1530.0,,1574.0,EUR,eurostat_d11emp,1574.0,1387.0,14680,0
 IE,Ireland,1996,1525.0,1689.0,,1684.0,EUR,eurostat_d11emp,1684.0,1525.0,16460,0
 IE,Ireland,1997,1767.0,1955.0,,1849.0,EUR,eurostat_d11emp,1849.0,1767.0,19950,0
@@ -457,11 +457,11 @@ IE,Ireland,2022,4151.0,5274.0,4371.0,4544.0,EUR,eurostat_d11emp,4544.0,4151.0,10
 IE,Ireland,2023,4310.0,5557.0,4660.0,4903.0,EUR,eurostat_d11emp,4903.0,4310.0,98340,0
 IE,Ireland,2024,4571.0,5924.0,4948.0,5109.0,EUR,eurostat_d11emp,5109.0,4571.0,104350,0
 IE,Ireland,2025,4799.0,6262.0,5423.0,5282.0,EUR,eurostat_d11emp,5282.0,4799.0,110150,0
-IT,Italy,1990,1204.0,1344.0,,1204.0,EUR,oecd,1204.0,,18175.0,0
-IT,Italy,1991,1297.0,1453.0,,1297.0,EUR,oecd,1297.0,,19181.0,0
-IT,Italy,1992,1363.0,1524.0,,1363.0,EUR,oecd,1363.0,,20344.0,0
-IT,Italy,1993,1414.0,1581.0,,1414.0,EUR,oecd,1414.0,,16345.0,0
-IT,Italy,1994,1467.0,1646.0,,1467.0,EUR,oecd,1467.0,,16853.0,0
+IT,Italy,1990,1204.0,1204.0,,1204.0,EUR,oecd,1204.0,,18175.0,0
+IT,Italy,1991,1297.0,1297.0,,1297.0,EUR,oecd,1297.0,,19181.0,0
+IT,Italy,1992,1363.0,1363.0,,1363.0,EUR,oecd,1363.0,,20344.0,0
+IT,Italy,1993,1414.0,1414.0,,1414.0,EUR,oecd,1414.0,,16345.0,0
+IT,Italy,1994,1467.0,1467.0,,1467.0,EUR,oecd,1467.0,,16853.0,0
 IT,Italy,1995,1302.0,1611.0,,1522.0,EUR,eurostat_d11emp,1522.0,1302.0,15840,0
 IT,Italy,1996,1488.0,1831.0,,1598.0,EUR,eurostat_d11emp,1598.0,1488.0,18210,0
 IT,Italy,1997,1572.0,1937.0,,1674.0,EUR,eurostat_d11emp,1674.0,1572.0,19320,0
@@ -554,11 +554,11 @@ LT,Lithuania,2022,1973.0,2571.0,2078.0,2020.0,EUR,eurostat_d11emp,2020.0,1973.0,
 LT,Lithuania,2023,2212.0,2839.0,2392.0,2262.0,EUR,eurostat_d11emp,2262.0,2212.0,25880,0
 LT,Lithuania,2024,2371.0,3009.0,2566.0,2428.0,EUR,eurostat_d11emp,2428.0,2371.0,27350,0
 LT,Lithuania,2025,2608.0,3284.0,2947.0,2662.0,EUR,eurostat_d11emp,2662.0,2608.0,29170,0
-LU,Luxembourg,1990,2176.0,2728.0,,2176.0,EUR,oecd,2176.0,,29263.0,0
-LU,Luxembourg,1991,2313.0,2931.0,,2313.0,EUR,oecd,2313.0,,31281.0,0
-LU,Luxembourg,1992,2475.0,3178.0,,2475.0,EUR,oecd,2475.0,,34568.0,0
-LU,Luxembourg,1993,2623.0,3354.0,,2623.0,EUR,oecd,2623.0,,34941.0,0
-LU,Luxembourg,1994,2735.0,3544.0,,2735.0,EUR,oecd,2735.0,,38325.0,0
+LU,Luxembourg,1990,2176.0,2176.0,,2176.0,EUR,oecd,2176.0,,29263.0,0
+LU,Luxembourg,1991,2313.0,2313.0,,2313.0,EUR,oecd,2313.0,,31281.0,0
+LU,Luxembourg,1992,2475.0,2475.0,,2475.0,EUR,oecd,2475.0,,34568.0,0
+LU,Luxembourg,1993,2623.0,2623.0,,2623.0,EUR,oecd,2623.0,,34941.0,0
+LU,Luxembourg,1994,2735.0,2735.0,,2735.0,EUR,oecd,2735.0,,38325.0,0
 LU,Luxembourg,1995,2731.0,3517.0,,2788.0,EUR,eurostat_d11emp,2788.0,2731.0,38940,0
 LU,Luxembourg,1996,2776.0,3625.0,,2867.0,EUR,eurostat_d11emp,2867.0,2776.0,39720,0
 LU,Luxembourg,1997,2774.0,3606.0,,2968.0,EUR,eurostat_d11emp,2968.0,2774.0,41130,0
@@ -590,11 +590,11 @@ LU,Luxembourg,2022,5812.0,8213.0,6120.0,6206.0,EUR,eurostat_d11emp,6206.0,5812.0
 LU,Luxembourg,2023,6243.0,8787.0,6750.0,6683.0,EUR,eurostat_d11emp,6683.0,6243.0,122970,0
 LU,Luxembourg,2024,6470.0,9101.0,7003.0,6941.0,EUR,eurostat_d11emp,6941.0,6470.0,127030,0
 LU,Luxembourg,2025,6701.0,9479.0,7572.0,7168.0,EUR,eurostat_d11emp,7168.0,6701.0,130300,0
-NL,Netherlands,1990,2036.0,2953.0,,2036.0,EUR,oecd,2036.0,,19126.0,0
-NL,Netherlands,1991,2125.0,3061.0,,2125.0,EUR,oecd,2125.0,,19548.0,0
-NL,Netherlands,1992,2202.0,3223.0,,2202.0,EUR,oecd,2202.0,,21439.0,0
-NL,Netherlands,1993,2288.0,3305.0,,2288.0,EUR,oecd,2288.0,,20699.0,0
-NL,Netherlands,1994,2364.0,3495.0,,2364.0,EUR,oecd,2364.0,,22098.0,0
+NL,Netherlands,1990,2036.0,2036.0,,2036.0,EUR,oecd,2036.0,,19126.0,0
+NL,Netherlands,1991,2125.0,2125.0,,2125.0,EUR,oecd,2125.0,,19548.0,0
+NL,Netherlands,1992,2202.0,2202.0,,2202.0,EUR,oecd,2202.0,,21439.0,0
+NL,Netherlands,1993,2288.0,2288.0,,2288.0,EUR,oecd,2288.0,,20699.0,0
+NL,Netherlands,1994,2364.0,2364.0,,2364.0,EUR,oecd,2364.0,,22098.0,0
 NL,Netherlands,1995,2040.0,2961.0,,2367.0,EUR,eurostat_d11emp,2367.0,2040.0,22410,0
 NL,Netherlands,1996,2028.0,2929.0,,2403.0,EUR,eurostat_d11emp,2403.0,2028.0,22900,0
 NL,Netherlands,1997,2023.0,2947.0,,2466.0,EUR,eurostat_d11emp,2466.0,2023.0,23600,0
@@ -657,7 +657,7 @@ PT,Portugal,2022,1709.0,2082.0,1800.0,1755.0,EUR,eurostat_d11emp,1755.0,1709.0,2
 PT,Portugal,2023,1870.0,2224.0,2022.0,1926.0,EUR,eurostat_d11emp,1926.0,1870.0,25560,0
 PT,Portugal,2024,2002.0,2372.0,2167.0,2062.0,EUR,eurostat_d11emp,2062.0,2002.0,27100,0
 PT,Portugal,2025,2092.0,2499.0,2364.0,2152.0,EUR,eurostat_d11emp,2152.0,2092.0,28390,0
-SK,Slovakia,1994,219.0,253.0,,219.0,EUR,oecd,219.0,,2646.0,0
+SK,Slovakia,1994,219.0,219.0,,219.0,EUR,oecd,219.0,,2646.0,0
 SK,Slovakia,1995,198.0,229.0,,258.0,EUR,eurostat_d11emp,258.0,198.0,2890,0
 SK,Slovakia,1996,223.0,263.0,,291.0,EUR,eurostat_d11emp,291.0,223.0,3200,0
 SK,Slovakia,1997,269.0,317.0,,343.0,EUR,eurostat_d11emp,343.0,269.0,3610,0
@@ -720,11 +720,11 @@ SI,Slovenia,2022,2420.0,3213.0,2548.0,2499.0,EUR,eurostat_d11emp,2499.0,2420.0,2
 SI,Slovenia,2023,2656.0,3550.0,2872.0,2747.0,EUR,eurostat_d11emp,2747.0,2656.0,30200,0
 SI,Slovenia,2024,2812.0,3699.0,3044.0,2917.0,EUR,eurostat_d11emp,2917.0,2812.0,31700,0
 SI,Slovenia,2025,3033.0,4015.0,3427.0,3131.0,EUR,eurostat_d11emp,3131.0,3033.0,33060,0
-ES,Spain,1990,959.0,1176.0,,959.0,EUR,oecd,959.0,,12100.0,0
-ES,Spain,1991,1053.0,1286.0,,1053.0,EUR,oecd,1053.0,,12987.0,0
-ES,Spain,1992,1164.0,1428.0,,1164.0,EUR,oecd,1164.0,,14150.0,0
-ES,Spain,1993,1245.0,1538.0,,1245.0,EUR,oecd,1245.0,,11850.0,0
-ES,Spain,1994,1319.0,1630.0,,1319.0,EUR,oecd,1319.0,,11858.0,0
+ES,Spain,1990,959.0,959.0,,959.0,EUR,oecd,959.0,,12100.0,0
+ES,Spain,1991,1053.0,1053.0,,1053.0,EUR,oecd,1053.0,,12987.0,0
+ES,Spain,1992,1164.0,1164.0,,1164.0,EUR,oecd,1164.0,,14150.0,0
+ES,Spain,1993,1245.0,1245.0,,1245.0,EUR,oecd,1245.0,,11850.0,0
+ES,Spain,1994,1319.0,1319.0,,1319.0,EUR,oecd,1319.0,,11858.0,0
 ES,Spain,1995,1330.0,1641.0,,1355.0,EUR,eurostat_d11emp,1355.0,1330.0,11830,0
 ES,Spain,1996,1404.0,1725.0,,1415.0,EUR,eurostat_d11emp,1415.0,1404.0,12690,0
 ES,Spain,1997,1393.0,1707.0,,1453.0,EUR,eurostat_d11emp,1453.0,1393.0,13000,0
@@ -989,33 +989,33 @@ GB,United Kingdom,1995,,,,1465.0,GBP,oecd,,,20580.0,0
 GB,United Kingdom,1996,,,,1516.0,GBP,oecd,,,21708.0,0
 GB,United Kingdom,1997,,,,1605.0,GBP,oecd,,,23821.0,0
 GB,United Kingdom,1998,,,,1652.0,GBP,oecd,,,25137.0,0
-GB,United Kingdom,1999,2651.0,3507.0,2826.0,1747.0,GBP,oecd,2651.0,,27077.0,0
-GB,United Kingdom,2000,3009.0,4126.0,2779.0,1834.0,GBP,oecd,3009.0,,30731.0,0
-GB,United Kingdom,2001,3100.0,4244.0,2776.0,1928.0,GBP,oecd,3100.0,,31278.0,0
-GB,United Kingdom,2002,3122.0,4312.0,2952.0,1963.0,GBP,oecd,3122.0,,31895.0,0
-GB,United Kingdom,2003,2967.0,4148.0,3356.0,2053.0,GBP,oecd,2967.0,,30550.0,0
-GB,United Kingdom,2004,3174.0,4427.0,3949.0,2154.0,GBP,oecd,3174.0,,32562.0,0
-GB,United Kingdom,2005,3246.0,4500.0,4039.0,2220.0,GBP,oecd,3246.0,,33953.0,0
-GB,United Kingdom,2006,3415.0,4754.0,4288.0,2328.0,GBP,oecd,3415.0,,35597.0,0
-GB,United Kingdom,2007,3604.0,4985.0,4939.0,2466.0,GBP,oecd,3604.0,,36943.0,0
-GB,United Kingdom,2008,3136.0,4390.0,4612.0,2497.0,GBP,oecd,3136.0,,32400.0,0
-GB,United Kingdom,2009,2821.0,3961.0,3935.0,2513.0,GBP,oecd,2821.0,,27968.0,0
-GB,United Kingdom,2010,2970.0,4200.0,3937.0,2548.0,GBP,oecd,2970.0,,30005.0,0
-GB,United Kingdom,2011,2989.0,4195.0,4160.0,2594.0,GBP,oecd,2989.0,,30386.0,0
-GB,United Kingdom,2012,3225.0,4470.0,4143.0,2615.0,GBP,oecd,3225.0,,33226.0,0
-GB,United Kingdom,2013,3170.0,4382.0,4210.0,2692.0,GBP,oecd,3170.0,,32834.0,0
-GB,United Kingdom,2014,3392.0,4668.0,4507.0,2735.0,GBP,oecd,3392.0,,35940.0,0
-GB,United Kingdom,2015,3804.0,5287.0,4221.0,2761.0,GBP,oecd,3804.0,,40789.0,0
-GB,United Kingdom,2016,3455.0,4663.0,3824.0,2831.0,GBP,oecd,3455.0,,37274.0,0
-GB,United Kingdom,2017,3308.0,4560.0,3737.0,2900.0,GBP,oecd,3308.0,,36221.0,0
-GB,United Kingdom,2018,3351.0,4615.0,3957.0,2965.0,GBP,oecd,3351.0,,37008.0,0
-GB,United Kingdom,2019,3473.0,4774.0,3888.0,3049.0,GBP,oecd,3473.0,,38554.0,0
-GB,United Kingdom,2020,3391.0,5166.0,3874.0,3017.0,GBP,oecd,3391.0,,35734.0,0
-GB,United Kingdom,2021,3657.0,5114.0,4326.0,3144.0,GBP,oecd,3657.0,,40326.0,0
-GB,United Kingdom,2022,3919.0,5376.0,4127.0,3342.0,GBP,oecd,3919.0,,44665.0,0
-GB,United Kingdom,2023,4075.0,5620.0,4406.0,3544.0,GBP,oecd,4075.0,,46168.0,0
-GB,United Kingdom,2024,4395.0,6006.0,4757.0,3721.0,GBP,oecd,4395.0,,49281.0,0
-GB,United Kingdom,2025,4524.0,6194.0,5112.0,3876.0,GBP,oecd,4524.0,,50976.0,0
+GB,United Kingdom,1999,2651.0,2651.0,2826.0,1747.0,GBP,oecd,2651.0,,27077.0,0
+GB,United Kingdom,2000,3009.0,3009.0,2779.0,1834.0,GBP,oecd,3009.0,,30731.0,0
+GB,United Kingdom,2001,3100.0,3100.0,2776.0,1928.0,GBP,oecd,3100.0,,31278.0,0
+GB,United Kingdom,2002,3122.0,3122.0,2952.0,1963.0,GBP,oecd,3122.0,,31895.0,0
+GB,United Kingdom,2003,2967.0,2967.0,3356.0,2053.0,GBP,oecd,2967.0,,30550.0,0
+GB,United Kingdom,2004,3174.0,3174.0,3949.0,2154.0,GBP,oecd,3174.0,,32562.0,0
+GB,United Kingdom,2005,3246.0,3246.0,4039.0,2220.0,GBP,oecd,3246.0,,33953.0,0
+GB,United Kingdom,2006,3415.0,3415.0,4288.0,2328.0,GBP,oecd,3415.0,,35597.0,0
+GB,United Kingdom,2007,3604.0,3604.0,4939.0,2466.0,GBP,oecd,3604.0,,36943.0,0
+GB,United Kingdom,2008,3136.0,3136.0,4612.0,2497.0,GBP,oecd,3136.0,,32400.0,0
+GB,United Kingdom,2009,2821.0,2821.0,3935.0,2513.0,GBP,oecd,2821.0,,27968.0,0
+GB,United Kingdom,2010,2970.0,2970.0,3937.0,2548.0,GBP,oecd,2970.0,,30005.0,0
+GB,United Kingdom,2011,2989.0,2989.0,4160.0,2594.0,GBP,oecd,2989.0,,30386.0,0
+GB,United Kingdom,2012,3225.0,3225.0,4143.0,2615.0,GBP,oecd,3225.0,,33226.0,0
+GB,United Kingdom,2013,3170.0,3170.0,4210.0,2692.0,GBP,oecd,3170.0,,32834.0,0
+GB,United Kingdom,2014,3392.0,3392.0,4507.0,2735.0,GBP,oecd,3392.0,,35940.0,0
+GB,United Kingdom,2015,3804.0,3804.0,4221.0,2761.0,GBP,oecd,3804.0,,40789.0,0
+GB,United Kingdom,2016,3455.0,3455.0,3824.0,2831.0,GBP,oecd,3455.0,,37274.0,0
+GB,United Kingdom,2017,3308.0,3308.0,3737.0,2900.0,GBP,oecd,3308.0,,36221.0,0
+GB,United Kingdom,2018,3351.0,3351.0,3957.0,2965.0,GBP,oecd,3351.0,,37008.0,0
+GB,United Kingdom,2019,3473.0,3473.0,3888.0,3049.0,GBP,oecd,3473.0,,38554.0,0
+GB,United Kingdom,2020,3391.0,3391.0,3874.0,3017.0,GBP,oecd,3391.0,,35734.0,0
+GB,United Kingdom,2021,3657.0,3657.0,4326.0,3144.0,GBP,oecd,3657.0,,40326.0,0
+GB,United Kingdom,2022,3919.0,3919.0,4127.0,3342.0,GBP,oecd,3919.0,,44665.0,0
+GB,United Kingdom,2023,4075.0,4075.0,4406.0,3544.0,GBP,oecd,4075.0,,46168.0,0
+GB,United Kingdom,2024,4395.0,4395.0,4757.0,3721.0,GBP,oecd,4395.0,,49281.0,0
+GB,United Kingdom,2025,4524.0,4524.0,5112.0,3876.0,GBP,oecd,4524.0,,50976.0,0
 BG,Bulgaria,1995,98.0,116.0,,9.0,BGN,eurostat_d11emp,,98.0,1730,0
 BG,Bulgaria,1996,66.0,78.0,,15.0,BGN,eurostat_d11emp,,66.0,1180,0
 BG,Bulgaria,1997,74.0,87.0,,141.0,BGN,eurostat_d11emp,,74.0,1210,0
@@ -1275,39 +1275,39 @@ RS,Serbia,2022,850.0,850.0,807.0,850.0,EUR,eurostat_d11emp,,850.0,9530,0
 RS,Serbia,2023,975.0,975.0,902.0,975.0,EUR,eurostat_d11emp,,975.0,11350,0
 RS,Serbia,2024,1119.0,1119.0,1034.0,1119.0,EUR,eurostat_d11emp,,1119.0,12640,0
 RS,Serbia,2025,1255.0,1255.0,1111.0,1255.0,EUR,eurostat_d11emp,,1255.0,13540,0
-TR,Turkey,2004,655.0,710.0,815.0,655.0,EUR,eurostat_earn,,,4870,0
-TR,Turkey,2005,782.0,840.0,973.0,782.0,EUR,eurostat_earn,,,5950,0
-TR,Turkey,2006,721.0,771.0,905.0,721.0,EUR,eurostat_earn,,,6380,0
-TR,Turkey,2007,624.0,679.0,855.0,624.0,EUR,eurostat_earn,,,7120,0
-TR,Turkey,2008,652.0,714.0,959.0,652.0,EUR,eurostat_earn,,,7450,0
-TR,Turkey,2009,633.0,700.0,883.0,633.0,EUR,eurostat_earn,,,6500,0
-TR,Turkey,2010,752.0,833.0,997.0,752.0,EUR,eurostat_earn,,,8050,0
-TR,Turkey,2011,703.0,784.0,979.0,703.0,EUR,eurostat_earn,,,8150,0
-TR,Turkey,2012,791.0,887.0,1016.0,791.0,EUR,eurostat_earn,,,9140,0
-TR,Turkey,2013,812.0,922.0,1078.0,812.0,EUR,eurostat_earn,,,9480,0
-TR,Turkey,2014,788.0,896.0,1047.0,788.0,EUR,eurostat_earn,,,9090,0
-TR,Turkey,2015,859.0,987.0,953.0,859.0,EUR,eurostat_earn,,,9700,0
-TR,Turkey,2016,931.0,1082.0,1031.0,931.0,EUR,eurostat_earn,,,9600,0
-TR,Turkey,2017,837.0,981.0,946.0,837.0,EUR,eurostat_earn,,,9170,0
-TR,Turkey,2018,715.0,852.0,844.0,715.0,EUR,eurostat_earn,,,7850,0
-TR,Turkey,2019,810.0,973.0,907.0,810.0,EUR,eurostat_earn,,,8030,0
-TR,Turkey,2020,755.0,999.0,862.0,755.0,EUR,eurostat_earn,,,7340,0
-TR,Turkey,2021,690.0,829.0,816.0,690.0,EUR,eurostat_earn,,,8050,0
-TR,Turkey,2022,721.0,866.0,759.0,721.0,EUR,eurostat_earn,,,9930,0
-TR,Turkey,2023,1005.0,1207.0,1087.0,1005.0,EUR,eurostat_earn,,,11860,0
+TR,Turkey,2004,655.0,655.0,815.0,655.0,EUR,eurostat_earn,,,4870,0
+TR,Turkey,2005,782.0,782.0,973.0,782.0,EUR,eurostat_earn,,,5950,0
+TR,Turkey,2006,721.0,721.0,905.0,721.0,EUR,eurostat_earn,,,6380,0
+TR,Turkey,2007,624.0,624.0,855.0,624.0,EUR,eurostat_earn,,,7120,0
+TR,Turkey,2008,652.0,652.0,959.0,652.0,EUR,eurostat_earn,,,7450,0
+TR,Turkey,2009,633.0,633.0,883.0,633.0,EUR,eurostat_earn,,,6500,0
+TR,Turkey,2010,752.0,752.0,997.0,752.0,EUR,eurostat_earn,,,8050,0
+TR,Turkey,2011,703.0,703.0,979.0,703.0,EUR,eurostat_earn,,,8150,0
+TR,Turkey,2012,791.0,791.0,1016.0,791.0,EUR,eurostat_earn,,,9140,0
+TR,Turkey,2013,812.0,812.0,1078.0,812.0,EUR,eurostat_earn,,,9480,0
+TR,Turkey,2014,788.0,788.0,1047.0,788.0,EUR,eurostat_earn,,,9090,0
+TR,Turkey,2015,859.0,859.0,953.0,859.0,EUR,eurostat_earn,,,9700,0
+TR,Turkey,2016,931.0,931.0,1031.0,931.0,EUR,eurostat_earn,,,9600,0
+TR,Turkey,2017,837.0,837.0,946.0,837.0,EUR,eurostat_earn,,,9170,0
+TR,Turkey,2018,715.0,715.0,844.0,715.0,EUR,eurostat_earn,,,7850,0
+TR,Turkey,2019,810.0,810.0,907.0,810.0,EUR,eurostat_earn,,,8030,0
+TR,Turkey,2020,755.0,755.0,862.0,755.0,EUR,eurostat_earn,,,7340,0
+TR,Turkey,2021,690.0,690.0,816.0,690.0,EUR,eurostat_earn,,,8050,0
+TR,Turkey,2022,721.0,721.0,759.0,721.0,EUR,eurostat_earn,,,9930,0
+TR,Turkey,2023,1005.0,1005.0,1087.0,1005.0,EUR,eurostat_earn,,,11860,0
 AD,Andorra,2025,2515.0,2515.0,,,EUR,wikipedia (2024-09),,,48046.0,0
 AZ,Azerbaijan,2025,588.0,588.0,,,EUR,wikipedia (2026-06),,,6558.0,0
 XK,Kosovo,2025,713.0,713.0,,,EUR,wikipedia (2025),,,6991.0,0
 SM,San Marino,2025,2629.0,2629.0,,,EUR,wikipedia (2024-10),,,58003.0,0
-DE,Germany,2026,5193.0,8322.0,,,EUR,projected,,,57791.0,1
-DE,Germany,2027,5376.0,8616.0,,,EUR,projected,,,59836.0,1
-DE,Germany,2028,5551.0,8896.0,,,EUR,projected,,,61775.0,1
+DE,Germany,2026,5193.0,5193.0,,,EUR,projected,,,57791.0,1
+DE,Germany,2027,5376.0,5376.0,,,EUR,projected,,,59836.0,1
+DE,Germany,2028,5551.0,5551.0,,,EUR,projected,,,61775.0,1
 DE,Germany,2029,5732.0,5732.0,,,EUR,projected,,,63795.0,1
 DE,Germany,2030,5905.0,5905.0,,,EUR,projected,,,65721.0,1
 DE,Germany,2031,6077.0,6077.0,,,EUR,projected,,,67635.0,1
-PL,Poland,2026,2366.0,2926.0,,,EUR,projected,,,27731.0,1
-PL,Poland,2027,2476.0,3062.0,,,EUR,projected,,,29021.0,1
-PL,Poland,2028,2615.0,3234.0,,,EUR,projected,,,30643.0,1
+PL,Poland,2026,2366.0,2366.0,,,EUR,projected,,,27731.0,1
+PL,Poland,2027,2476.0,2476.0,,,EUR,projected,,,29021.0,1
+PL,Poland,2028,2615.0,2615.0,,,EUR,projected,,,30643.0,1
 PL,Poland,2029,2766.0,2766.0,,,EUR,projected,,,32412.0,1
 PL,Poland,2030,2919.0,2919.0,,,EUR,projected,,,34207.0,1
 PL,Poland,2031,3079.0,3079.0,,,EUR,projected,,,36087.0,1
@@ -1363,168 +1363,168 @@ AL,Albania,2028,1235.0,1235.0,,,EUR,projected,,,12520.0,1
 AL,Albania,2029,1321.0,1321.0,,,EUR,projected,,,13396.0,1
 AL,Albania,2030,1414.0,1414.0,,,EUR,projected,,,14340.0,1
 AL,Albania,2031,1515.0,1515.0,,,EUR,projected,,,15357.0,1
-AT,Austria,2026,4545.0,6879.0,,,EUR,projected,,,59967.0,1
-AT,Austria,2027,4686.0,7093.0,,,EUR,projected,,,61829.0,1
-AT,Austria,2028,4816.0,7290.0,,,EUR,projected,,,63546.0,1
+AT,Austria,2026,4545.0,4545.0,,,EUR,projected,,,59967.0,1
+AT,Austria,2027,4686.0,4686.0,,,EUR,projected,,,61829.0,1
+AT,Austria,2028,4816.0,4816.0,,,EUR,projected,,,63546.0,1
 AT,Austria,2029,4958.0,4958.0,,,EUR,projected,,,65425.0,1
 AT,Austria,2030,5093.0,5093.0,,,EUR,projected,,,67198.0,1
 AT,Austria,2031,5226.0,5226.0,,,EUR,projected,,,68955.0,1
-BE,Belgium,2026,4904.0,7069.0,,,EUR,projected,,,57622.0,1
-BE,Belgium,2027,5015.0,7229.0,,,EUR,projected,,,58930.0,1
-BE,Belgium,2028,5125.0,7387.0,,,EUR,projected,,,60222.0,1
+BE,Belgium,2026,4904.0,4904.0,,,EUR,projected,,,57622.0,1
+BE,Belgium,2027,5015.0,5015.0,,,EUR,projected,,,58930.0,1
+BE,Belgium,2028,5125.0,5125.0,,,EUR,projected,,,60222.0,1
 BE,Belgium,2029,5260.0,5260.0,,,EUR,projected,,,61806.0,1
 BE,Belgium,2030,5390.0,5390.0,,,EUR,projected,,,63330.0,1
 BE,Belgium,2031,5525.0,5525.0,,,EUR,projected,,,64918.0,1
-EE,Estonia,2026,2324.0,3023.0,,,EUR,projected,,,33379.0,1
-EE,Estonia,2027,2443.0,3178.0,,,EUR,projected,,,35084.0,1
-EE,Estonia,2028,2576.0,3351.0,,,EUR,projected,,,36991.0,1
+EE,Estonia,2026,2324.0,2324.0,,,EUR,projected,,,33379.0,1
+EE,Estonia,2027,2443.0,2443.0,,,EUR,projected,,,35084.0,1
+EE,Estonia,2028,2576.0,2576.0,,,EUR,projected,,,36991.0,1
 EE,Estonia,2029,2703.0,2703.0,,,EUR,projected,,,38829.0,1
 EE,Estonia,2030,2827.0,2827.0,,,EUR,projected,,,40602.0,1
 EE,Estonia,2031,2950.0,2950.0,,,EUR,projected,,,42369.0,1
-FI,Finland,2026,4069.0,5822.0,,,EUR,projected,,,53213.0,1
-FI,Finland,2027,4221.0,6040.0,,,EUR,projected,,,55204.0,1
-FI,Finland,2028,4361.0,6240.0,,,EUR,projected,,,57035.0,1
+FI,Finland,2026,4069.0,4069.0,,,EUR,projected,,,53213.0,1
+FI,Finland,2027,4221.0,4221.0,,,EUR,projected,,,55204.0,1
+FI,Finland,2028,4361.0,4361.0,,,EUR,projected,,,57035.0,1
 FI,Finland,2029,4522.0,4522.0,,,EUR,projected,,,59147.0,1
 FI,Finland,2030,4693.0,4693.0,,,EUR,projected,,,61381.0,1
 FI,Finland,2031,4865.0,4865.0,,,EUR,projected,,,63624.0,1
-FR,France,2026,3717.0,5552.0,,,EUR,projected,,,46092.0,1
-FR,France,2027,3785.0,5653.0,,,EUR,projected,,,46934.0,1
-FR,France,2028,3881.0,5797.0,,,EUR,projected,,,48124.0,1
+FR,France,2026,3717.0,3717.0,,,EUR,projected,,,46092.0,1
+FR,France,2027,3785.0,3785.0,,,EUR,projected,,,46934.0,1
+FR,France,2028,3881.0,3881.0,,,EUR,projected,,,48124.0,1
 FR,France,2029,3986.0,3986.0,,,EUR,projected,,,49425.0,1
 FR,France,2030,4093.0,4093.0,,,EUR,projected,,,50750.0,1
 FR,France,2031,4196.0,4196.0,,,EUR,projected,,,52034.0,1
-GR,Greece,2026,1760.0,2181.0,,,EUR,projected,,,26280.0,1
-GR,Greece,2027,1836.0,2275.0,,,EUR,projected,,,27404.0,1
-GR,Greece,2028,1908.0,2364.0,,,EUR,projected,,,28478.0,1
+GR,Greece,2026,1760.0,1760.0,,,EUR,projected,,,26280.0,1
+GR,Greece,2027,1836.0,1836.0,,,EUR,projected,,,27404.0,1
+GR,Greece,2028,1908.0,1908.0,,,EUR,projected,,,28478.0,1
 GR,Greece,2029,1981.0,1981.0,,,EUR,projected,,,29570.0,1
 GR,Greece,2030,2057.0,2057.0,,,EUR,projected,,,30712.0,1
 GR,Greece,2031,2140.0,2140.0,,,EUR,projected,,,31949.0,1
-IE,Ireland,2026,5401.0,7048.0,,,EUR,projected,,,124060.0,1
-IE,Ireland,2027,5552.0,7245.0,,,EUR,projected,,,127528.0,1
-IE,Ireland,2028,5705.0,7445.0,,,EUR,projected,,,131050.0,1
+IE,Ireland,2026,5401.0,5401.0,,,EUR,projected,,,124060.0,1
+IE,Ireland,2027,5552.0,5552.0,,,EUR,projected,,,127528.0,1
+IE,Ireland,2028,5705.0,5705.0,,,EUR,projected,,,131050.0,1
 IE,Ireland,2029,5836.0,5836.0,,,EUR,projected,,,134063.0,1
 IE,Ireland,2030,5981.0,5981.0,,,EUR,projected,,,137394.0,1
 IE,Ireland,2031,6134.0,6134.0,,,EUR,projected,,,140899.0,1
-IT,Italy,2026,2930.0,3738.0,,,EUR,projected,,,41156.0,1
-IT,Italy,2027,3006.0,3835.0,,,EUR,projected,,,42226.0,1
-IT,Italy,2028,3098.0,3952.0,,,EUR,projected,,,43519.0,1
+IT,Italy,2026,2930.0,2930.0,,,EUR,projected,,,41156.0,1
+IT,Italy,2027,3006.0,3006.0,,,EUR,projected,,,42226.0,1
+IT,Italy,2028,3098.0,3098.0,,,EUR,projected,,,43519.0,1
 IT,Italy,2029,3187.0,3187.0,,,EUR,projected,,,44773.0,1
 IT,Italy,2030,3280.0,3280.0,,,EUR,projected,,,46079.0,1
 IT,Italy,2031,3376.0,3376.0,,,EUR,projected,,,47425.0,1
-LV,Latvia,2026,2077.0,2730.0,,,EUR,projected,,,25587.0,1
-LV,Latvia,2027,2200.0,2892.0,,,EUR,projected,,,27097.0,1
-LV,Latvia,2028,2323.0,3054.0,,,EUR,projected,,,28615.0,1
+LV,Latvia,2026,2077.0,2077.0,,,EUR,projected,,,25587.0,1
+LV,Latvia,2027,2200.0,2200.0,,,EUR,projected,,,27097.0,1
+LV,Latvia,2028,2323.0,2323.0,,,EUR,projected,,,28615.0,1
 LV,Latvia,2029,2444.0,2444.0,,,EUR,projected,,,30104.0,1
 LV,Latvia,2030,2569.0,2569.0,,,EUR,projected,,,31647.0,1
 LV,Latvia,2031,2702.0,2702.0,,,EUR,projected,,,33280.0,1
-LT,Lithuania,2026,2797.0,3522.0,,,EUR,projected,,,32341.0,1
-LT,Lithuania,2027,2915.0,3670.0,,,EUR,projected,,,33707.0,1
-LT,Lithuania,2028,3081.0,3879.0,,,EUR,projected,,,35625.0,1
+LT,Lithuania,2026,2797.0,2797.0,,,EUR,projected,,,32341.0,1
+LT,Lithuania,2027,2915.0,2915.0,,,EUR,projected,,,33707.0,1
+LT,Lithuania,2028,3081.0,3081.0,,,EUR,projected,,,35625.0,1
 LT,Lithuania,2029,3238.0,3238.0,,,EUR,projected,,,37433.0,1
 LT,Lithuania,2030,3421.0,3421.0,,,EUR,projected,,,39549.0,1
 LT,Lithuania,2031,3594.0,3594.0,,,EUR,projected,,,41554.0,1
-LU,Luxembourg,2026,7066.0,9995.0,,,EUR,projected,,,140474.0,1
-LU,Luxembourg,2027,7182.0,10159.0,,,EUR,projected,,,142781.0,1
-LU,Luxembourg,2028,7329.0,10367.0,,,EUR,projected,,,145701.0,1
+LU,Luxembourg,2026,7066.0,7066.0,,,EUR,projected,,,140474.0,1
+LU,Luxembourg,2027,7182.0,7182.0,,,EUR,projected,,,142781.0,1
+LU,Luxembourg,2028,7329.0,7329.0,,,EUR,projected,,,145701.0,1
 LU,Luxembourg,2029,7485.0,7485.0,,,EUR,projected,,,148799.0,1
 LU,Luxembourg,2030,7643.0,7643.0,,,EUR,projected,,,151948.0,1
 LU,Luxembourg,2031,7803.0,7803.0,,,EUR,projected,,,155118.0,1
-NL,Netherlands,2026,4521.0,6956.0,,,EUR,projected,,,70725.0,1
-NL,Netherlands,2027,4658.0,7167.0,,,EUR,projected,,,72858.0,1
-NL,Netherlands,2028,4795.0,7378.0,,,EUR,projected,,,75001.0,1
+NL,Netherlands,2026,4521.0,4521.0,,,EUR,projected,,,70725.0,1
+NL,Netherlands,2027,4658.0,4658.0,,,EUR,projected,,,72858.0,1
+NL,Netherlands,2028,4795.0,4795.0,,,EUR,projected,,,75001.0,1
 NL,Netherlands,2029,4936.0,4936.0,,,EUR,projected,,,77207.0,1
 NL,Netherlands,2030,5074.0,5074.0,,,EUR,projected,,,79367.0,1
 NL,Netherlands,2031,5215.0,5215.0,,,EUR,projected,,,81573.0,1
-PT,Portugal,2026,2328.0,2780.0,,,EUR,projected,,,31358.0,1
-PT,Portugal,2027,2430.0,2902.0,,,EUR,projected,,,32735.0,1
-PT,Portugal,2028,2536.0,3029.0,,,EUR,projected,,,34154.0,1
+PT,Portugal,2026,2328.0,2328.0,,,EUR,projected,,,31358.0,1
+PT,Portugal,2027,2430.0,2430.0,,,EUR,projected,,,32735.0,1
+PT,Portugal,2028,2536.0,2536.0,,,EUR,projected,,,34154.0,1
 PT,Portugal,2029,2642.0,2642.0,,,EUR,projected,,,35584.0,1
 PT,Portugal,2030,2746.0,2746.0,,,EUR,projected,,,36983.0,1
 PT,Portugal,2031,2852.0,2852.0,,,EUR,projected,,,38415.0,1
-SK,Slovakia,2026,1928.0,2600.0,,,EUR,projected,,,27648.0,1
-SK,Slovakia,2027,2026.0,2732.0,,,EUR,projected,,,29047.0,1
-SK,Slovakia,2028,2139.0,2884.0,,,EUR,projected,,,30666.0,1
+SK,Slovakia,2026,1928.0,1928.0,,,EUR,projected,,,27648.0,1
+SK,Slovakia,2027,2026.0,2026.0,,,EUR,projected,,,29047.0,1
+SK,Slovakia,2028,2139.0,2139.0,,,EUR,projected,,,30666.0,1
 SK,Slovakia,2029,2248.0,2248.0,,,EUR,projected,,,32234.0,1
 SK,Slovakia,2030,2351.0,2351.0,,,EUR,projected,,,33701.0,1
 SK,Slovakia,2031,2447.0,2447.0,,,EUR,projected,,,35088.0,1
-SI,Slovenia,2026,3246.0,4297.0,,,EUR,projected,,,35956.0,1
-SI,Slovenia,2027,3370.0,4461.0,,,EUR,projected,,,37339.0,1
-SI,Slovenia,2028,3514.0,4652.0,,,EUR,projected,,,38929.0,1
+SI,Slovenia,2026,3246.0,3246.0,,,EUR,projected,,,35956.0,1
+SI,Slovenia,2027,3370.0,3370.0,,,EUR,projected,,,37339.0,1
+SI,Slovenia,2028,3514.0,3514.0,,,EUR,projected,,,38929.0,1
 SI,Slovenia,2029,3667.0,3667.0,,,EUR,projected,,,40621.0,1
 SI,Slovenia,2030,3825.0,3825.0,,,EUR,projected,,,42374.0,1
 SI,Slovenia,2031,3988.0,3988.0,,,EUR,projected,,,44176.0,1
-ES,Spain,2026,3019.0,3987.0,,,EUR,projected,,,36782.0,1
-ES,Spain,2027,3124.0,4125.0,,,EUR,projected,,,38061.0,1
-ES,Spain,2028,3236.0,4273.0,,,EUR,projected,,,39419.0,1
+ES,Spain,2026,3019.0,3019.0,,,EUR,projected,,,36782.0,1
+ES,Spain,2027,3124.0,3124.0,,,EUR,projected,,,38061.0,1
+ES,Spain,2028,3236.0,3236.0,,,EUR,projected,,,39419.0,1
 ES,Spain,2029,3339.0,3339.0,,,EUR,projected,,,40681.0,1
 ES,Spain,2030,3453.0,3453.0,,,EUR,projected,,,42070.0,1
 ES,Spain,2031,3574.0,3574.0,,,EUR,projected,,,43545.0,1
-CZ,Czechia,2026,2278.0,2668.0,,,EUR,projected,,,35218.0,1
-CZ,Czechia,2027,2383.0,2791.0,,,EUR,projected,,,36837.0,1
-CZ,Czechia,2028,2489.0,2915.0,,,EUR,projected,,,38470.0,1
+CZ,Czechia,2026,2278.0,2278.0,,,EUR,projected,,,35218.0,1
+CZ,Czechia,2027,2383.0,2383.0,,,EUR,projected,,,36837.0,1
+CZ,Czechia,2028,2489.0,2489.0,,,EUR,projected,,,38470.0,1
 CZ,Czechia,2029,2594.0,2594.0,,,EUR,projected,,,40094.0,1
 CZ,Czechia,2030,2702.0,2702.0,,,EUR,projected,,,41767.0,1
 CZ,Czechia,2031,2814.0,2814.0,,,EUR,projected,,,43504.0,1
-DK,Denmark,2026,5652.0,8660.0,,,EUR,projected,,,73847.0,1
-DK,Denmark,2027,5847.0,8959.0,,,EUR,projected,,,76395.0,1
-DK,Denmark,2028,6028.0,9236.0,,,EUR,projected,,,78756.0,1
+DK,Denmark,2026,5652.0,5652.0,,,EUR,projected,,,73847.0,1
+DK,Denmark,2027,5847.0,5847.0,,,EUR,projected,,,76395.0,1
+DK,Denmark,2028,6028.0,6028.0,,,EUR,projected,,,78756.0,1
 DK,Denmark,2029,6224.0,6224.0,,,EUR,projected,,,81321.0,1
 DK,Denmark,2030,6419.0,6419.0,,,EUR,projected,,,83868.0,1
 DK,Denmark,2031,6620.0,6620.0,,,EUR,projected,,,86497.0,1
-HU,Hungary,2026,1729.0,2178.0,,,EUR,projected,,,25160.0,1
-HU,Hungary,2027,1818.0,2290.0,,,EUR,projected,,,26463.0,1
-HU,Hungary,2028,1911.0,2407.0,,,EUR,projected,,,27816.0,1
+HU,Hungary,2026,1729.0,1729.0,,,EUR,projected,,,25160.0,1
+HU,Hungary,2027,1818.0,1818.0,,,EUR,projected,,,26463.0,1
+HU,Hungary,2028,1911.0,1911.0,,,EUR,projected,,,27816.0,1
 HU,Hungary,2029,2014.0,2014.0,,,EUR,projected,,,29305.0,1
 HU,Hungary,2030,2122.0,2122.0,,,EUR,projected,,,30890.0,1
 HU,Hungary,2031,2236.0,2236.0,,,EUR,projected,,,32538.0,1
-IS,Iceland,2026,6336.0,9250.0,,,EUR,projected,,,97389.0,1
-IS,Iceland,2027,6513.0,9508.0,,,EUR,projected,,,100107.0,1
-IS,Iceland,2028,6672.0,9741.0,,,EUR,projected,,,102562.0,1
+IS,Iceland,2026,6336.0,6336.0,,,EUR,projected,,,97389.0,1
+IS,Iceland,2027,6513.0,6513.0,,,EUR,projected,,,100107.0,1
+IS,Iceland,2028,6672.0,6672.0,,,EUR,projected,,,102562.0,1
 IS,Iceland,2029,6847.0,6847.0,,,EUR,projected,,,105246.0,1
 IS,Iceland,2030,7028.0,7028.0,,,EUR,projected,,,108032.0,1
 IS,Iceland,2031,7213.0,7213.0,,,EUR,projected,,,110872.0,1
-NO,Norway,2026,4788.0,7317.0,,,EUR,projected,,,93698.0,1
-NO,Norway,2027,4789.0,7319.0,,,EUR,projected,,,93721.0,1
-NO,Norway,2028,4763.0,7279.0,,,EUR,projected,,,93206.0,1
+NO,Norway,2026,4788.0,4788.0,,,EUR,projected,,,93698.0,1
+NO,Norway,2027,4789.0,4789.0,,,EUR,projected,,,93721.0,1
+NO,Norway,2028,4763.0,4763.0,,,EUR,projected,,,93206.0,1
 NO,Norway,2029,4743.0,4743.0,,,EUR,projected,,,92819.0,1
 NO,Norway,2030,4740.0,4740.0,,,EUR,projected,,,92760.0,1
 NO,Norway,2031,4749.0,4749.0,,,EUR,projected,,,92944.0,1
-SE,Sweden,2026,4245.0,6357.0,,,EUR,projected,,,62546.0,1
-SE,Sweden,2027,4403.0,6593.0,,,EUR,projected,,,64875.0,1
-SE,Sweden,2028,4592.0,6876.0,,,EUR,projected,,,67654.0,1
+SE,Sweden,2026,4245.0,4245.0,,,EUR,projected,,,62546.0,1
+SE,Sweden,2027,4403.0,4403.0,,,EUR,projected,,,64875.0,1
+SE,Sweden,2028,4592.0,4592.0,,,EUR,projected,,,67654.0,1
 SE,Sweden,2029,4763.0,4763.0,,,EUR,projected,,,70175.0,1
 SE,Sweden,2030,4947.0,4947.0,,,EUR,projected,,,72878.0,1
 SE,Sweden,2031,5129.0,5129.0,,,EUR,projected,,,75567.0,1
-CH,Switzerland,2026,8242.0,12834.0,,,EUR,projected,,,111663.0,1
-CH,Switzerland,2027,8494.0,13226.0,,,EUR,projected,,,115077.0,1
-CH,Switzerland,2028,8797.0,13698.0,,,EUR,projected,,,119187.0,1
+CH,Switzerland,2026,8242.0,8242.0,,,EUR,projected,,,111663.0,1
+CH,Switzerland,2027,8494.0,8494.0,,,EUR,projected,,,115077.0,1
+CH,Switzerland,2028,8797.0,8797.0,,,EUR,projected,,,119187.0,1
 CH,Switzerland,2029,9069.0,9069.0,,,EUR,projected,,,122874.0,1
 CH,Switzerland,2030,9407.0,9407.0,,,EUR,projected,,,127452.0,1
 CH,Switzerland,2031,9699.0,9699.0,,,EUR,projected,,,131403.0,1
-GB,United Kingdom,2026,4805.0,6579.0,,,EUR,projected,,,54033.0,1
-GB,United Kingdom,2027,5013.0,6863.0,,,EUR,projected,,,56376.0,1
-GB,United Kingdom,2028,5227.0,7156.0,,,EUR,projected,,,58779.0,1
+GB,United Kingdom,2026,4805.0,4805.0,,,EUR,projected,,,54033.0,1
+GB,United Kingdom,2027,5013.0,5013.0,,,EUR,projected,,,56376.0,1
+GB,United Kingdom,2028,5227.0,5227.0,,,EUR,projected,,,58779.0,1
 GB,United Kingdom,2029,5453.0,5453.0,,,EUR,projected,,,61318.0,1
 GB,United Kingdom,2030,5705.0,5705.0,,,EUR,projected,,,64161.0,1
 GB,United Kingdom,2031,5962.0,5962.0,,,EUR,projected,,,67046.0,1
-BG,Bulgaria,2025,1402.0,1777.0,,,EUR,projected,,,18060,1
-BG,Bulgaria,2026,1639.0,2077.0,,,EUR,projected,,,21105.0,1
-BG,Bulgaria,2027,1767.0,2239.0,,,EUR,projected,,,22757.0,1
-BG,Bulgaria,2028,1915.0,2427.0,,,EUR,projected,,,24660.0,1
+BG,Bulgaria,2025,1402.0,1402.0,,,EUR,projected,,,18060,1
+BG,Bulgaria,2026,1639.0,1639.0,,,EUR,projected,,,21105.0,1
+BG,Bulgaria,2027,1767.0,1767.0,,,EUR,projected,,,22757.0,1
+BG,Bulgaria,2028,1915.0,1915.0,,,EUR,projected,,,24660.0,1
 BG,Bulgaria,2029,2037.0,2037.0,,,EUR,projected,,,26228.0,1
 BG,Bulgaria,2030,2174.0,2174.0,,,EUR,projected,,,28000.0,1
 BG,Bulgaria,2031,2311.0,2311.0,,,EUR,projected,,,29757.0,1
-RO,Romania,2025,1791.0,1976.0,,,EUR,projected,,,19960,1
-RO,Romania,2026,2040.0,2251.0,,,EUR,projected,,,22737.0,1
-RO,Romania,2027,2184.0,2409.0,,,EUR,projected,,,24335.0,1
-RO,Romania,2028,2352.0,2595.0,,,EUR,projected,,,26213.0,1
+RO,Romania,2025,1791.0,1791.0,,,EUR,projected,,,19960,1
+RO,Romania,2026,2040.0,2040.0,,,EUR,projected,,,22737.0,1
+RO,Romania,2027,2184.0,2184.0,,,EUR,projected,,,24335.0,1
+RO,Romania,2028,2352.0,2352.0,,,EUR,projected,,,26213.0,1
 RO,Romania,2029,2508.0,2508.0,,,EUR,projected,,,27948.0,1
 RO,Romania,2030,2676.0,2676.0,,,EUR,projected,,,29815.0,1
 RO,Romania,2031,2845.0,2845.0,,,EUR,projected,,,31707.0,1
-HR,Croatia,2025,2186.0,2341.0,,,EUR,projected,,,23950,1
-HR,Croatia,2026,2426.0,2598.0,,,EUR,projected,,,26576.0,1
-HR,Croatia,2027,2547.0,2728.0,,,EUR,projected,,,27895.0,1
-HR,Croatia,2028,2657.0,2846.0,,,EUR,projected,,,29106.0,1
+HR,Croatia,2025,2186.0,2186.0,,,EUR,projected,,,23950,1
+HR,Croatia,2026,2426.0,2426.0,,,EUR,projected,,,26576.0,1
+HR,Croatia,2027,2547.0,2547.0,,,EUR,projected,,,27895.0,1
+HR,Croatia,2028,2657.0,2657.0,,,EUR,projected,,,29106.0,1
 HR,Croatia,2029,2776.0,2776.0,,,EUR,projected,,,30405.0,1
 HR,Croatia,2030,2902.0,2902.0,,,EUR,projected,,,31791.0,1
 HR,Croatia,2031,3034.0,3034.0,,,EUR,projected,,,33238.0,1
@@ -1535,9 +1535,9 @@ BA,Bosnia & Herz.,2028,1184.0,1184.0,,,EUR,projected,,,10585.0,1
 BA,Bosnia & Herz.,2029,1251.0,1251.0,,,EUR,projected,,,11185.0,1
 BA,Bosnia & Herz.,2030,1321.0,1321.0,,,EUR,projected,,,11808.0,1
 BA,Bosnia & Herz.,2031,1394.0,1394.0,,,EUR,projected,,,12464.0,1
-CY,Cyprus,2026,2524.0,2912.0,,,EUR,projected,,,40185.0,1
-CY,Cyprus,2027,2618.0,3020.0,,,EUR,projected,,,41674.0,1
-CY,Cyprus,2028,2746.0,3168.0,,,EUR,projected,,,43713.0,1
+CY,Cyprus,2026,2524.0,2524.0,,,EUR,projected,,,40185.0,1
+CY,Cyprus,2027,2618.0,2618.0,,,EUR,projected,,,41674.0,1
+CY,Cyprus,2028,2746.0,2746.0,,,EUR,projected,,,43713.0,1
 CY,Cyprus,2029,2885.0,2885.0,,,EUR,projected,,,45926.0,1
 CY,Cyprus,2030,3028.0,3028.0,,,EUR,projected,,,48209.0,1
 CY,Cyprus,2031,3179.0,3179.0,,,EUR,projected,,,50603.0,1
@@ -1554,9 +1554,9 @@ ME,Montenegro,2028,1472.0,1472.0,,,EUR,projected,,,16114.0,1
 ME,Montenegro,2029,1550.0,1550.0,,,EUR,projected,,,16972.0,1
 ME,Montenegro,2030,1630.0,1630.0,,,EUR,projected,,,17849.0,1
 ME,Montenegro,2031,1715.0,1715.0,,,EUR,projected,,,18774.0,1
-MT,Malta,2026,3204.0,3714.0,,,EUR,projected,,,47399.0,1
-MT,Malta,2027,3325.0,3854.0,,,EUR,projected,,,49188.0,1
-MT,Malta,2028,3456.0,4006.0,,,EUR,projected,,,51133.0,1
+MT,Malta,2026,3204.0,3204.0,,,EUR,projected,,,47399.0,1
+MT,Malta,2027,3325.0,3325.0,,,EUR,projected,,,49188.0,1
+MT,Malta,2028,3456.0,3456.0,,,EUR,projected,,,51133.0,1
 MT,Malta,2029,3603.0,3603.0,,,EUR,projected,,,53313.0,1
 MT,Malta,2030,3763.0,3763.0,,,EUR,projected,,,55666.0,1
 MT,Malta,2031,3933.0,3933.0,,,EUR,projected,,,58183.0,1
@@ -1566,7 +1566,7 @@ RS,Serbia,2028,1613.0,1613.0,,,EUR,projected,,,18018.0,1
 RS,Serbia,2029,1733.0,1733.0,,,EUR,projected,,,19362.0,1
 RS,Serbia,2030,1863.0,1863.0,,,EUR,projected,,,20816.0,1
 RS,Serbia,2031,2003.0,2003.0,,,EUR,projected,,,22382.0,1
-TR,Turkey,2024,1264.0,1518.0,,,EUR,projected,,,14140,1
+TR,Turkey,2024,1264.0,1264.0,,,EUR,projected,,,14140,1
 TR,Turkey,2025,1472.0,1472.0,,,EUR,projected,,,16470.0,1
 TR,Turkey,2026,1504.0,1504.0,,,EUR,projected,,,16830.0,1
 TR,Turkey,2027,1487.0,1487.0,,,EUR,projected,,,16642.0,1

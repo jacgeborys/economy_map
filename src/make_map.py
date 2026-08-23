@@ -146,8 +146,7 @@ wage_lookup = {}   # iso2 -> {year: wage_eur}
 for _, row in wages_df.iterrows():
     iso2 = row["iso2"]
     yr   = int(row["year"])
-    norm = row.get("wage_norm_eur")
-    w    = norm if (norm is not None and pd.notna(norm) and norm != "") else row["wage_monthly_eur"]
+    w    = row["wage_monthly_eur"]
     if pd.notna(w) and w != "":
         wage_lookup.setdefault(iso2, {})[yr] = float(w)
 

@@ -1066,7 +1066,8 @@ def fetch_oecd_hours():
     """
     Average Annual Hours Actually Worked per Worker (OECD ANHRS dataset).
     Returns: {iso2: {year: annual_hours}}  — 33 European countries, 1990-2025.
-    Countries not covered keep wage_norm_eur = wage_monthly_eur (no adjustment).
+    Only used to normalise eurostat_d11emp rows (D11 / SAL_DC headcount).
+    National-office, OECD, and Wikipedia sources skip normalisation entirely.
     """
     ISO3_TO_ISO2 = {
         "AUT":"AT","BEL":"BE","BGR":"BG","HRV":"HR","CYP":"CY","CZE":"CZ",
@@ -2273,22 +2274,30 @@ def main():
 
     # 10. Normalise wages to a standard 40h/week using OECD annual hours data.
     # wage_norm_eur = wage_monthly_eur × (2080 / annual_hours)
-    # where 2080 = 40h × 52 weeks.  Falls back to wage_monthly_eur when no hours data.
+    # where 2080 = 40h × 52 weeks.
+    #
+    # ONLY applied to eurostat_d11emp rows: D11 / SAL_DC headcount includes
+    # part-timers in the denominator, understating full-time-equivalent wages.
+    # National-office, oecd, and wikipedia sources already express per-worker
+    # wages on a (near) full-time basis → skip normalisation for those.
     STANDARD_HOURS = 2080  # 40h × 52 weeks
     for r in all_rows:
         w = r.get("wage_monthly_eur")
         if not w or w == "":
             r["wage_norm_eur"] = ""
             continue
+        src = r.get("source", "")
+        # Only normalise headcount-diluted Eurostat D11/SAL_DC figures
+        if src != "eurostat_d11emp":
+            r["wage_norm_eur"] = round(float(w), 0)
+            continue
         iso2 = r["iso2"]
         yr   = int(r["year"])
         iso_hours = hours_data.get(iso2, {})
-        # Use exact year if available, else nearest year within ±3 years
+        # Use exact year if available, else nearest available year (no distance limit)
         h = iso_hours.get(yr)
-        if h is None:
-            candidates = {y: v for y, v in iso_hours.items() if abs(y - yr) <= 3}
-            if candidates:
-                h = candidates[min(candidates, key=lambda y: abs(y - yr))]
+        if h is None and iso_hours:
+            h = iso_hours[min(iso_hours, key=lambda y: abs(y - yr))]
         if h and h > 0:
             r["wage_norm_eur"] = round(float(w) * STANDARD_HOURS / h, 0)
         else:

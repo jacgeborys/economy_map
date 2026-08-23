@@ -36,8 +36,7 @@ print(f"  {len(all_rows)} total rows, {len(rows)} historical")
 
 # Use hours-normalised wage as primary value where available
 for r in all_rows:
-    if r.get("wage_norm_eur") not in (None, ""):
-        r["wage_monthly_eur"] = r["wage_norm_eur"]
+    pass  # use wage_monthly_eur directly (wage_norm_eur kept as informational column only)
 
 # Rebuild gdp_data dict for the scatter chart
 gdp_data = {}
