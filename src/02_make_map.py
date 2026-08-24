@@ -55,14 +55,17 @@ BBOX_3035  = (2_500_000, 1_100_000, 6_000_000, 5_600_000)
 CRS        = "EPSG:3035"
 
 SMALL_LABEL_ISOS = {"ME", "XK", "LU", "SI", "AD", "SM", "MT", "LI",
-                    "CY", "MD", "MK", "BA", "RS", "HR", "SK", "EE",
+                    "MD", "MK", "BA", "RS", "HR", "SK", "EE",
                     "LV", "LT", "AL", "GE", "AM", "AZ", "IS"}
+
+# Countries to skip map labels for (too small / off-screen after crop)
+SKIP_MAP_LABELS = {"CY"}
 
 # Labels pulled inward for countries cropped at edges
 LABEL_OVERRIDES = {
     "RU": (5_600_000, 3_900_000),
-    "NO": (4_124_000, 4_372_000),
-    "TR": (5_100_000, 1_700_000),
+    "NO": (4_224_000, 4_372_000),
+    "TR": (4_800_000, 1_850_000),
 }
 
 # 1920×1080 at DPI=100
@@ -83,34 +86,36 @@ FORECAST_START = 2026
 # ── chart config ───────────────────────────────────────────────────────────
 # Countries to show on the right-panel chart (convergence story)
 CHART_COUNTRIES = [
-    "CH", "NO", "DE", "AT",         # top tier
-    "FR", "GB",                      # western
-    "PL", "CZ", "LT", "SK",         # converging
-    "ES", "IT", "GR",               # southern
-    "RU", "BY", "UA",               # eastern
+    "CH", "NO", "SE", "DE", "NL", "AT",  # top tier
+    "FR", "GB",                            # western
+    "PL", "CZ", "LT",                     # converging
+    "ES", "IT", "GR",                      # southern
+    "RU", "BY", "UA",                      # eastern
 ]
 
 CHART_COLORS = {
-    "CH": "#C0C0C0", "NO": "#B22222", "DE": "#FFFFFF", "AT": "#9400D3",
+    "CH": "#C0C0C0", "NO": "#B22222", "SE": "#1874CD", "DE": "#FFFFFF",
+    "NL": "#FF8C00", "AT": "#9400D3",
     "FR": "#2E8B57", "GB": "#4682B4",
-    "PL": "#DC143C", "CZ": "#1E90FF", "LT": "#32CD32", "SK": "#6A5ACD",
+    "PL": "#DC143C", "CZ": "#1E90FF", "LT": "#32CD32",
     "ES": "#DAA520", "IT": "#FF6347", "GR": "#00CED1",
     "RU": "#4169E1", "BY": "#8B0000", "UA": "#FFD700",
 }
 
 CHART_NAMES = {
-    "CH": "Switzerland", "NO": "Norway", "DE": "Germany", "AT": "Austria",
+    "CH": "Switzerland", "NO": "Norway", "SE": "Sweden", "DE": "Germany",
+    "NL": "Netherlands", "AT": "Austria",
     "FR": "France", "GB": "UK",
-    "PL": "Poland", "CZ": "Czechia", "LT": "Lithuania", "SK": "Slovakia",
+    "PL": "Poland", "CZ": "Czechia", "LT": "Lithuania",
     "ES": "Spain", "IT": "Italy", "GR": "Greece",
     "RU": "Russia", "BY": "Belarus", "UA": "Ukraine",
 }
 
 # Population in millions (for line thickness)
 POPULATION = {
-    "CH": 8.8, "NO": 5.5, "DE": 84.5, "AT": 9.1,
+    "CH": 8.8, "NO": 5.5, "SE": 10.5, "DE": 84.5, "NL": 17.9, "AT": 9.1,
     "FR": 68.2, "GB": 67.7,
-    "PL": 37.6, "CZ": 10.9, "LT": 2.9, "SK": 5.4,
+    "PL": 37.6, "CZ": 10.9, "LT": 2.9,
     "ES": 48.0, "IT": 58.9, "GR": 10.4,
     "RU": 144.0, "BY": 9.2, "UA": 37.0,
 }
@@ -318,6 +323,8 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
     for iso2, pt in label_points.items():
         if iso2 in blob_isos and iso2 != "RS":
             continue
+        if iso2 in SKIP_MAP_LABELS:
+            continue
         wage = frame_wages.get(iso2)
         if wage is not None:
             val = int(round(wage / 50) * 50)
@@ -387,7 +394,18 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
     ax_chart = fig.add_axes([0.58, 0.05, 0.37, 0.90])
     ax_chart.set_facecolor(BG_COLOR)
     ax_chart.set_xlim(START_YEAR - 0.5, END_YEAR + 2.0)
-    ax_chart.set_ylim(0, CHART_YMAX)
+
+    # Dynamic y-scale: tallest visible line + headroom, capped at CHART_YMAX
+    chart_max_visible = 0
+    for iso2 in CHART_COUNTRIES:
+        if iso2 not in chart_series:
+            continue
+        for t, w in chart_series[iso2]:
+            if t <= t_frac:
+                chart_max_visible = max(chart_max_visible, w)
+    dyn_ymax = min(chart_max_visible + 200, CHART_YMAX)
+    dyn_ymax = max(dyn_ymax, 1000)  # floor
+    ax_chart.set_ylim(0, dyn_ymax)
 
     # Projection shading
     ax_chart.axvspan(FORECAST_START - 0.5, END_YEAR + 3, alpha=0.06, color="gray")
@@ -437,7 +455,9 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
     # Place end labels (sorted top to bottom, nudged to avoid overlap)
     end_labels.sort(key=lambda x: -x[0])
     label_x = t_frac + 0.3
-    min_gap = CHART_YMAX * 0.020
+    min_gap = dyn_ymax * 0.016
+
+    # First pass: push down to avoid overlaps
     placed_ys = []
     for y_val, name, color in end_labels:
         nudged = y_val
@@ -446,20 +466,31 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
                 nudged = py - min_gap
         placed_ys.append(nudged)
 
+    # Second pass: push up any labels that fell below the floor
+    floor = min_gap * 0.5
+    for i in range(len(placed_ys) - 1, -1, -1):
+        if placed_ys[i] < floor:
+            placed_ys[i] = floor
+        if i < len(placed_ys) - 1 and placed_ys[i] - placed_ys[i + 1] < min_gap:
+            placed_ys[i] = placed_ys[i + 1] + min_gap
+
+    # Draw labels and leader lines
+    for i_lbl, (y_val, name, color) in enumerate(end_labels):
+        nudged = placed_ys[i_lbl]
+
         # Smooth label position across frames to prevent jitter
         if name in prev_label_positions:
             nudged = prev_label_positions[name] + LABEL_SMOOTH * (nudged - prev_label_positions[name])
         prev_label_positions[name] = nudged
 
         ax_chart.text(label_x, nudged, name,
-                      fontsize=7, color=color, va="center",
+                      fontsize=6.5, color=color, va="center",
                       fontfamily=LABEL_FONT, fontweight="bold",
                       alpha=0.9, clip_on=False)
 
         # Leader line when label is nudged away from data point
         offset = abs(nudged - y_val)
         if offset > min_gap * 0.5:
-            # Small dot at the data point, line to the label
             ax_chart.plot(t_frac, y_val, "o", color=color,
                           markersize=2.5, alpha=0.5, clip_on=True)
             ax_chart.plot([t_frac, label_x - 0.2],
