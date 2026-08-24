@@ -51,7 +51,7 @@ BBOX_WGS84 = (-12, 33, 46, 72)
 
 # Display extent in EPSG:3035 (Lambert Azimuthal Equal Area)
 # Cropped: no Canary Islands (left), less Russia/Turkey (right)
-BBOX_3035  = (2_300_000, 1_100_000, 6_200_000, 5_600_000)
+BBOX_3035  = (2_500_000, 1_100_000, 6_000_000, 5_600_000)
 CRS        = "EPSG:3035"
 
 SMALL_LABEL_ISOS = {"ME", "XK", "LU", "SI", "AD", "SM", "MT", "LI",
@@ -60,9 +60,9 @@ SMALL_LABEL_ISOS = {"ME", "XK", "LU", "SI", "AD", "SM", "MT", "LI",
 
 # Labels pulled inward for countries cropped at edges
 LABEL_OVERRIDES = {
-    "RU": (5_800_000, 3_900_000),
+    "RU": (5_600_000, 3_900_000),
     "NO": (4_124_000, 4_372_000),
-    "TR": (5_200_000, 1_700_000),
+    "TR": (5_100_000, 1_700_000),
 }
 
 # 1920×1080 at DPI=100
@@ -283,8 +283,8 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
     # Missing countries
     no_data = gdf[gdf["wage"].isna()]
     if not no_data.empty:
-        no_data.dissolve().plot(ax=ax_map, color=MISSING_CLR,
-                                edgecolor=BORDER_CLR, linewidth=0.4)
+        no_data.plot(ax=ax_map, color=MISSING_CLR,
+                     edgecolor=BORDER_CLR, linewidth=0.4)
 
     # Countries with data
     has_data = gdf[gdf["wage"].notna()].copy()
@@ -374,7 +374,7 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
                 linewidth=0.4, alpha=0.15, solid_capstyle="butt")
 
     # ── RIGHT PANEL: chart ───────────────────────────────────────────────
-    ax_chart = fig.add_axes([0.60, 0.08, 0.38, 0.82])
+    ax_chart = fig.add_axes([0.60, 0.05, 0.38, 0.90])
     ax_chart.set_facecolor(BG_COLOR)
     ax_chart.set_xlim(START_YEAR - 0.5, END_YEAR + 2.5)
     ax_chart.set_ylim(0, CHART_YMAX)
@@ -427,7 +427,7 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
     # Place end labels (sorted top to bottom, nudged to avoid overlap)
     end_labels.sort(key=lambda x: -x[0])
     label_x = t_frac + 0.3
-    min_gap = CHART_YMAX * 0.028
+    min_gap = CHART_YMAX * 0.020
     placed_ys = []
     for y_val, name, color in end_labels:
         nudged = y_val
@@ -439,6 +439,12 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
                       fontsize=7, color=color, va="center",
                       fontfamily=LABEL_FONT, fontweight="bold",
                       alpha=0.9, clip_on=False)
+        # Leader line when label is nudged far from data point
+        if abs(nudged - y_val) > min_gap * 0.4:
+            ax_chart.plot([t_frac + 0.05, label_x - 0.15],
+                          [y_val, nudged],
+                          color=color, linewidth=0.5, alpha=0.4,
+                          clip_on=False)
 
     # Chart styling
     ax_chart.set_ylabel("EUR / month", color="#aaaacc", fontsize=8, labelpad=8)
@@ -449,7 +455,7 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
     ax_chart.spines["right"].set_visible(False)
     ax_chart.grid(True, alpha=0.12, color="white")
     ax_chart.set_title("Wage Convergence + Projection",
-                       color="white", fontsize=10, fontweight="bold", pad=10)
+                       color="white", fontsize=10, fontweight="bold", pad=4)
 
     # ── save frame ───────────────────────────────────────────────────────
     frame_path = os.path.join(FRAMES, f"frame_{idx:05d}.png")
