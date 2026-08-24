@@ -27,6 +27,7 @@ src/
   01_fetch_wages.py          Fetch all APIs → data/raw/oecd_wages_europe.csv + charts
   02_make_map.py             Animated choropleth → output/frames/ + europe_wages.mp4
   03_make_coverage_table.py  HTML source coverage table → output/coverage_table.html
+  04_make_gif.py             Convert MP4 → optimized GIF for Reddit upload
 
 data/raw/
   oecd_wages_europe.csv  Combined output (~1,565 rows: historical + projected to 2031)
@@ -38,6 +39,7 @@ data/
 
 output/
   europe_wages.mp4       Animated choropleth (1995-2031)
+  europe_wages.gif       Reddit-optimized GIF (960px, 12fps)
   coverage_table.html    Source coverage matrix
   charts/
     europe_01_poland_neighbors.png     Poland + neighbors + Western Europe
@@ -114,6 +116,9 @@ uv pip install requests matplotlib openpyxl geopandas imageio[ffmpeg]
 
 # 3. Generate source coverage HTML table
 .venv/Scripts/python src/03_make_coverage_table.py
+
+# 4. Convert MP4 to GIF for Reddit
+.venv/Scripts/python src/04_make_gif.py
 ```
 
 ## Next Steps
