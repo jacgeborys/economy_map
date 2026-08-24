@@ -64,7 +64,7 @@ SKIP_MAP_LABELS = {"CY"}
 # Labels pulled inward for countries cropped at edges
 LABEL_OVERRIDES = {
     "RU": (5_600_000, 3_900_000),
-    "NO": (4_224_000, 4_372_000),
+    "NO": (4_224_000, 4_222_000),
     "TR": (4_800_000, 1_850_000),
 }
 
@@ -290,8 +290,8 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
     fig = plt.figure(figsize=(FIG_W, FIG_H), facecolor=BG_COLOR)
 
     # ── LEFT PANEL: map ──────────────────────────────────────────────────
-    ax_map   = fig.add_axes([0.00, 0.02, 0.50, 0.96])
-    cbar_ax  = fig.add_axes([0.515, 0.18, 0.010, 0.58])
+    ax_map   = fig.add_axes([0.01, 0.02, 0.52, 0.96])
+    cbar_ax  = fig.add_axes([0.535, 0.18, 0.010, 0.58])
     ax_map.set_facecolor(BG_COLOR)
     ax_map.axis("off")
 
@@ -343,8 +343,8 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
 
     # Colorbar
     cbar = fig.colorbar(sm, cax=cbar_ax)
-    cbar_ax.yaxis.set_tick_params(color="white", labelsize=5)
-    plt.setp(cbar_ax.yaxis.get_ticklabels(), color="white", fontsize=5)
+    cbar_ax.yaxis.set_tick_params(color="white", labelsize=6)
+    plt.setp(cbar_ax.yaxis.get_ticklabels(), color="white", fontsize=6)
     cbar_ax.set_facecolor(BG_COLOR)
 
     # Year + month (on map)
@@ -363,16 +363,16 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
                     transform=ax_map.transAxes,
                     fontsize=6.5, color="#ffdd44", alpha=0.7, va="top")
 
-    # Title (on map)
-    ax_map.text(0.5, 0.975,
+    # Title (on map, left-aligned)
+    ax_map.text(0.02, 0.975,
                 "European Average Monthly Gross Wage",
                 transform=ax_map.transAxes,
                 fontsize=11, color="white", alpha=0.9,
-                ha="center", va="top", fontweight="bold")
-    ax_map.text(0.5, 0.948,
+                ha="left", va="top", fontweight="bold")
+    ax_map.text(0.02, 0.948,
                 "Nominal EUR  |  Sources: national offices, Eurostat D11, OECD, ONS",
                 transform=ax_map.transAxes,
-                fontsize=6.5, color="#aaaacc", alpha=0.8, ha="center", va="top")
+                fontsize=6.5, color="#aaaacc", alpha=0.8, ha="left", va="top")
 
     # Country count
     n = int(gdf["wage"].notna().sum())
@@ -393,9 +393,9 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
                 linewidth=0.4, alpha=0.15, solid_capstyle="butt")
 
     # ── RIGHT PANEL: chart ───────────────────────────────────────────────
-    ax_chart = fig.add_axes([0.61, 0.05, 0.34, 0.90])
+    ax_chart = fig.add_axes([0.60, 0.05, 0.32, 0.90])
     ax_chart.set_facecolor(BG_COLOR)
-    ax_chart.set_xlim(START_YEAR - 0.5, END_YEAR + 2.0)
+    ax_chart.set_xlim(START_YEAR - 0.5, END_YEAR + 3.0)
 
     # Dynamic y-scale: tallest visible line + headroom, capped at CHART_YMAX
     chart_max_visible = 0
@@ -452,16 +452,35 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
             ax_chart.plot(proj_t, proj_w, "--", color=color, linewidth=lw, alpha=0.7)
 
         # End label at the tip of the visible line
-        end_labels.append((ws[-1], name, color))
+        end_labels.append((ws[-1], name, color, iso2))
 
     # Place end labels (sorted top to bottom, nudged to avoid overlap)
     end_labels.sort(key=lambda x: -x[0])
     label_x = t_frac + 0.3
     min_gap = dyn_ymax * 0.016
 
+    # Separate out-of-range labels (above dyn_ymax) — pin at top with value
+    top_labels = []   # labels pinned at chart top
+    chart_labels = [] # labels within chart range
+    for y_val, name, color, iso2 in end_labels:
+        if y_val > dyn_ymax * 0.97:
+            top_labels.append((y_val, name, color, iso2))
+        else:
+            chart_labels.append((y_val, name, color, iso2))
+
+    # Pin top labels at the chart ceiling with value in brackets
+    for i_top, (y_val, name, color, iso2) in enumerate(top_labels):
+        val = int(round(y_val / 50) * 50)
+        label_txt = f"{name} (€{val:,})"
+        pin_y = dyn_ymax - min_gap * i_top
+        ax_chart.text(label_x, pin_y, label_txt,
+                      fontsize=6.5, color=color, va="center",
+                      fontfamily=LABEL_FONT, fontweight="bold",
+                      alpha=0.9, clip_on=False)
+
     # First pass: push down to avoid overlaps
     placed_ys = []
-    for y_val, name, color in end_labels:
+    for y_val, name, color, iso2 in chart_labels:
         nudged = y_val
         for py in placed_ys:
             if abs(nudged - py) < min_gap:
@@ -477,7 +496,7 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
             placed_ys[i] = placed_ys[i + 1] + min_gap
 
     # Draw labels and leader lines
-    for i_lbl, (y_val, name, color) in enumerate(end_labels):
+    for i_lbl, (y_val, name, color, iso2) in enumerate(chart_labels):
         nudged = placed_ys[i_lbl]
 
         # Smooth label position across frames to prevent jitter
@@ -501,7 +520,7 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
                           clip_on=False)
 
     # Chart styling
-    ax_chart.set_ylabel("EUR / month", color="#aaaacc", fontsize=6, labelpad=4)
+    ax_chart.set_ylabel("")
     ax_chart.tick_params(colors="#aaaacc", labelsize=7)
     ax_chart.spines["bottom"].set_color("#333355")
     ax_chart.spines["left"].set_color("#333355")
