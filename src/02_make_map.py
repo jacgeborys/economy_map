@@ -68,10 +68,10 @@ LABEL_OVERRIDES = {
     "TR": (4_800_000, 1_850_000),
 }
 
-# 1920×1080 at DPI=100
-FIG_W    = 19.20   # inches
-FIG_H    = 10.80
-DPI      = 100
+# 1920×1080 at DPI=150 (sharper text)
+FIG_W    = 12.80   # inches (12.80 × 150 = 1920)
+FIG_H    = 7.20    # inches (7.20  × 150 = 1080)
+DPI      = 150
 
 CLOCK_FONT = "Consolas"
 LABEL_FONT = "DejaVu Sans"
@@ -290,8 +290,8 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
     fig = plt.figure(figsize=(FIG_W, FIG_H), facecolor=BG_COLOR)
 
     # ── LEFT PANEL: map ──────────────────────────────────────────────────
-    ax_map   = fig.add_axes([0.00, 0.02, 0.52, 0.96])
-    cbar_ax  = fig.add_axes([0.525, 0.18, 0.012, 0.58])
+    ax_map   = fig.add_axes([0.00, 0.02, 0.50, 0.96])
+    cbar_ax  = fig.add_axes([0.515, 0.18, 0.010, 0.58])
     ax_map.set_facecolor(BG_COLOR)
     ax_map.axis("off")
 
@@ -330,6 +330,9 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
             val = int(round(wage / 50) * 50)
             txt = f"\u20ac{val:,}"
             small = iso2 in SMALL_LABEL_ISOS
+            # Skip labels too close to the right edge (would bleed into chart)
+            if pt.x > BBOX_3035[2] - 150_000:
+                continue
             ax_map.text(pt.x, pt.y, txt,
                         fontsize=7 if small else 8.5,
                         color="white", ha="center", va="center",
@@ -340,24 +343,23 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
 
     # Colorbar
     cbar = fig.colorbar(sm, cax=cbar_ax)
-    cbar.set_label("EUR/month", color="white", fontsize=7)
-    cbar_ax.yaxis.set_tick_params(color="white", labelsize=6)
-    plt.setp(cbar_ax.yaxis.get_ticklabels(), color="white", fontsize=6)
+    cbar_ax.yaxis.set_tick_params(color="white", labelsize=5)
+    plt.setp(cbar_ax.yaxis.get_ticklabels(), color="white", fontsize=5)
     cbar_ax.set_facecolor(BG_COLOR)
 
     # Year + month (on map)
     year_color = "#ffdd44" if is_proj else "white"
-    ax_map.text(0.02, 0.08, str(yr),
+    ax_map.text(0.02, 0.05, str(yr),
                 transform=ax_map.transAxes,
                 fontsize=38, fontweight="bold", color=year_color,
                 alpha=0.95, va="bottom", fontfamily=CLOCK_FONT)
-    ax_map.text(0.02, 0.075, MONTHS[step],
+    ax_map.text(0.02, 0.045, MONTHS[step],
                 transform=ax_map.transAxes,
                 fontsize=11, color=year_color, alpha=0.75, va="top",
                 fontfamily=CLOCK_FONT)
 
     if is_proj:
-        ax_map.text(0.02, 0.055, "PROJECTED  (IMF WEO Apr 2026)",
+        ax_map.text(0.02, 0.025, "PROJECTED  (IMF WEO Apr 2026)",
                     transform=ax_map.transAxes,
                     fontsize=6.5, color="#ffdd44", alpha=0.7, va="top")
 
@@ -391,7 +393,7 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
                 linewidth=0.4, alpha=0.15, solid_capstyle="butt")
 
     # ── RIGHT PANEL: chart ───────────────────────────────────────────────
-    ax_chart = fig.add_axes([0.58, 0.05, 0.37, 0.90])
+    ax_chart = fig.add_axes([0.61, 0.05, 0.34, 0.90])
     ax_chart.set_facecolor(BG_COLOR)
     ax_chart.set_xlim(START_YEAR - 0.5, END_YEAR + 2.0)
 
@@ -499,7 +501,7 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
                           clip_on=False)
 
     # Chart styling
-    ax_chart.set_ylabel("EUR / month", color="#aaaacc", fontsize=8, labelpad=8)
+    ax_chart.set_ylabel("EUR / month", color="#aaaacc", fontsize=6, labelpad=4)
     ax_chart.tick_params(colors="#aaaacc", labelsize=7)
     ax_chart.spines["bottom"].set_color("#333355")
     ax_chart.spines["left"].set_color("#333355")
@@ -527,7 +529,7 @@ frame_files = sorted(
 
 writer = imageio.get_writer(
     video_path, fps=FPS, codec="libx264",
-    pixelformat="yuv420p", output_params=["-crf", "18"],
+    pixelformat="yuv420p", output_params=["-crf", "15"],
 )
 for path in frame_files:
     writer.append_data(imageio.imread(path))
