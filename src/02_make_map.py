@@ -33,9 +33,9 @@ os.makedirs(FRAMES, exist_ok=True)
 # ── config ─────────────────────────────────────────────────────────────────
 START_YEAR   = 1995
 END_YEAR     = 2031
-CMAP         = "plasma"
+CMAP         = "inferno"
 VMIN         = 0
-VMAX         = 8000
+VMAX         = 7000
 BG_COLOR     = "#0d0d1a"
 MISSING_CLR  = "#2a2a3a"
 BORDER_CLR   = "#555577"
@@ -120,7 +120,7 @@ POPULATION = {
     "RU": 144.0, "BY": 9.2, "UA": 37.0,
 }
 
-CHART_YMAX = 8000
+CHART_YMAX = 7000
 
 
 def _line_width(iso2, min_w=0.6, max_w=3.5):
