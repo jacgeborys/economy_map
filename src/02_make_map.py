@@ -35,7 +35,7 @@ START_YEAR   = 1995
 END_YEAR     = 2031
 CMAP         = "plasma"
 VMIN         = 0
-VMAX         = 10000
+VMAX         = 8000
 BG_COLOR     = "#0d0d1a"
 MISSING_CLR  = "#2a2a3a"
 BORDER_CLR   = "#555577"
@@ -115,7 +115,7 @@ POPULATION = {
     "RU": 144.0, "BY": 9.2, "UA": 37.0,
 }
 
-CHART_YMAX = 8500
+CHART_YMAX = 8000
 
 
 def _line_width(iso2, min_w=0.6, max_w=3.5):
@@ -310,7 +310,7 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
             continue
         wage = frame_wages.get(iso2)
         if wage is not None:
-            val = int(round(wage / 100) * 100)
+            val = int(round(wage / 50) * 50)
             txt = f"\u20ac{val:,}"
             small = iso2 in SMALL_LABEL_ISOS
             ax_map.text(pt.x, pt.y, txt,
