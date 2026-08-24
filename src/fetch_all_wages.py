@@ -74,7 +74,7 @@ COLORS = {
 
 # Countries where we have dedicated national office fetchers.
 # These override OECD for the same country.
-NATIONAL_OFFICE_COUNTRIES = {"DE", "PL", "RU", "BY", "UA", "MK", "GE", "AM", "KZ", "AL"}
+NATIONAL_OFFICE_COUNTRIES = {"DE", "PL", "RU", "BY", "UA", "MK", "GE", "AM", "KZ", "AL", "GB"}
 
 # OECD data issues — countries to exclude from OECD
 # Turkey: methodology break in 2009 (values triple overnight), FX conversion unreliable
@@ -406,6 +406,46 @@ def fetch_ilostat_ukraine():
     return result
 
 
+def fetch_ons():
+    """
+    Fetch UK Average Weekly Earnings (total pay, seasonally adjusted) from ONS.
+    Series KAB9: AWE Whole Economy Level (£), SA Total Pay Excluding Arrears.
+    This is the headline UK wage figure — gross pay before tax, excl. employer NIC.
+    Matches the D11 concept used for other European countries.
+    Returns: {year: wage_gbp_weekly}
+    """
+    print("  GB: ONS Average Weekly Earnings (KAB9)...")
+    url = ("https://www.ons.gov.uk/generator?format=csv&uri="
+           "/employmentandlabourmarket/peopleinwork/"
+           "earningsandworkinghours/timeseries/kab9/lms")
+    try:
+        resp = requests.get(url, timeout=30,
+                            headers={"User-Agent": "Mozilla/5.0"})
+    except Exception as e:
+        print(f"    FAILED: {e}")
+        return {}
+    if resp.status_code != 200:
+        print(f"    FAILED: HTTP {resp.status_code}")
+        return {}
+
+    result = {}
+    for line in resp.text.splitlines():
+        parts = [p.strip().strip('"') for p in line.strip().split(",")]
+        if len(parts) >= 2 and parts[0].isdigit():
+            year = int(parts[0])
+            if 1990 <= year <= 2030:
+                try:
+                    result[year] = float(parts[1])
+                except ValueError:
+                    pass
+
+    if result:
+        yrs = sorted(result)
+        print(f"    Got {len(result)} years: {yrs[0]}-{yrs[-1]}, "
+              f"latest={yrs[-1]}: £{result[yrs[-1]]:,.0f}/week")
+    return result
+
+
 def fetch_national_offices(fx_rates):
     """
     Fetch historical data from national statistical offices.
@@ -474,6 +514,13 @@ def fetch_national_offices(fx_rates):
     al_data = fetch_albania(fx_rates)
     if al_data:
         results["AL"] = al_data
+
+    # United Kingdom — ONS AWE (GBP weekly → monthly, FX conversion later)
+    gb_data = fetch_ons()
+    if gb_data:
+        results["GB"] = {yr: {"local": round(v * 52 / 12, 0),
+                               "currency": "GBP", "eur": None}
+                          for yr, v in gb_data.items()}
 
     return results
 
@@ -824,7 +871,7 @@ def fetch_armenia(fx_rates):
         fx_amd_usd = amd_per_usd.get(yr) or amd_per_usd.get(yr - 1)
         fx_usd_eur = usd_per_eur.get(yr)
         if fx_amd_usd and fx_usd_eur:
-            eur = (amd / fx_amd_usd) * fx_usd_eur  # AMD → USD → EUR
+            eur = (amd / fx_amd_usd) / fx_usd_eur  # AMD → USD → EUR
         else:
             eur = None
         result[yr] = {"local": amd, "currency": "AMD",
@@ -898,7 +945,7 @@ def fetch_kazakhstan(fx_rates):
         fx_kzt_usd = kzt_per_usd.get(yr) or kzt_per_usd.get(yr - 1)
         fx_usd_eur = usd_per_eur.get(yr)
         if fx_kzt_usd and fx_usd_eur:
-            eur = (kzt / fx_kzt_usd) * fx_usd_eur  # KZT → USD → EUR
+            eur = (kzt / fx_kzt_usd) / fx_usd_eur  # KZT → USD → EUR
         else:
             eur = None
         result[yr] = {"local": kzt, "currency": "KZT",
@@ -968,7 +1015,7 @@ def fetch_albania(fx_rates):
         fx_all_usd = all_per_usd.get(yr) or all_per_usd.get(yr - 1)
         fx_usd_eur = usd_per_eur.get(yr)
         if fx_all_usd and fx_usd_eur:
-            eur = (all_val / fx_all_usd) * fx_usd_eur  # ALL → USD → EUR
+            eur = (all_val / fx_all_usd) / fx_usd_eur  # ALL → USD → EUR
         else:
             eur = None
         result[yr] = {"local": round(all_val, 0), "currency": "ALL",

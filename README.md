@@ -6,15 +6,14 @@ evolution across all European countries from 1990-2025, with forecast to 2031.
 ## Status
 
 **Data pipeline:** Complete. 48 countries covered (missing only Liechtenstein, Monaco).
-- 10 national office fetchers: DE, PL, RU, BY, UA, MK, GE, AM (Armstat), KZ (BNS), AL (INSTAT)
-- 33 countries from Eurostat D11/employees (primary for non-national-office countries)
-- 1 country from OECD AV_AN_WAGE: GB (no Eurostat D11)
+- 11 national office fetchers: DE, PL, RU, BY, UA, MK, GE, AM (Armstat), KZ (BNS), AL (INSTAT), GB (ONS AWE)
+- 25 countries from Eurostat D11/employees (primary for non-national-office countries)
+- 8 countries from OECD AV_AN_WAGE with D11/headcount overlay
 - GDP per capita from Eurostat + World Bank + IMF WEO (all 48 countries, forecasts to 2031)
-- 5 countries from Wikipedia snapshot only: AD, AZ, SM, TR, XK
+- 4 countries from Wikipedia snapshot only: AD, AZ, SM, XK
 
 **Validation:** All latest values cross-checked against Wikipedia (national office
 headlines). Divergences reported but NOT corrected — no scaling applied.
-Large divergences: IS 1.71x, MT 1.51x, BE 1.26x (D1 vs D11 methodology difference).
 
 **Charts:** Five charts with population-weighted line thickness, end-of-line labels,
 y-axis starting at 0.
@@ -29,7 +28,7 @@ src/
                          + GDP per capita + projections + Wikipedia
 
 data/raw/
-  oecd_wages_europe.csv  Combined output (1,281 rows: 1,071 historical + 210 projected)
+  oecd_wages_europe.csv  Combined output (~1,565 rows: historical + projected to 2031)
   wiki_wages.html        Cached Wikipedia page with source references
   rosstat_tab3.xlsx      Cached Rosstat wage Excel
 
@@ -65,7 +64,8 @@ output/charts/
 
 | Source | Countries | Years | Notes |
 |--------|-----------|-------|-------|
-| OECD AV_AN_WAGE | 1 (GB) | 1990-2025 | SDMX API, D1/FTE — reference column only |
+| ONS AWE (UK) | 1 (GB) | 2000-2025 | KAB9 total pay, £/week → €/month |
+| OECD AV_AN_WAGE | 8 | 1990-2025 | SDMX API, D1/FTE — reference column only |
 | Eurostat nama_10_a10 | ~40 | 1995-2025 | D11 + D1 in CP_MEUR |
 | Eurostat nama_10_a10_e | ~40 | 1995-2025 | SAL_DC employees headcount |
 | Eurostat nama_10_pc | ~38 | 1975-2025 | GDP per capita CP_EUR_HAB |
