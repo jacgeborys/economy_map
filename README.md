@@ -25,9 +25,8 @@ y-axis starting at 0.
 ```
 src/
   01_fetch_wages.py          Fetch all APIs → data/raw/oecd_wages_europe.csv + charts
-  02_make_charts.py          Regenerate charts from CSV (no API calls)
-  03_make_map.py             Animated choropleth → output/frames/ + europe_wages.mp4
-  04_make_coverage_table.py  HTML source coverage table → output/coverage_table.html
+  02_make_map.py             Animated choropleth → output/frames/ + europe_wages.mp4
+  03_make_coverage_table.py  HTML source coverage table → output/coverage_table.html
 
 data/raw/
   oecd_wages_europe.csv  Combined output (~1,565 rows: historical + projected to 2031)
@@ -110,14 +109,11 @@ uv pip install requests matplotlib openpyxl geopandas imageio[ffmpeg]
 # 1. Fetch all data → CSV + 5 charts (~2-3 min, hits OECD/Eurostat/ECB/ONS APIs)
 .venv/Scripts/python src/01_fetch_wages.py
 
-# 2. Regenerate charts only (no API calls, reads existing CSV)
-.venv/Scripts/python src/02_make_charts.py
+# 2. Render animated choropleth → output/europe_wages.mp4 (~10-15 min)
+.venv/Scripts/python src/02_make_map.py
 
-# 3. Render animated choropleth → output/europe_wages.mp4 (~10-15 min)
-.venv/Scripts/python src/03_make_map.py
-
-# 4. Generate source coverage HTML table
-.venv/Scripts/python src/04_make_coverage_table.py
+# 3. Generate source coverage HTML table
+.venv/Scripts/python src/03_make_coverage_table.py
 ```
 
 ## Next Steps
