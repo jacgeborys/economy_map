@@ -72,7 +72,7 @@ SKIP_MAP_LABELS = {"CY"}
 LABEL_OVERRIDES = {
     "RU": (5_600_000, 3_900_000),
     "NO": (4_224_000, 4_222_000),
-    "TR": (4_800_000, 1_850_000),
+    "TR": (5_720_000, 1_960_000),
 }
 
 # 1920×1080 at DPI=150 (sharper text)
@@ -81,7 +81,7 @@ FIG_H    = 7.20    # inches (7.20  × 150 = 1080)
 DPI      = 150
 
 CLOCK_FONT = "Consolas"
-LABEL_FONT = "DejaVu Sans"
+LABEL_FONT = "Consolas"
 
 YUGO_INDEPENDENCE = {
     "SI": 1992, "HR": 1992, "BA": 1992, "MK": 1993,
