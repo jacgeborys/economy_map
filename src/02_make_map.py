@@ -93,7 +93,7 @@ FORECAST_START = 2026
 # ── chart config ───────────────────────────────────────────────────────────
 # Countries to show on the right-panel chart (convergence story)
 CHART_COUNTRIES = [
-    "CH", "NO", "SE", "DE", "NL", "AT",  # top tier
+    "CH", "LU", "NO", "SE", "DE", "NL", "AT",  # top tier
     "FR", "GB",                            # western
     "PL", "CZ", "LT",                     # converging
     "ES", "IT", "GR",                      # southern
@@ -101,8 +101,8 @@ CHART_COUNTRIES = [
 ]
 
 CHART_COLORS = {
-    "CH": "#C0C0C0", "NO": "#B22222", "SE": "#1874CD", "DE": "#FFFFFF",
-    "NL": "#FF8C00", "AT": "#9400D3",
+    "CH": "#C0C0C0", "LU": "#E6B800", "NO": "#B22222", "SE": "#1874CD",
+    "DE": "#FFFFFF", "NL": "#FF8C00", "AT": "#9400D3",
     "FR": "#2E8B57", "GB": "#4682B4",
     "PL": "#DC143C", "CZ": "#1E90FF", "LT": "#32CD32",
     "ES": "#DAA520", "IT": "#FF6347", "GR": "#00CED1",
@@ -110,8 +110,8 @@ CHART_COLORS = {
 }
 
 CHART_NAMES = {
-    "CH": "Switzerland", "NO": "Norway", "SE": "Sweden", "DE": "Germany",
-    "NL": "Netherlands", "AT": "Austria",
+    "CH": "Switzerland", "LU": "Luxembourg", "NO": "Norway", "SE": "Sweden",
+    "DE": "Germany", "NL": "Netherlands", "AT": "Austria",
     "FR": "France", "GB": "UK",
     "PL": "Poland", "CZ": "Czechia", "LT": "Lithuania",
     "ES": "Spain", "IT": "Italy", "GR": "Greece",
@@ -120,7 +120,8 @@ CHART_NAMES = {
 
 # Population in millions (for line thickness)
 POPULATION = {
-    "CH": 8.8, "NO": 5.5, "SE": 10.5, "DE": 84.5, "NL": 17.9, "AT": 9.1,
+    "CH": 8.8, "LU": 0.66, "NO": 5.5, "SE": 10.5, "DE": 84.5,
+    "NL": 17.9, "AT": 9.1,
     "FR": 68.2, "GB": 67.7,
     "PL": 37.6, "CZ": 10.9, "LT": 2.9,
     "ES": 48.0, "IT": 58.9, "GR": 10.4,
@@ -713,7 +714,7 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
                           clip_on=False)
 
     # Chart styling
-    ax_chart.set_ylabel("")
+    ax_chart.set_ylabel("EUR / month", color="#aaaacc", fontsize=7, labelpad=4)
     ax_chart.tick_params(colors="#aaaacc", labelsize=7)
     ax_chart.spines["bottom"].set_color("#333355")
     ax_chart.spines["left"].set_color("#333355")
