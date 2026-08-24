@@ -2,18 +2,22 @@
 make_charts.py — regenerate all output/charts/ without re-fetching any APIs.
 
 Reads data/raw/oecd_wages_europe.csv and calls the plot functions
-imported directly from fetch_all_wages.
+imported directly from 01_fetch_wages.
 """
 import csv
+import importlib
 import os
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
-from fetch_all_wages import (
-    plot_focus, plot_all_europe, plot_ratio_germany,
-    plot_gdp_wage_scatter, plot_projection,
-    DATA_DIR, OUT_DIR,
-)
+_fw = importlib.import_module("01_fetch_wages")
+plot_focus = _fw.plot_focus
+plot_all_europe = _fw.plot_all_europe
+plot_ratio_germany = _fw.plot_ratio_germany
+plot_gdp_wage_scatter = _fw.plot_gdp_wage_scatter
+plot_projection = _fw.plot_projection
+DATA_DIR = _fw.DATA_DIR
+OUT_DIR = _fw.OUT_DIR
 
 csv_path = os.path.join(DATA_DIR, "oecd_wages_europe.csv")
 print(f"Loading {csv_path} ...")

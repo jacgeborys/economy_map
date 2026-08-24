@@ -24,8 +24,10 @@ y-axis starting at 0.
 
 ```
 src/
-  fetch_all_wages.py     Main pipeline: OECD + Eurostat D11 + 5 national offices
-                         + GDP per capita + projections + Wikipedia
+  01_fetch_wages.py          Fetch all APIs → data/raw/oecd_wages_europe.csv + charts
+  02_make_charts.py          Regenerate charts from CSV (no API calls)
+  03_make_map.py             Animated choropleth → output/frames/ + europe_wages.mp4
+  04_make_coverage_table.py  HTML source coverage table → output/coverage_table.html
 
 data/raw/
   oecd_wages_europe.csv  Combined output (~1,565 rows: historical + projected to 2031)
@@ -35,12 +37,15 @@ data/raw/
 data/
   SOURCES_MAP.md         Source reference for all 48 countries
 
-output/charts/
-  europe_01_poland_neighbors.png   Poland + neighbors (DE, AT, CZ, SK, LT, HU, BY, RU, UA)
-  europe_02_all_europe_eur.png     All 48 countries in EUR
-  europe_03_ratio_germany.png      Wages as % of Germany
-  europe_04_gdp_wage_correlation.png  Log-log scatter: GDP per capita vs wage (R²=0.925)
-  europe_05_wage_projection.png    Projection to 2031 for focus countries
+output/
+  europe_wages.mp4       Animated choropleth (1995-2031)
+  coverage_table.html    Source coverage matrix
+  charts/
+    europe_01_poland_neighbors.png     Poland + neighbors + Western Europe
+    europe_02_all_europe_eur.png       All 48 countries in EUR
+    europe_03_ratio_germany.png        Wages as % of Germany
+    europe_04_gdp_wage_correlation.png Log-log scatter: GDP/capita vs wage
+    europe_05_wage_projection.png      Projection to 2031 for focus countries
 ```
 
 ## CSV Columns
@@ -100,10 +105,19 @@ output/charts/
 ```bash
 # Setup
 uv venv .venv
-uv pip install requests matplotlib openpyxl
+uv pip install requests matplotlib openpyxl geopandas imageio[ffmpeg]
 
-# Run full pipeline (fetches data, generates CSV + 5 charts)
-.venv/Scripts/python src/fetch_all_wages.py
+# 1. Fetch all data → CSV + 5 charts (~2-3 min, hits OECD/Eurostat/ECB/ONS APIs)
+.venv/Scripts/python src/01_fetch_wages.py
+
+# 2. Regenerate charts only (no API calls, reads existing CSV)
+.venv/Scripts/python src/02_make_charts.py
+
+# 3. Render animated choropleth → output/europe_wages.mp4 (~10-15 min)
+.venv/Scripts/python src/03_make_map.py
+
+# 4. Generate source coverage HTML table
+.venv/Scripts/python src/04_make_coverage_table.py
 ```
 
 ## Next Steps
