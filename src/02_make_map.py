@@ -247,6 +247,12 @@ for i, yr in enumerate(years):
         is_proj = yr >= FORECAST_START
         t_frac = yr + step / INTERP
         frame_seq.append((yr, step, is_proj, frame_wages, t_frac))
+        # Stop after Jan 2031 — projections are flat beyond this
+        if yr == END_YEAR and step == 0:
+            break
+    else:
+        continue
+    break
 
 hold_count = int(FPS * HOLD_SECS)
 last = frame_seq[-1]
@@ -264,6 +270,10 @@ sm.set_array([])
 
 # ── 6. render frames ─────────────────────────────────────────────────────
 print(f"\nRendering {total} frames (side-by-side map + chart)...")
+
+# Track smoothed label positions across frames for stable leader lines
+prev_label_positions = {}  # name -> smoothed y position
+LABEL_SMOOTH = 0.3         # exponential smoothing factor (0=sticky, 1=instant)
 
 for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
     blob_isos, blob_geom = yugo_blob(yr)
@@ -314,7 +324,7 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
             txt = f"\u20ac{val:,}"
             small = iso2 in SMALL_LABEL_ISOS
             ax_map.text(pt.x, pt.y, txt,
-                        fontsize=5.5 if small else 6.5,
+                        fontsize=7 if small else 8.5,
                         color="white", ha="center", va="center",
                         alpha=0.82 if small else 0.93,
                         fontfamily=LABEL_FONT, fontweight="bold",
@@ -374,9 +384,9 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
                 linewidth=0.4, alpha=0.15, solid_capstyle="butt")
 
     # ── RIGHT PANEL: chart ───────────────────────────────────────────────
-    ax_chart = fig.add_axes([0.60, 0.05, 0.38, 0.90])
+    ax_chart = fig.add_axes([0.58, 0.05, 0.37, 0.90])
     ax_chart.set_facecolor(BG_COLOR)
-    ax_chart.set_xlim(START_YEAR - 0.5, END_YEAR + 2.5)
+    ax_chart.set_xlim(START_YEAR - 0.5, END_YEAR + 2.0)
     ax_chart.set_ylim(0, CHART_YMAX)
 
     # Projection shading
@@ -435,15 +445,26 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
             if abs(nudged - py) < min_gap:
                 nudged = py - min_gap
         placed_ys.append(nudged)
+
+        # Smooth label position across frames to prevent jitter
+        if name in prev_label_positions:
+            nudged = prev_label_positions[name] + LABEL_SMOOTH * (nudged - prev_label_positions[name])
+        prev_label_positions[name] = nudged
+
         ax_chart.text(label_x, nudged, name,
                       fontsize=7, color=color, va="center",
                       fontfamily=LABEL_FONT, fontweight="bold",
                       alpha=0.9, clip_on=False)
-        # Leader line when label is nudged far from data point
-        if abs(nudged - y_val) > min_gap * 0.4:
-            ax_chart.plot([t_frac + 0.05, label_x - 0.15],
+
+        # Leader line when label is nudged away from data point
+        offset = abs(nudged - y_val)
+        if offset > min_gap * 0.5:
+            # Small dot at the data point, line to the label
+            ax_chart.plot(t_frac, y_val, "o", color=color,
+                          markersize=2.5, alpha=0.5, clip_on=True)
+            ax_chart.plot([t_frac, label_x - 0.2],
                           [y_val, nudged],
-                          color=color, linewidth=0.5, alpha=0.4,
+                          color=color, linewidth=0.6, alpha=0.35,
                           clip_on=False)
 
     # Chart styling
