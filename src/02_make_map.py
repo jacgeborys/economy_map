@@ -11,6 +11,7 @@ Outputs:
   output/frames/frame_NNNNN.png  — one PNG per interpolated step
   output/europe_wages.mp4        — stitched animation (via imageio-ffmpeg)
 """
+import argparse
 import math
 import os
 import requests
@@ -22,6 +23,12 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import imageio.v2 as imageio
+
+# ── CLI ───────────────────────────────────────────────────────────────────
+_parser = argparse.ArgumentParser()
+_parser.add_argument("--preview", nargs="+", metavar="CMAP",
+                     help="Render a single 2024-Jan frame for each CMAP and exit")
+_args = _parser.parse_args()
 
 # ── paths ──────────────────────────────────────────────────────────────────
 ROOT     = os.path.join(os.path.dirname(__file__), "..")
@@ -272,6 +279,192 @@ cmap = plt.get_cmap(CMAP)
 norm = mcolors.Normalize(vmin=VMIN, vmax=VMAX)
 sm   = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
 sm.set_array([])
+
+# ── 5b. preview mode: single frame per cmap, then exit ───────────────────
+if _args.preview:
+    preview_dir = os.path.join(OUT_DIR, "colormap_variants")
+    os.makedirs(preview_dir, exist_ok=True)
+    # Pick 2024-Jan frame
+    preview_frame = None
+    for f in frame_seq:
+        if f[0] == 2024 and f[1] == 0:
+            preview_frame = f
+            break
+    if preview_frame is None:
+        preview_frame = frame_seq[len(frame_seq) // 2]
+
+    yr, step_f, is_proj, frame_wages, t_frac = preview_frame
+
+    for cmap_name in _args.preview:
+        print(f"  Rendering preview: {cmap_name} (year={yr})...")
+        _cmap = plt.get_cmap(cmap_name)
+        _norm = mcolors.Normalize(vmin=VMIN, vmax=VMAX)
+        _sm   = plt.cm.ScalarMappable(cmap=_cmap, norm=_norm)
+        _sm.set_array([])
+
+        blob_isos, blob_geom = yugo_blob(yr)
+        rs_wage = frame_wages.get("RS")
+        gdf = world[~world["iso2"].isin(blob_isos)].copy()
+        gdf["wage"] = gdf["iso2"].map(frame_wages)
+
+        fig = plt.figure(figsize=(FIG_W, FIG_H), facecolor=BG_COLOR)
+        ax_map  = fig.add_axes([0.01, 0.02, 0.52, 0.96])
+        cbar_ax = fig.add_axes([0.535, 0.18, 0.010, 0.58])
+        ax_map.set_facecolor(BG_COLOR)
+        ax_map.axis("off")
+
+        no_data = gdf[gdf["wage"].isna()]
+        if not no_data.empty:
+            no_data.plot(ax=ax_map, color=MISSING_CLR,
+                         edgecolor=BORDER_CLR, linewidth=0.4)
+        has_data = gdf[gdf["wage"].notna()].copy()
+        if not has_data.empty:
+            has_data["color"] = has_data["wage"].apply(
+                lambda v: _cmap(_norm(min(v, VMAX))))
+            has_data.plot(ax=ax_map, color=has_data["color"].tolist(),
+                          edgecolor=BORDER_CLR, linewidth=0.4)
+        if blob_geom is not None:
+            blob_color = _cmap(_norm(min(rs_wage, VMAX))) if rs_wage is not None else MISSING_CLR
+            gpd.GeoDataFrame(geometry=[blob_geom], crs=CRS).plot(
+                ax=ax_map, color=blob_color, edgecolor=BORDER_CLR, linewidth=0.4)
+
+        ax_map.set_xlim(BBOX_3035[0], BBOX_3035[2])
+        ax_map.set_ylim(BBOX_3035[1], BBOX_3035[3])
+
+        for iso2, pt in label_points.items():
+            if iso2 in blob_isos and iso2 != "RS":
+                continue
+            if iso2 in SKIP_MAP_LABELS:
+                continue
+            wage = frame_wages.get(iso2)
+            if wage is not None:
+                val = int(round(wage / 50) * 50)
+                txt = f"\u20ac{val:,}"
+                small = iso2 in SMALL_LABEL_ISOS
+                if pt.x > BBOX_3035[2] - 150_000:
+                    continue
+                ax_map.text(pt.x, pt.y, txt,
+                            fontsize=7 if small else 8.5,
+                            color="white", ha="center", va="center",
+                            alpha=0.82 if small else 0.93,
+                            fontfamily=LABEL_FONT, fontweight="bold",
+                            bbox=dict(boxstyle="round,pad=0.1", facecolor=BG_COLOR,
+                                      alpha=0.35, linewidth=0))
+
+        cbar = fig.colorbar(_sm, cax=cbar_ax)
+        cbar_ax.yaxis.set_tick_params(color="white", labelsize=6)
+        plt.setp(cbar_ax.yaxis.get_ticklabels(), color="white", fontsize=6)
+        cbar_ax.set_facecolor(BG_COLOR)
+
+        ax_map.text(0.02, 0.05, str(yr), transform=ax_map.transAxes,
+                    fontsize=38, fontweight="bold", color="white",
+                    alpha=0.95, va="bottom", fontfamily=CLOCK_FONT)
+        ax_map.text(0.02, 0.045, MONTHS[step_f], transform=ax_map.transAxes,
+                    fontsize=11, color="white", alpha=0.75, va="top",
+                    fontfamily=CLOCK_FONT)
+        ax_map.text(0.02, 0.975, "European Average Monthly Gross Wage",
+                    transform=ax_map.transAxes, fontsize=11, color="white",
+                    alpha=0.9, ha="left", va="top", fontweight="bold")
+        ax_map.text(0.02, 0.948,
+                    "Nominal EUR  |  Sources: national offices, Eurostat D11, OECD, ONS",
+                    transform=ax_map.transAxes, fontsize=6.5, color="#aaaacc",
+                    alpha=0.8, ha="left", va="top")
+
+        # Right panel: chart
+        ax_chart = fig.add_axes([0.60, 0.05, 0.32, 0.90])
+        ax_chart.set_facecolor(BG_COLOR)
+        ax_chart.set_xlim(START_YEAR - 0.5, END_YEAR + 3.0)
+        chart_max_visible = 0
+        for iso2c in CHART_COUNTRIES:
+            if iso2c not in chart_series:
+                continue
+            for t, w in chart_series[iso2c]:
+                if t <= t_frac:
+                    chart_max_visible = max(chart_max_visible, w)
+        dyn_ymax = min(chart_max_visible + 200, CHART_YMAX)
+        dyn_ymax = max(dyn_ymax, 1000)
+        ax_chart.set_ylim(0, dyn_ymax)
+        ax_chart.axvspan(FORECAST_START - 0.5, END_YEAR + 3, alpha=0.06, color="gray")
+        ax_chart.axvline(x=t_frac, color="white", linewidth=1.2, alpha=0.4)
+
+        end_labels_p = []
+        for iso2c in CHART_COUNTRIES:
+            if iso2c not in chart_series:
+                continue
+            pts = chart_series[iso2c]
+            visible = [(t, w) for t, w in pts if t <= t_frac]
+            if not visible:
+                continue
+            color = CHART_COLORS.get(iso2c, "#888888")
+            lw = _line_width(iso2c)
+            name = CHART_NAMES.get(iso2c, iso2c)
+            ts = [p[0] for p in visible]
+            ws = [p[1] for p in visible]
+            hist_t = [t for t in ts if t < FORECAST_START]
+            hist_w = [w for t, w in zip(ts, ws) if t < FORECAST_START]
+            proj_t = [t for t in ts if t >= FORECAST_START]
+            proj_w = [w for t, w in zip(ts, ws) if t >= FORECAST_START]
+            if hist_t:
+                ax_chart.plot(hist_t, hist_w, "-", color=color, linewidth=lw, alpha=0.9)
+            if proj_t and hist_t:
+                ax_chart.plot([hist_t[-1]] + proj_t, [hist_w[-1]] + proj_w,
+                              "--", color=color, linewidth=lw, alpha=0.7)
+            elif proj_t:
+                ax_chart.plot(proj_t, proj_w, "--", color=color, linewidth=lw, alpha=0.7)
+            end_labels_p.append((ws[-1], name, color, iso2c))
+
+        end_labels_p.sort(key=lambda x: -x[0])
+        label_x_p = t_frac + 0.3
+        min_gap_p = dyn_ymax * 0.016
+        top_labels_p = [(y, n, c, i) for y, n, c, i in end_labels_p if y > dyn_ymax * 0.97]
+        chart_labels_p = [(y, n, c, i) for y, n, c, i in end_labels_p if y <= dyn_ymax * 0.97]
+        for i_t, (y_val, name, color, _) in enumerate(top_labels_p):
+            val = int(round(y_val / 50) * 50)
+            ax_chart.text(label_x_p, dyn_ymax - min_gap_p * i_t,
+                          f"{name} (\u20ac{val:,})", fontsize=6.5, color=color,
+                          va="center", fontfamily=LABEL_FONT, fontweight="bold",
+                          alpha=0.9, clip_on=False)
+        placed_ys_p = []
+        for y_val, name, color, _ in chart_labels_p:
+            nudged = y_val
+            for py in placed_ys_p:
+                if abs(nudged - py) < min_gap_p:
+                    nudged = py - min_gap_p
+            placed_ys_p.append(nudged)
+        floor_p = min_gap_p * 0.5
+        for i in range(len(placed_ys_p) - 1, -1, -1):
+            if placed_ys_p[i] < floor_p:
+                placed_ys_p[i] = floor_p
+            if i < len(placed_ys_p) - 1 and placed_ys_p[i] - placed_ys_p[i + 1] < min_gap_p:
+                placed_ys_p[i] = placed_ys_p[i + 1] + min_gap_p
+        for i_lbl, (y_val, name, color, _) in enumerate(chart_labels_p):
+            nudged = placed_ys_p[i_lbl]
+            ax_chart.text(label_x_p, nudged, name, fontsize=6.5, color=color,
+                          va="center", fontfamily=LABEL_FONT, fontweight="bold",
+                          alpha=0.9, clip_on=False)
+            if abs(nudged - y_val) > min_gap_p * 0.5:
+                ax_chart.plot(t_frac, y_val, "o", color=color, markersize=2.5,
+                              alpha=0.5, clip_on=True)
+                ax_chart.plot([t_frac, label_x_p - 0.2], [y_val, nudged],
+                              color=color, linewidth=0.6, alpha=0.35, clip_on=False)
+
+        ax_chart.tick_params(colors="#aaaacc", labelsize=7)
+        ax_chart.spines["bottom"].set_color("#333355")
+        ax_chart.spines["left"].set_color("#333355")
+        ax_chart.spines["top"].set_visible(False)
+        ax_chart.spines["right"].set_visible(False)
+        ax_chart.grid(True, alpha=0.12, color="white")
+        ax_chart.set_title("Wage Convergence + Projection",
+                           color="white", fontsize=10, fontweight="bold", pad=4)
+
+        out_path = os.path.join(preview_dir, f"{cmap_name}.png")
+        fig.savefig(out_path, dpi=DPI, facecolor=BG_COLOR)
+        plt.close(fig)
+        print(f"    Saved: {out_path}")
+
+    print(f"\nDone! {len(_args.preview)} previews in {preview_dir}")
+    import sys
+    sys.exit(0)
 
 # ── 6. render frames ─────────────────────────────────────────────────────
 print(f"\nRendering {total} frames (side-by-side map + chart)...")
