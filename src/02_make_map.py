@@ -1,5 +1,8 @@
 """
-make_map.py — animated choropleth of European monthly wages 1995-2031.
+02_make_map.py — side-by-side animated choropleth + wage chart.
+
+Left panel:  choropleth map of European monthly wages
+Right panel: progressive time-series chart (lines reveal over time)
 
 Generates monthly-interpolated frames (12 per year) so the animation is
 smooth rather than jumping year-to-year.
@@ -8,6 +11,7 @@ Outputs:
   output/frames/frame_NNNNN.png  — one PNG per interpolated step
   output/europe_wages.mp4        — stitched animation (via imageio-ffmpeg)
 """
+import math
 import os
 import requests
 import numpy as np
@@ -29,53 +33,97 @@ os.makedirs(FRAMES, exist_ok=True)
 # ── config ─────────────────────────────────────────────────────────────────
 START_YEAR   = 1995
 END_YEAR     = 2031
-CMAP         = "plasma"     # alternatives: inferno, hot, magma
+CMAP         = "plasma"
 VMIN         = 0
-VMAX         = 10000        # EUR — normalised wages: CH ~11.8k, DE ~7.8k, rest spread well
+VMAX         = 10000
 BG_COLOR     = "#0d0d1a"
 MISSING_CLR  = "#2a2a3a"
 BORDER_CLR   = "#555577"
-FPS          = 15           # frames per second
+FPS          = 15
 INTERP       = 12           # sub-frames per year (monthly interpolation)
-HOLD_SECS    = 3            # seconds to hold on final frame (2031)
+HOLD_SECS    = 3
 
 MONTHS = ["Jan","Feb","Mar","Apr","May","Jun",
           "Jul","Aug","Sep","Oct","Nov","Dec"]
 
-# Europe clip bbox in WGS84 — used only for initial geographic filter
-BBOX_WGS84 = (-27, 33, 46, 72)
+# Europe clip bbox in WGS84
+BBOX_WGS84 = (-12, 33, 46, 72)
 
-# Display extent in EPSG:3035 (Lambert Azimuthal Equal Area, metres)
-# Symmetric 5M × 5M square centred on ~(9.5°E, 52.5°N) → Europe fills the frame
-BBOX_3035  = (1_800_000, 800_000, 6_800_000, 5_800_000)
+# Display extent in EPSG:3035 (Lambert Azimuthal Equal Area)
+# Cropped: no Canary Islands (left), less Russia/Turkey (right)
+BBOX_3035  = (2_300_000, 1_100_000, 6_200_000, 5_600_000)
 CRS        = "EPSG:3035"
 
-# Tiny/crowded countries get a smaller font so they don't overlap neighbours
 SMALL_LABEL_ISOS = {"ME", "XK", "LU", "SI", "AD", "SM", "MT", "LI",
                     "CY", "MD", "MK", "BA", "RS", "HR", "SK", "EE",
                     "LV", "LT", "AL", "GE", "AM", "AZ", "IS"}
 
-# Manual label positions in EPSG:3035 (metres) for countries whose
-# representative_point() falls outside the visible map area
+# Labels pulled inward for countries cropped at edges
 LABEL_OVERRIDES = {
-    "RU": (6_003_000, 3_962_000),  # Moscow area (pyproj-computed)
-    "NO": (4_124_000, 4_372_000),  # Ålesund area — mid-body, west coast
-    # GE (Georgia) and KZ (Kazakhstan) are outside BBOX_3035 — omitted
+    "RU": (5_800_000, 3_900_000),
+    "NO": (4_124_000, 4_372_000),
+    "TR": (5_200_000, 1_700_000),
 }
 
-# Fixed canvas size — 1440×1440 (both divisible by 16 for codec)
-FIG_W = FIG_H = 9.6      # inches; at DPI=150 → 1440 px each (90 × 16 ✓)
-DPI          = 150
+# 1920×1080 at DPI=100
+FIG_W    = 19.20   # inches
+FIG_H    = 10.80
+DPI      = 100
 
-CLOCK_FONT   = "Consolas"     # year/month counter — digital clock feel
-LABEL_FONT   = "DejaVu Sans"  # country value labels — clean, fast-reading numerals
+CLOCK_FONT = "Consolas"
+LABEL_FONT = "DejaVu Sans"
 
-# Yugoslavia successor states: shown as one merged blob (coloured with RS data)
-# until each country's independence year, then crystallise out individually.
 YUGO_INDEPENDENCE = {
     "SI": 1992, "HR": 1992, "BA": 1992, "MK": 1993,
     "ME": 2006, "XK": 2008,
 }
+
+FORECAST_START = 2026
+
+# ── chart config ───────────────────────────────────────────────────────────
+# Countries to show on the right-panel chart (convergence story)
+CHART_COUNTRIES = [
+    "CH", "NO", "DE", "AT",         # top tier
+    "FR", "GB",                      # western
+    "PL", "CZ", "LT", "SK",         # converging
+    "ES", "IT", "GR",               # southern
+    "RU", "BY", "UA",               # eastern
+]
+
+CHART_COLORS = {
+    "CH": "#C0C0C0", "NO": "#B22222", "DE": "#FFFFFF", "AT": "#9400D3",
+    "FR": "#2E8B57", "GB": "#4682B4",
+    "PL": "#DC143C", "CZ": "#1E90FF", "LT": "#32CD32", "SK": "#6A5ACD",
+    "ES": "#DAA520", "IT": "#FF6347", "GR": "#00CED1",
+    "RU": "#4169E1", "BY": "#8B0000", "UA": "#FFD700",
+}
+
+CHART_NAMES = {
+    "CH": "Switzerland", "NO": "Norway", "DE": "Germany", "AT": "Austria",
+    "FR": "France", "GB": "UK",
+    "PL": "Poland", "CZ": "Czechia", "LT": "Lithuania", "SK": "Slovakia",
+    "ES": "Spain", "IT": "Italy", "GR": "Greece",
+    "RU": "Russia", "BY": "Belarus", "UA": "Ukraine",
+}
+
+# Population in millions (for line thickness)
+POPULATION = {
+    "CH": 8.8, "NO": 5.5, "DE": 84.5, "AT": 9.1,
+    "FR": 68.2, "GB": 67.7,
+    "PL": 37.6, "CZ": 10.9, "LT": 2.9, "SK": 5.4,
+    "ES": 48.0, "IT": 58.9, "GR": 10.4,
+    "RU": 144.0, "BY": 9.2, "UA": 37.0,
+}
+
+CHART_YMAX = 8500
+
+
+def _line_width(iso2, min_w=0.6, max_w=3.5):
+    pop = POPULATION.get(iso2, 5.0)
+    log_min, log_max = math.log(2.0), math.log(144.0)
+    t = (math.log(max(pop, 2.0)) - log_min) / (log_max - log_min)
+    return min_w + t * (max_w - min_w)
+
 
 # ── 1. download Natural Earth boundaries ───────────────────────────────────
 GEO_PATH = os.path.join(DATA_DIR, "ne_50m_admin0.geojson")
@@ -99,7 +147,6 @@ world = gpd.read_file(GEO_PATH)
 world = world[["ISO_A2", "ISO_A2_EH", "NAME", "geometry"]].copy()
 world["iso2"] = world["ISO_A2"].where(world["ISO_A2"] != "-99", world["ISO_A2_EH"])
 
-# Manual overrides
 NAME_OVERRIDES = {"Kosovo": "XK"}
 EXCLUDE_NAMES  = {"N. Cyprus", "Somaliland"}
 for name, code in NAME_OVERRIDES.items():
@@ -112,8 +159,6 @@ world = world.cx[BBOX_WGS84[0]:BBOX_WGS84[2], BBOX_WGS84[1]:BBOX_WGS84[3]].copy(
 world = world.to_crs(CRS)
 print(f"  {len(world)} country polygons in Europe bbox (EPSG:3035)")
 
-# Pre-compute label anchor points for ALL countries (representative_point = always inside polygon)
-# Manual overrides for countries whose centroid falls outside the visible map area
 from shapely.geometry import Point
 label_points = {}
 for _, row in world.iterrows():
@@ -124,25 +169,20 @@ for _, row in world.iterrows():
     else:
         label_points[iso2] = row["geometry"].representative_point()
 
-# Pre-compute merged Yugoslavia blob geometry for each unique phase.
-# Phase changes only when a country crystallises out, so there are very few phases.
 from shapely.ops import unary_union as _uu
 _yugo_cache: dict = {}
 
 def yugo_blob(yr: int):
-    """Return (frozenset of blob isos, merged geometry) for year yr."""
     blob = frozenset({"RS"} | {iso for iso, ind in YUGO_INDEPENDENCE.items() if yr < ind})
     if blob not in _yugo_cache:
         geoms = world.loc[world["iso2"].isin(blob), "geometry"]
         _yugo_cache[blob] = _uu(geoms.values) if not geoms.empty else None
     return blob, _yugo_cache[blob]
 
-# ── 3. load wage data → nested dict {iso2: {year: wage}} ──────────────────
+# ── 3. load wage data ─────────────────────────────────────────────────────
 wages_df = pd.read_csv(os.path.join(DATA_DIR, "oecd_wages_europe.csv"))
 
-# Historical only for the time series; projected rows already present
-# Use hours-normalised wage (40h/week standard) where available, else raw monthly.
-wage_lookup = {}   # iso2 -> {year: wage_eur}
+wage_lookup = {}
 for _, row in wages_df.iterrows():
     iso2 = row["iso2"]
     yr   = int(row["year"])
@@ -150,14 +190,7 @@ for _, row in wages_df.iterrows():
     if pd.notna(w) and w != "":
         wage_lookup.setdefault(iso2, {})[yr] = float(w)
 
-# Years where the majority of data is projected (IMF WEO boundary).
-# Individual countries (UA, TR) may project earlier but we don't label
-# the whole map as "PROJECTED" until the IMF WEO horizon kicks in.
-FORECAST_START = 2026
-
-# ── 3b. fill intra-series annual gaps by linear interpolation ─────────────
-# Prevents countries (e.g. Ukraine 2001) from going gray when a single year
-# is missing between two known values.
+# Fill intra-series annual gaps by linear interpolation
 for iso2, yr_data in wage_lookup.items():
     known = sorted(yr_data.keys())
     for i in range(len(known) - 1):
@@ -168,19 +201,41 @@ for iso2, yr_data in wage_lookup.items():
                 a = (y - y0) / (y1 - y0)
                 yr_data[y] = w0 * (1.0 - a) + w1 * a
 
+# ── 3b. build chart time series (sub-year resolution) ─────────────────────
+# For each chart country, build a dense series: {fractional_year: wage}
+# e.g. 2020.0 = Jan 2020, 2020.5 = Jul 2020
+chart_series = {}  # iso2 -> [(t, wage), ...]
+for iso2 in CHART_COUNTRIES:
+    yr_data = wage_lookup.get(iso2, {})
+    if not yr_data:
+        continue
+    pts = []
+    yrs = sorted(yr_data.keys())
+    for i, yr in enumerate(yrs):
+        next_yr = yrs[i + 1] if i + 1 < len(yrs) else None
+        for step in range(INTERP):
+            t = yr + step / INTERP
+            if t < START_YEAR or t > END_YEAR + 1:
+                continue
+            w0 = yr_data[yr]
+            if next_yr is not None:
+                w1 = yr_data[next_yr]
+                alpha = step / INTERP
+                w = w0 * (1.0 - alpha) + w1 * alpha
+            else:
+                w = w0
+            pts.append((t, w))
+    chart_series[iso2] = pts
+
 # ── 4. build interpolated frame list ──────────────────────────────────────
-# Each entry: (display_year, display_month_idx, is_proj, {iso2: wage})
 print("Building interpolated frame sequence...")
 years = list(range(START_YEAR, END_YEAR + 1))
-frame_seq = []  # (year, month_idx 0-11, is_proj, wage_dict)
+frame_seq = []
 
 for i, yr in enumerate(years):
     next_yr = years[i + 1] if i + 1 < len(years) else None
-
     for step in range(INTERP):
-        alpha = step / INTERP  # 0.0 → just before yr+1
-
-        # Interpolated wages for every country
+        alpha = step / INTERP
         frame_wages = {}
         for iso2, yr_data in wage_lookup.items():
             w0 = yr_data.get(yr)
@@ -189,139 +244,214 @@ for i, yr in enumerate(years):
                 frame_wages[iso2] = w0 * (1.0 - alpha) + w1 * alpha
             elif w0 is not None:
                 frame_wages[iso2] = w0
-            # else: no data this period → stays gray
-
         is_proj = yr >= FORECAST_START
-        frame_seq.append((yr, step, is_proj, frame_wages))
+        t_frac = yr + step / INTERP
+        frame_seq.append((yr, step, is_proj, frame_wages, t_frac))
 
-# Hold the very last frame for HOLD_SECS
 hold_count = int(FPS * HOLD_SECS)
 last = frame_seq[-1]
 frame_seq.extend([last] * hold_count)
 
 total = len(frame_seq)
-print(f"  {total} frames total  ({len(years)}yr × {INTERP} steps + {hold_count} hold)")
+print(f"  {total} frames total  ({len(years)}yr x {INTERP} steps + {hold_count} hold)")
 print(f"  Duration: {total/FPS:.1f}s at {FPS}fps")
 
-# ── 5. colormap ────────────────────────────────────────────────────────────
+# ── 5. colormap ───────────────────────────────────────────────────────────
 cmap = plt.get_cmap(CMAP)
 norm = mcolors.Normalize(vmin=VMIN, vmax=VMAX)
 sm   = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
 sm.set_array([])
 
-# ── 6. render frames ───────────────────────────────────────────────────────
-print(f"\nRendering {total} frames...")
+# ── 6. render frames ─────────────────────────────────────────────────────
+print(f"\nRendering {total} frames (side-by-side map + chart)...")
 
-for idx, (yr, step, is_proj, frame_wages) in enumerate(frame_seq):
-    # Yugoslavia blob: RS + any successor states not yet independent
+for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
     blob_isos, blob_geom = yugo_blob(yr)
     rs_wage = frame_wages.get("RS")
 
-    # Build gdf without blob countries (they're drawn as one merged polygon)
     gdf = world[~world["iso2"].isin(blob_isos)].copy()
     gdf["wage"] = gdf["iso2"].map(frame_wages)
 
     fig = plt.figure(figsize=(FIG_W, FIG_H), facecolor=BG_COLOR)
-    # Fixed axes positions in figure coords — never change between frames
-    ax      = fig.add_axes([0.01, 0.02, 0.83, 0.96])
-    cbar_ax = fig.add_axes([0.87, 0.18, 0.025, 0.58])
-    ax.set_facecolor(BG_COLOR)
-    ax.axis("off")
 
-    # Missing countries (non-blob) — dissolve so internal borders vanish
+    # ── LEFT PANEL: map ──────────────────────────────────────────────────
+    ax_map   = fig.add_axes([0.00, 0.02, 0.52, 0.96])
+    cbar_ax  = fig.add_axes([0.525, 0.18, 0.012, 0.58])
+    ax_map.set_facecolor(BG_COLOR)
+    ax_map.axis("off")
+
+    # Missing countries
     no_data = gdf[gdf["wage"].isna()]
     if not no_data.empty:
-        no_data.dissolve().plot(ax=ax, color=MISSING_CLR, edgecolor=BORDER_CLR, linewidth=0.4)
+        no_data.dissolve().plot(ax=ax_map, color=MISSING_CLR,
+                                edgecolor=BORDER_CLR, linewidth=0.4)
 
-    # Countries with data (non-blob)
+    # Countries with data
     has_data = gdf[gdf["wage"].notna()].copy()
     if not has_data.empty:
         has_data["color"] = has_data["wage"].apply(
             lambda v: cmap(norm(min(v, VMAX)))
         )
-        has_data.plot(ax=ax, color=has_data["color"].tolist(),
+        has_data.plot(ax=ax_map, color=has_data["color"].tolist(),
                       edgecolor=BORDER_CLR, linewidth=0.4)
 
-    # Yugoslavia/Serbia blob — one merged polygon coloured with RS wage
+    # Yugoslavia blob
     if blob_geom is not None:
         blob_color = cmap(norm(min(rs_wage, VMAX))) if rs_wage is not None else MISSING_CLR
         gpd.GeoDataFrame(geometry=[blob_geom], crs=CRS).plot(
-            ax=ax, color=blob_color, edgecolor=BORDER_CLR, linewidth=0.4)
+            ax=ax_map, color=blob_color, edgecolor=BORDER_CLR, linewidth=0.4)
 
-    # Fix extent AFTER plot calls (geopandas resets limits to data bounds)
-    ax.set_xlim(BBOX_3035[0], BBOX_3035[2])
-    ax.set_ylim(BBOX_3035[1], BBOX_3035[3])
+    ax_map.set_xlim(BBOX_3035[0], BBOX_3035[2])
+    ax_map.set_ylim(BBOX_3035[1], BBOX_3035[3])
 
-    # ── on-map wage labels — stock-ticker style ──
+    # On-map wage labels
     for iso2, pt in label_points.items():
-        # Suppress labels for blob members (except RS — it represents the whole blob)
         if iso2 in blob_isos and iso2 != "RS":
             continue
         wage = frame_wages.get(iso2)
         if wage is not None:
             val = int(round(wage / 100) * 100)
-            txt = f"€{val:,}"
+            txt = f"\u20ac{val:,}"
             small = iso2 in SMALL_LABEL_ISOS
-            ax.text(pt.x, pt.y, txt,
-                    fontsize=6.5 if small else 7.5,
-                    color="white", ha="center", va="center",
-                    alpha=0.82 if small else 0.93,
-                    fontfamily=LABEL_FONT, fontweight="bold",
-                    bbox=dict(boxstyle="round,pad=0.1", facecolor=BG_COLOR,
-                              alpha=0.35, linewidth=0))
+            ax_map.text(pt.x, pt.y, txt,
+                        fontsize=5.5 if small else 6.5,
+                        color="white", ha="center", va="center",
+                        alpha=0.82 if small else 0.93,
+                        fontfamily=LABEL_FONT, fontweight="bold",
+                        bbox=dict(boxstyle="round,pad=0.1", facecolor=BG_COLOR,
+                                  alpha=0.35, linewidth=0))
 
-    # ── colorbar — drawn into pre-positioned fixed axes ──
+    # Colorbar
     cbar = fig.colorbar(sm, cax=cbar_ax)
-    cbar.set_label("Monthly gross wage (EUR)", color="white", fontsize=9)
-    cbar_ax.yaxis.set_tick_params(color="white")
-    plt.setp(cbar_ax.yaxis.get_ticklabels(), color="white", fontsize=8)
+    cbar.set_label("EUR/month", color="white", fontsize=7)
+    cbar_ax.yaxis.set_tick_params(color="white", labelsize=6)
+    plt.setp(cbar_ax.yaxis.get_ticklabels(), color="white", fontsize=6)
     cbar_ax.set_facecolor(BG_COLOR)
 
-    # ── year + month label ──
+    # Year + month (on map)
     year_color = "#ffdd44" if is_proj else "white"
-    ax.text(0.015, 0.07, str(yr),
-            transform=ax.transAxes,
-            fontsize=46, fontweight="bold", color=year_color,
-            alpha=0.95, va="bottom", fontfamily=CLOCK_FONT)
-    ax.text(0.015, 0.065, MONTHS[step],
-            transform=ax.transAxes,
-            fontsize=13, color=year_color, alpha=0.75, va="top",
-            fontfamily=CLOCK_FONT)
+    ax_map.text(0.02, 0.08, str(yr),
+                transform=ax_map.transAxes,
+                fontsize=38, fontweight="bold", color=year_color,
+                alpha=0.95, va="bottom", fontfamily=CLOCK_FONT)
+    ax_map.text(0.02, 0.075, MONTHS[step],
+                transform=ax_map.transAxes,
+                fontsize=11, color=year_color, alpha=0.75, va="top",
+                fontfamily=CLOCK_FONT)
 
     if is_proj:
-        ax.text(0.015, 0.048, "PROJECTED  (IMF WEO Apr 2026)",
-                transform=ax.transAxes,
-                fontsize=8, color="#ffdd44", alpha=0.7, va="top")
+        ax_map.text(0.02, 0.055, "PROJECTED  (IMF WEO Apr 2026)",
+                    transform=ax_map.transAxes,
+                    fontsize=6.5, color="#ffdd44", alpha=0.7, va="top")
 
-    # ── title ──
-    ax.text(0.5, 0.975,
-            "European Average Monthly Gross Wage",
-            transform=ax.transAxes,
-            fontsize=13, color="white", alpha=0.9,
-            ha="center", va="top", fontweight="bold")
-    ax.text(0.5, 0.945,
-            "Nominal EUR at market exchange rates  |  Sources: national offices, Eurostat D11, OECD",
-            transform=ax.transAxes,
-            fontsize=7.5, color="#aaaacc", alpha=0.8, ha="center", va="top")
+    # Title (on map)
+    ax_map.text(0.5, 0.975,
+                "European Average Monthly Gross Wage",
+                transform=ax_map.transAxes,
+                fontsize=11, color="white", alpha=0.9,
+                ha="center", va="top", fontweight="bold")
+    ax_map.text(0.5, 0.948,
+                "Nominal EUR  |  Sources: national offices, Eurostat D11, OECD, ONS",
+                transform=ax_map.transAxes,
+                fontsize=6.5, color="#aaaacc", alpha=0.8, ha="center", va="top")
 
-    # ── country count ──
+    # Country count
     n = int(gdf["wage"].notna().sum())
-    ax.text(0.985, 0.03, f"{n} countries with data",
-            transform=ax.transAxes,
-            fontsize=7.5, color="#aaaacc", alpha=0.7, ha="right", va="bottom")
+    ax_map.text(0.98, 0.03, f"{n} countries",
+                transform=ax_map.transAxes,
+                fontsize=6.5, color="#aaaacc", alpha=0.7, ha="right", va="bottom")
 
-    # ── progress bar (thin line at bottom) ──
+    # Progress bar
     total_steps = len(years) * INTERP
     cur_step    = (yr - START_YEAR) * INTERP + step
     progress    = cur_step / (total_steps - 1)
     bar_y = 0.012
-    ax.plot([0.01, 0.01 + 0.88 * progress], [bar_y, bar_y],
-            transform=ax.transAxes, color=year_color,
-            linewidth=1.5, alpha=0.5, solid_capstyle="butt")
-    ax.plot([0.01, 0.89], [bar_y, bar_y],
-            transform=ax.transAxes, color="white",
-            linewidth=0.4, alpha=0.15, solid_capstyle="butt")
+    ax_map.plot([0.02, 0.02 + 0.86 * progress], [bar_y, bar_y],
+                transform=ax_map.transAxes, color=year_color,
+                linewidth=1.5, alpha=0.5, solid_capstyle="butt")
+    ax_map.plot([0.02, 0.88], [bar_y, bar_y],
+                transform=ax_map.transAxes, color="white",
+                linewidth=0.4, alpha=0.15, solid_capstyle="butt")
 
+    # ── RIGHT PANEL: chart ───────────────────────────────────────────────
+    ax_chart = fig.add_axes([0.60, 0.08, 0.38, 0.82])
+    ax_chart.set_facecolor(BG_COLOR)
+    ax_chart.set_xlim(START_YEAR - 0.5, END_YEAR + 2.5)
+    ax_chart.set_ylim(0, CHART_YMAX)
+
+    # Projection shading
+    ax_chart.axvspan(FORECAST_START - 0.5, END_YEAR + 3, alpha=0.06, color="gray")
+    ax_chart.axvline(x=FORECAST_START - 0.5, color="gray", linestyle=":",
+                     linewidth=0.6, alpha=0.4)
+
+    # Vertical playhead
+    ax_chart.axvline(x=t_frac, color=year_color, linewidth=1.2, alpha=0.4)
+
+    # Draw lines up to current time
+    end_labels = []  # (y_value, name, color) for label placement
+    for iso2 in CHART_COUNTRIES:
+        if iso2 not in chart_series:
+            continue
+        pts = chart_series[iso2]
+        # Clip to current time
+        visible = [(t, w) for t, w in pts if t <= t_frac]
+        if not visible:
+            continue
+
+        color = CHART_COLORS.get(iso2, "#888888")
+        lw = _line_width(iso2)
+        name = CHART_NAMES.get(iso2, iso2)
+
+        ts = [p[0] for p in visible]
+        ws = [p[1] for p in visible]
+
+        # Split into historical and projected segments
+        hist_t = [t for t in ts if t < FORECAST_START]
+        hist_w = [w for t, w in zip(ts, ws) if t < FORECAST_START]
+        proj_t = [t for t in ts if t >= FORECAST_START]
+        proj_w = [w for t, w in zip(ts, ws) if t >= FORECAST_START]
+
+        if hist_t:
+            ax_chart.plot(hist_t, hist_w, "-", color=color, linewidth=lw, alpha=0.9)
+        if proj_t and hist_t:
+            # Bridge from last historical to first projected
+            bridge_t = [hist_t[-1]] + proj_t
+            bridge_w = [hist_w[-1]] + proj_w
+            ax_chart.plot(bridge_t, bridge_w, "--", color=color, linewidth=lw, alpha=0.7)
+        elif proj_t:
+            ax_chart.plot(proj_t, proj_w, "--", color=color, linewidth=lw, alpha=0.7)
+
+        # End label at the tip of the visible line
+        end_labels.append((ws[-1], name, color))
+
+    # Place end labels (sorted top to bottom, nudged to avoid overlap)
+    end_labels.sort(key=lambda x: -x[0])
+    label_x = t_frac + 0.3
+    min_gap = CHART_YMAX * 0.028
+    placed_ys = []
+    for y_val, name, color in end_labels:
+        nudged = y_val
+        for py in placed_ys:
+            if abs(nudged - py) < min_gap:
+                nudged = py - min_gap
+        placed_ys.append(nudged)
+        ax_chart.text(label_x, nudged, name,
+                      fontsize=7, color=color, va="center",
+                      fontfamily=LABEL_FONT, fontweight="bold",
+                      alpha=0.9, clip_on=False)
+
+    # Chart styling
+    ax_chart.set_ylabel("EUR / month", color="#aaaacc", fontsize=8, labelpad=8)
+    ax_chart.tick_params(colors="#aaaacc", labelsize=7)
+    ax_chart.spines["bottom"].set_color("#333355")
+    ax_chart.spines["left"].set_color("#333355")
+    ax_chart.spines["top"].set_visible(False)
+    ax_chart.spines["right"].set_visible(False)
+    ax_chart.grid(True, alpha=0.12, color="white")
+    ax_chart.set_title("Wage Convergence + Projection",
+                       color="white", fontsize=10, fontweight="bold", pad=10)
+
+    # ── save frame ───────────────────────────────────────────────────────
     frame_path = os.path.join(FRAMES, f"frame_{idx:05d}.png")
     fig.savefig(frame_path, dpi=DPI, facecolor=BG_COLOR)
     plt.close(fig)
@@ -350,3 +480,4 @@ print(f"\nDone!")
 print(f"  Video:   {video_path}  ({size_mb:.1f} MB)")
 print(f"  Frames:  {len(frame_files)} PNGs in {FRAMES}")
 print(f"  Length:  {len(frame_files)/FPS:.1f}s at {FPS}fps")
+print(f"  Size:    1920x1080 (LinkedIn landscape)")
