@@ -74,6 +74,10 @@ SOURCE_MAP = {
     "wage_mean_net_eur": "Nominal EUR  |  Source: Eurostat + OECD tax-benefit model",
 }
 VMAX = VMAX_MAP.get(WAGE_COLUMN, 6000)
+
+# Derive short suffix for output filenames: wage_median_eur -> median
+_WAGE_SUFFIX = WAGE_COLUMN.replace("wage_", "").replace("_eur", "")
+
 BG_COLOR     = "#0d0d1a"
 MISSING_CLR  = "#2a2a3a"
 BORDER_CLR   = "#555577"
@@ -224,13 +228,18 @@ def yugo_blob(yr: int):
     return blob, _yugo_cache[blob]
 
 # ── 3. load wage data ─────────────────────────────────────────────────────
-wages_df = pd.read_csv(os.path.join(DATA_DIR, "wages_europe_combined.csv"))
+if WAGE_COLUMN == "wage_median_eur":
+    wages_df = pd.read_csv(os.path.join(DATA_DIR, "median_wages_ses.csv"))
+    _wcol = "wage_median_eur"
+else:
+    wages_df = pd.read_csv(os.path.join(DATA_DIR, "wages_europe_combined.csv"))
+    _wcol = WAGE_COLUMN
 
 wage_lookup = {}
 for _, row in wages_df.iterrows():
     iso2 = row["iso2"]
     yr   = int(row["year"])
-    w    = row.get(WAGE_COLUMN)
+    w    = row.get(_wcol)
     if pd.notna(w) and w != "":
         wage_lookup.setdefault(iso2, {})[yr] = float(w)
 
@@ -488,10 +497,93 @@ if _args.preview:
         ax_chart.set_title("Wage Convergence + Projection",
                            color="white", fontsize=10, fontweight="bold", pad=4)
 
-        out_path = os.path.join(preview_dir, f"{cmap_name}.png")
+        out_path = os.path.join(preview_dir, f"{cmap_name}_{_WAGE_SUFFIX}.png")
         fig.savefig(out_path, dpi=DPI, facecolor=BG_COLOR)
         plt.close(fig)
         print(f"    Saved: {out_path}")
+
+        # ── chart-only PNG ────────────────────────────────────────────
+        fig_c = plt.figure(figsize=(8, 5.4), facecolor=BG_COLOR)
+        ax_c = fig_c.add_axes([0.08, 0.08, 0.62, 0.86])
+        ax_c.set_facecolor(BG_COLOR)
+        ax_c.set_xlim(START_YEAR - 0.5, END_YEAR + 3.0)
+        ax_c.set_ylim(0, CHART_YMAX)
+        ax_c.axvspan(FORECAST_START - 0.5, END_YEAR + 3, alpha=0.06, color="gray")
+
+        end_labels_c = []
+        for iso2c in CHART_COUNTRIES:
+            if iso2c not in chart_series:
+                continue
+            pts = chart_series[iso2c]
+            color = CHART_COLORS.get(iso2c, "#888888")
+            lw = _line_width(iso2c)
+            name = CHART_NAMES.get(iso2c, iso2c)
+            ts = [p[0] for p in pts]
+            ws = [p[1] for p in pts]
+            hist_t = [t for t in ts if t < FORECAST_START]
+            hist_w = [w for t, w in zip(ts, ws) if t < FORECAST_START]
+            proj_t = [t for t in ts if t >= FORECAST_START]
+            proj_w = [w for t, w in zip(ts, ws) if t >= FORECAST_START]
+            if hist_t:
+                ax_c.plot(hist_t, hist_w, "-", color=color, linewidth=lw, alpha=0.9)
+            if proj_t and hist_t:
+                ax_c.plot([hist_t[-1]] + proj_t, [hist_w[-1]] + proj_w,
+                          "--", color=color, linewidth=lw, alpha=0.7)
+            elif proj_t:
+                ax_c.plot(proj_t, proj_w, "--", color=color, linewidth=lw, alpha=0.7)
+            end_labels_c.append((ws[-1], name, color, iso2c))
+
+        end_labels_c.sort(key=lambda x: -x[0])
+        label_x_c = END_YEAR + 0.8
+        min_gap_c = CHART_YMAX * 0.016
+        top_labels_c = [(y, n, c, i) for y, n, c, i in end_labels_c if y > CHART_YMAX * 0.97]
+        chart_labels_c = [(y, n, c, i) for y, n, c, i in end_labels_c if y <= CHART_YMAX * 0.97]
+        for i_t, (y_val, name, color, _) in enumerate(top_labels_c):
+            val = int(round(y_val / 50) * 50)
+            ax_c.text(label_x_c, CHART_YMAX - min_gap_c * i_t,
+                      f"{name} (\u20ac{val:,})", fontsize=7, color=color,
+                      va="center", fontfamily=LABEL_FONT, fontweight="bold",
+                      alpha=0.9, clip_on=False)
+        placed_ys_c = []
+        for y_val, name, color, _ in chart_labels_c:
+            nudged = y_val
+            for py in placed_ys_c:
+                if abs(nudged - py) < min_gap_c:
+                    nudged = py - min_gap_c
+            placed_ys_c.append(nudged)
+        floor_c = min_gap_c * 0.5
+        for i in range(len(placed_ys_c) - 1, -1, -1):
+            if placed_ys_c[i] < floor_c:
+                placed_ys_c[i] = floor_c
+            if i < len(placed_ys_c) - 1 and placed_ys_c[i] - placed_ys_c[i + 1] < min_gap_c:
+                placed_ys_c[i] = placed_ys_c[i + 1] + min_gap_c
+        for i_lbl, (y_val, name, color, _) in enumerate(chart_labels_c):
+            nudged = placed_ys_c[i_lbl]
+            ax_c.text(label_x_c, nudged, name, fontsize=7, color=color,
+                      va="center", fontfamily=LABEL_FONT, fontweight="bold",
+                      alpha=0.9, clip_on=False)
+            if abs(nudged - y_val) > min_gap_c * 0.5:
+                ax_c.plot(END_YEAR + 0.5, y_val, "o", color=color, markersize=2.5,
+                          alpha=0.5, clip_on=True)
+                ax_c.plot([END_YEAR + 0.5, label_x_c - 0.2], [y_val, nudged],
+                          color=color, linewidth=0.6, alpha=0.35, clip_on=False)
+
+        ax_c.set_ylabel("EUR / month", color="#aaaacc", fontsize=8)
+        ax_c.tick_params(colors="#aaaacc", labelsize=7)
+        ax_c.spines["bottom"].set_color("#333355")
+        ax_c.spines["left"].set_color("#333355")
+        ax_c.spines["top"].set_visible(False)
+        ax_c.spines["right"].set_visible(False)
+        ax_c.grid(True, alpha=0.12, color="white")
+        ax_c.set_title(TITLE_MAP[WAGE_COLUMN] + " — Convergence + Projection",
+                       color="white", fontsize=10, fontweight="bold", pad=4)
+        ax_c.text(0.5, -0.04, SOURCE_MAP[WAGE_COLUMN], transform=ax_c.transAxes,
+                  fontsize=6.5, color="#aaaacc", alpha=0.8, ha="center", va="top")
+
+        chart_path = os.path.join(preview_dir, f"chart_{_WAGE_SUFFIX}.png")
+        fig_c.savefig(chart_path, dpi=150, facecolor=BG_COLOR)
+        plt.close(fig_c)
+        print(f"    Chart: {chart_path}")
 
     print(f"\nDone! {len(_args.preview)} previews in {preview_dir}")
     import sys
@@ -764,7 +856,7 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
 
 # ── 7. stitch into MP4 ────────────────────────────────────────────────────
 print("\nStitching frames into video...")
-video_path = os.path.join(OUT_DIR, "europe_wages.mp4")
+video_path = os.path.join(OUT_DIR, f"europe_wages_{_WAGE_SUFFIX}.mp4")
 
 frame_files = sorted(
     os.path.join(FRAMES, f) for f in os.listdir(FRAMES) if f.startswith("frame_")
