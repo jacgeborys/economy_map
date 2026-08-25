@@ -381,47 +381,127 @@ def main():
     rows.extend(proj_rows)
     print(f"   +{len(proj_rows)} projected rows")
 
-    # ── 7b. Non-SES countries: apply published median/mean ratios ───────
-    # These countries have no Eurostat SES data. We use the median/mean ratio
-    # from their national statistical offices and apply it to our mean EUR series.
-    # Sources:
-    #   RU 0.65: Rosstat publishes median/mean ratio (~0.63-0.67 range, 2020-2024)
-    #   BY 0.68: Belstat wage distribution reports
-    #   UA 0.72: SSSU (State Statistics Service of Ukraine)
-    #   GE 0.75: GeoStat
-    #   AM 0.75: Armstat
-    #   KZ 0.72: BNS Kazakhstan
-    #   AZ 0.70: estimate (no published ratio)
-    #   MD 0.75: NBS Moldova
-    #   XK 0.80: estimate (Kosovo, small economy)
-    #   AD 0.85: estimate (Andorra, high-income microstate)
-    #   SM 0.85: estimate (San Marino)
-    NON_SES_RATIOS = {
-        "RU": 0.65, "BY": 0.68, "UA": 0.72, "GE": 0.75,
-        "AM": 0.75, "KZ": 0.72, "AZ": 0.70, "MD": 0.75,
-        "XK": 0.80, "AD": 0.85, "SM": 0.85,
+    # ── 7b. Non-SES countries: official national median data ────────────
+    # These countries publish their own median wage statistics.
+    # Values in local currency, converted to EUR via pipeline FX rates.
+    print("\n7b. Non-SES countries: official median data from national offices...")
+
+    mean_df = pd.read_csv(os.path.join(DATA_DIR, "oecd_wages_europe.csv"))
+
+    # Build FX rate lookup from pipeline data: {iso: {year: local_per_eur}}
+    fx_rates = defaultdict(dict)
+    for _, row in mean_df.iterrows():
+        if pd.notna(row.get("wage_monthly_local")) and pd.notna(row.get("wage_monthly_eur")):
+            if row["wage_monthly_eur"] > 0:
+                fx_rates[row["iso2"]][int(row["year"])] = row["wage_monthly_local"] / row["wage_monthly_eur"]
+
+    def get_fx(iso, year):
+        """Get FX rate for iso/year, with nearest-year fallback."""
+        rates = fx_rates.get(iso, {})
+        if year in rates:
+            return rates[year]
+        if rates:
+            closest = min(rates.keys(), key=lambda y: abs(y - year))
+            return rates[closest]
+        return None
+
+    # ── Official median wages (local currency, monthly) ──────────────
+    # Russia: Rosstat biennial April survey + annual admin data (from 2020)
+    # Source: rosstat.gov.ru/folder/11110/document/13268
+    OFFICIAL_MEDIANS = {
+        "RU": {
+            "currency": "RUB",
+            "source": "Rosstat",
+            "values": {
+                2017: 28345, 2019: 30458, 2021: 33549,
+                2023: 52558, 2024: 56443, 2025: 73900,
+            },
+        },
+        # Belarus: Belstat semi-annual (May + November), using November values
+        # Source: belstat.gov.by
+        "BY": {
+            "currency": "BYN",
+            "source": "Belstat",
+            "values": {
+                2021: 1189, 2022: 1330, 2023: 1506, 2024: 1792, 2025: 2082,
+            },
+        },
+        # Georgia: Geostat annual median earnings (from Revenue Service data)
+        # Source: geostat.ge/media/73905/Median-Monthly-Earnings.xlsx
+        "GE": {
+            "currency": "GEL",
+            "source": "Geostat",
+            "values": {
+                2018: 700, 2019: 792, 2020: 809, 2021: 900,
+                2022: 1040, 2023: 1238, 2024: 1332,
+            },
+        },
+        # Kazakhstan: BNS annual median
+        # Source: stat.gov.kz
+        "KZ": {
+            "currency": "KZT",
+            "source": "BNS Kazakhstan",
+            "values": {
+                2023: 251356, 2024: 285677, 2025: 317512,
+            },
+        },
     }
+
     NON_SES_NAMES = {
         "RU": "Russia", "BY": "Belarus", "UA": "Ukraine", "GE": "Georgia",
         "AM": "Armenia", "KZ": "Kazakhstan", "AZ": "Azerbaijan", "MD": "Moldova",
         "XK": "Kosovo", "AD": "Andorra", "SM": "San Marino",
     }
+    COUNTRY_NAMES.update(NON_SES_NAMES)
 
-    print("\n7b. Non-SES countries: applying published median/mean ratios...")
-    mean_df = pd.read_csv(os.path.join(DATA_DIR, "oecd_wages_europe.csv"))
     non_ses_rows = []
-    for iso, ratio in NON_SES_RATIOS.items():
+
+    # Add official median data (local currency → EUR)
+    for iso, info in OFFICIAL_MEDIANS.items():
+        for year, local_val in info["values"].items():
+            rate = get_fx(iso, year)
+            if rate:
+                eur_val = round(local_val / rate)
+                non_ses_rows.append((iso, year, eur_val, "national_office"))
+        # Interpolate between anchor years
+        anchor_years = sorted(info["values"].keys())
+        for i in range(len(anchor_years) - 1):
+            y0, y1 = anchor_years[i], anchor_years[i + 1]
+            for y in range(y0 + 1, y1):
+                rate0 = get_fx(iso, y0)
+                rate1 = get_fx(iso, y1)
+                rate_y = get_fx(iso, y)
+                if rate0 and rate1 and rate_y:
+                    v0_eur = info["values"][y0] / rate0
+                    v1_eur = info["values"][y1] / rate1
+                    frac = (y - y0) / (y1 - y0)
+                    interp_eur = v0_eur + frac * (v1_eur - v0_eur)
+                    non_ses_rows.append((iso, y, round(interp_eur), "national_interpolated"))
+        print(f"   {iso} ({info['source']}): {len(info['values'])} official values")
+
+    # Countries without official median: use ratio estimates (clearly flagged)
+    # UA: no official median (SSSU only publishes average)
+    # AM, AZ, MD, XK, AD, SM: no official median
+    RATIO_ESTIMATES = {
+        "UA": 0.72,  # SSSU does not publish median; estimated from wage distribution
+        "AM": 0.75,  # Armstat: no official median
+        "AZ": 0.70,  # No official median
+        "MD": 0.75,  # BNS Moldova: distribution only, no explicit median
+        "XK": 0.80,  # ASK Kosovo: no official median
+        "AD": 0.85,  # Andorra: microstate, no stat office API
+        "SM": 0.85,  # San Marino: microstate
+    }
+    for iso, ratio in RATIO_ESTIMATES.items():
         country_data = mean_df[mean_df.iso2 == iso]
         for _, row in country_data.iterrows():
             if pd.notna(row.get("wage_monthly_eur")):
                 median_val = round(row["wage_monthly_eur"] * ratio)
-                src = "ratio_estimate"
-                non_ses_rows.append((iso, int(row["year"]), median_val, src))
+                non_ses_rows.append((iso, int(row["year"]), median_val, "ratio_estimate"))
         if not country_data.empty:
-            print(f"   {iso} (ratio {ratio}): {len(country_data)} years")
+            print(f"   {iso} (ratio {ratio}, no official median): {len(country_data)} years")
+
     rows.extend(non_ses_rows)
-    COUNTRY_NAMES.update(NON_SES_NAMES)
-    print(f"   +{len(non_ses_rows)} ratio-estimated rows")
+    print(f"   +{len(non_ses_rows)} non-SES rows total")
 
     # ── 8. Assemble and save ─────────────────────────────────────────────
     print("\n8. Assembling final dataset...")
