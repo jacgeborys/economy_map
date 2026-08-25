@@ -28,6 +28,8 @@ import imageio.v2 as imageio
 _parser = argparse.ArgumentParser()
 _parser.add_argument("--preview", nargs="+", metavar="CMAP",
                      help="Render a single 2024-Jan frame for each CMAP and exit")
+_parser.add_argument("--wage", metavar="COL",
+                     help="Wage column: wage_mean_eur, wage_median_eur, wage_median_net_eur, wage_mean_net_eur")
 _args = _parser.parse_args()
 
 # ── paths ──────────────────────────────────────────────────────────────────
@@ -42,7 +44,36 @@ START_YEAR   = 1995
 END_YEAR     = 2031
 CMAP         = "inferno"
 VMIN         = 0
-VMAX         = 6000
+
+# ── wage column selector ──────────────────────────────────────────────────
+# Switch which wage metric to visualize:
+#   "wage_mean_eur"        — gross mean (original)
+#   "wage_median_eur"      — gross median (SES-anchored)
+#   "wage_median_net_eur"  — net median (median × tax-benefit ratio)
+#   "wage_mean_net_eur"    — net mean (mean × tax-benefit ratio)
+WAGE_COLUMN  = "wage_median_eur"
+if _args.wage:
+    WAGE_COLUMN = _args.wage
+
+VMAX_MAP = {
+    "wage_mean_eur": 7000,
+    "wage_median_eur": 6000,
+    "wage_median_net_eur": 5000,
+    "wage_mean_net_eur": 5000,
+}
+TITLE_MAP = {
+    "wage_mean_eur": "European Average Monthly Gross Wage",
+    "wage_median_eur": "European Median Monthly Gross Wage",
+    "wage_median_net_eur": "European Median Monthly Net Wage",
+    "wage_mean_net_eur": "European Average Monthly Net Wage",
+}
+SOURCE_MAP = {
+    "wage_mean_eur": "Nominal EUR  |  Source: Eurostat D11, OECD, national offices",
+    "wage_median_eur": "Nominal EUR  |  Source: Eurostat SES + national offices",
+    "wage_median_net_eur": "Nominal EUR  |  Source: Eurostat SES + OECD tax-benefit model",
+    "wage_mean_net_eur": "Nominal EUR  |  Source: Eurostat + OECD tax-benefit model",
+}
+VMAX = VMAX_MAP.get(WAGE_COLUMN, 6000)
 BG_COLOR     = "#0d0d1a"
 MISSING_CLR  = "#2a2a3a"
 BORDER_CLR   = "#555577"
@@ -128,7 +159,7 @@ POPULATION = {
     "RU": 144.0, "BY": 9.2, "UA": 37.0,
 }
 
-CHART_YMAX = 6000
+CHART_YMAX = VMAX
 
 
 def _line_width(iso2, min_w=0.6, max_w=3.5):
@@ -193,13 +224,13 @@ def yugo_blob(yr: int):
     return blob, _yugo_cache[blob]
 
 # ── 3. load wage data ─────────────────────────────────────────────────────
-wages_df = pd.read_csv(os.path.join(DATA_DIR, "median_wages_europe.csv"))
+wages_df = pd.read_csv(os.path.join(DATA_DIR, "wages_europe_combined.csv"))
 
 wage_lookup = {}
 for _, row in wages_df.iterrows():
     iso2 = row["iso2"]
     yr   = int(row["year"])
-    w    = row["wage_median_eur"]
+    w    = row.get(WAGE_COLUMN)
     if pd.notna(w) and w != "":
         wage_lookup.setdefault(iso2, {})[yr] = float(w)
 
@@ -363,11 +394,10 @@ if _args.preview:
         ax_map.text(0.02, 0.045, MONTHS[step_f], transform=ax_map.transAxes,
                     fontsize=11, color="white", alpha=0.75, va="top",
                     fontfamily=CLOCK_FONT)
-        ax_map.text(0.02, 0.975, "European Median Monthly Gross Wage",
+        ax_map.text(0.02, 0.975, TITLE_MAP[WAGE_COLUMN],
                     transform=ax_map.transAxes, fontsize=11, color="white",
                     alpha=0.9, ha="left", va="top", fontweight="bold")
-        ax_map.text(0.02, 0.948,
-                    "Nominal EUR  |  Source: Eurostat SES + national offices",
+        ax_map.text(0.02, 0.948, SOURCE_MAP[WAGE_COLUMN],
                     transform=ax_map.transAxes, fontsize=6.5, color="#aaaacc",
                     alpha=0.8, ha="left", va="top")
 
@@ -559,12 +589,12 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
 
     # Title (on map, left-aligned)
     ax_map.text(0.02, 0.975,
-                "European Median Monthly Gross Wage",
+                TITLE_MAP[WAGE_COLUMN],
                 transform=ax_map.transAxes,
                 fontsize=11, color="white", alpha=0.9,
                 ha="left", va="top", fontweight="bold")
     ax_map.text(0.02, 0.948,
-                "Nominal EUR  |  Source: Eurostat SES + national offices",
+                SOURCE_MAP[WAGE_COLUMN],
                 transform=ax_map.transAxes,
                 fontsize=6.5, color="#aaaacc", alpha=0.8, ha="left", va="top")
 
