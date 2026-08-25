@@ -42,7 +42,7 @@ START_YEAR   = 1995
 END_YEAR     = 2031
 CMAP         = "inferno"
 VMIN         = 0
-VMAX         = 7000
+VMAX         = 6000
 BG_COLOR     = "#0d0d1a"
 MISSING_CLR  = "#2a2a3a"
 BORDER_CLR   = "#555577"
@@ -93,7 +93,7 @@ FORECAST_START = 2026
 # ── chart config ───────────────────────────────────────────────────────────
 # Countries to show on the right-panel chart (convergence story)
 CHART_COUNTRIES = [
-    "CH", "LU", "NO", "SE", "DE", "NL", "AT",  # top tier
+    "CH", "DK", "LU", "NO", "SE", "DE", "NL", "AT",  # top tier
     "FR", "GB",                            # western
     "PL", "CZ", "LT",                     # converging
     "ES", "IT", "GR",                      # southern
@@ -101,8 +101,8 @@ CHART_COUNTRIES = [
 ]
 
 CHART_COLORS = {
-    "CH": "#C0C0C0", "LU": "#E6B800", "NO": "#B22222", "SE": "#1874CD",
-    "DE": "#FFFFFF", "NL": "#FF8C00", "AT": "#9400D3",
+    "CH": "#C0C0C0", "DK": "#FF4500", "LU": "#E6B800", "NO": "#B22222",
+    "SE": "#1874CD", "DE": "#FFFFFF", "NL": "#FF8C00", "AT": "#9400D3",
     "FR": "#2E8B57", "GB": "#4682B4",
     "PL": "#DC143C", "CZ": "#1E90FF", "LT": "#32CD32",
     "ES": "#DAA520", "IT": "#FF6347", "GR": "#00CED1",
@@ -110,8 +110,8 @@ CHART_COLORS = {
 }
 
 CHART_NAMES = {
-    "CH": "Switzerland", "LU": "Luxembourg", "NO": "Norway", "SE": "Sweden",
-    "DE": "Germany", "NL": "Netherlands", "AT": "Austria",
+    "CH": "Switzerland", "DK": "Denmark", "LU": "Luxembourg", "NO": "Norway",
+    "SE": "Sweden", "DE": "Germany", "NL": "Netherlands", "AT": "Austria",
     "FR": "France", "GB": "UK",
     "PL": "Poland", "CZ": "Czechia", "LT": "Lithuania",
     "ES": "Spain", "IT": "Italy", "GR": "Greece",
@@ -120,7 +120,7 @@ CHART_NAMES = {
 
 # Population in millions (for line thickness)
 POPULATION = {
-    "CH": 8.8, "LU": 0.66, "NO": 5.5, "SE": 10.5, "DE": 84.5,
+    "CH": 8.8, "DK": 5.9, "LU": 0.66, "NO": 5.5, "SE": 10.5, "DE": 84.5,
     "NL": 17.9, "AT": 9.1,
     "FR": 68.2, "GB": 67.7,
     "PL": 37.6, "CZ": 10.9, "LT": 2.9,
@@ -128,7 +128,7 @@ POPULATION = {
     "RU": 144.0, "BY": 9.2, "UA": 37.0,
 }
 
-CHART_YMAX = 7000
+CHART_YMAX = 6000
 
 
 def _line_width(iso2, min_w=0.6, max_w=3.5):
@@ -193,13 +193,13 @@ def yugo_blob(yr: int):
     return blob, _yugo_cache[blob]
 
 # ── 3. load wage data ─────────────────────────────────────────────────────
-wages_df = pd.read_csv(os.path.join(DATA_DIR, "oecd_wages_europe.csv"))
+wages_df = pd.read_csv(os.path.join(DATA_DIR, "median_wages_europe.csv"))
 
 wage_lookup = {}
 for _, row in wages_df.iterrows():
     iso2 = row["iso2"]
     yr   = int(row["year"])
-    w    = row["wage_monthly_eur"]
+    w    = row["wage_median_eur"]
     if pd.notna(w) and w != "":
         wage_lookup.setdefault(iso2, {})[yr] = float(w)
 
@@ -363,11 +363,11 @@ if _args.preview:
         ax_map.text(0.02, 0.045, MONTHS[step_f], transform=ax_map.transAxes,
                     fontsize=11, color="white", alpha=0.75, va="top",
                     fontfamily=CLOCK_FONT)
-        ax_map.text(0.02, 0.975, "European Average Monthly Gross Wage",
+        ax_map.text(0.02, 0.975, "European Median Monthly Gross Wage",
                     transform=ax_map.transAxes, fontsize=11, color="white",
                     alpha=0.9, ha="left", va="top", fontweight="bold")
         ax_map.text(0.02, 0.948,
-                    "Nominal EUR  |  Sources: national offices, Eurostat D11, OECD, ONS",
+                    "Nominal EUR  |  Source: Eurostat SES + national offices",
                     transform=ax_map.transAxes, fontsize=6.5, color="#aaaacc",
                     alpha=0.8, ha="left", va="top")
 
@@ -559,12 +559,12 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
 
     # Title (on map, left-aligned)
     ax_map.text(0.02, 0.975,
-                "European Average Monthly Gross Wage",
+                "European Median Monthly Gross Wage",
                 transform=ax_map.transAxes,
                 fontsize=11, color="white", alpha=0.9,
                 ha="left", va="top", fontweight="bold")
     ax_map.text(0.02, 0.948,
-                "Nominal EUR  |  Sources: national offices, Eurostat D11, OECD, ONS",
+                "Nominal EUR  |  Source: Eurostat SES + national offices",
                 transform=ax_map.transAxes,
                 fontsize=6.5, color="#aaaacc", alpha=0.8, ha="left", va="top")
 
