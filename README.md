@@ -5,12 +5,12 @@ evolution across European countries from 1995-2025, with forecast to 2031.
 
 ## Status
 
-**Median wage pipeline:** Complete. 47 countries with median estimates.
-- Anchor data: Eurostat Structure of Earnings Survey (SES) — real median hourly
-  wages for 36 EU/EEA countries at 5 survey waves (2006, 2010, 2014, 2018, 2022).
-- Between survey years: linear interpolation of SES values.
-- Pre-2006 / post-2022: extrapolated using mean wage growth rates.
-- Non-SES countries (RU, UA, BY, etc.): estimated via regional median/mean ratios.
+**Median wage pipeline:** Complete. 48 countries, 1400 data points.
+- Anchor data: Eurostat `earn_ses_monthly` — direct median gross monthly EUR
+  for 37 EU/EEA countries at 6 survey waves (2002, 2006, 2010, 2014, 2018, 2022).
+- National office overrides: CH (BFS LSE, 2000-2024), GB (ONS ASHE, 1997-2024),
+  RU (Rosstat, 2005-2025), BY (Belstat, 2018-2025), GE (Geostat, 2018-2024), KZ (BNS, 2023-2025).
+- Between anchor years: linear interpolation. Pre-first-survey: backcast via mean growth rates.
 - Mean wage pipeline still available for reference (48 countries).
 
 **Animation:** Side-by-side choropleth map + progressive time-series chart.
@@ -21,55 +21,60 @@ evolution across European countries from 1995-2025, with forecast to 2031.
 ```
 src/
   01_fetch_wages.py          Fetch all APIs → data/raw/oecd_wages_europe.csv + charts
-  02_make_map.py             Animated choropleth → output/frames/ + europe_wages.mp4
+  02_make_map.py             Animated choropleth → output/europe_wages_{metric}.mp4
+  05_build_median.py         Build median wages → data/raw/median_wages_ses.csv
   03_make_coverage_table.py  HTML source coverage table → output/coverage_table.html
   04_make_gif.py             Convert MP4 → optimized GIF for Reddit upload
 
 data/raw/
+  median_wages_ses.csv     Median wage data (48 countries, 1400 rows, 1995-2031)
   oecd_wages_europe.csv    Mean wage data (~1,565 rows: historical + projected to 2031)
-  median_wages_europe.csv  Median wage data (SES-anchored, 47 countries)
-  wiki_wages.html          Cached Wikipedia page with source references
-  rosstat_tab3.xlsx        Cached Rosstat wage Excel
 
 output/
-  europe_wages.mp4       Animated choropleth (1995-2031)
-  europe_wages.gif       Reddit-optimized GIF (960px, 12fps)
-  coverage_table.html    Source coverage matrix
+  europe_wages_median.mp4  Animated choropleth (median, 1995-2031)
+  europe_wages.gif         Reddit-optimized GIF (960px, 12fps)
 ```
 
 ## Median Methodology
 
-The animation uses **median** gross monthly wages derived from Eurostat's Structure
-of Earnings Survey (SES), which surveys enterprises every 4 years. The SES provides
-median hourly earnings in EUR, converted to monthly via × 173.33 hours (40h/week).
+The animation uses **median** gross monthly wages. The primary source is Eurostat's
+`earn_ses_monthly` dataset, which provides median gross monthly earnings in EUR
+directly from the Structure of Earnings Survey (SES) microdata. No hourly-to-monthly
+conversion is needed.
 
-| Period | Method |
-|--------|--------|
-| 2006, 2010, 2014, 2018, 2022 | Direct SES median (anchor points) |
-| Between survey years | Linear interpolation |
-| Before 2006 | Backcast: SES anchor × mean growth rate |
-| 2023-2025 | Forecast: SES 2022 × mean growth rate |
-| 2026-2031 | Projection: IMF WEO GDP × wage/GDP ratio |
-| Non-SES countries | Mean × regional median/mean ratio |
+| Period | Method | Source label |
+|--------|--------|-------------|
+| 2002-2022 (survey years) | Direct SES monthly EUR | `ses_survey` |
+| Between survey years | Linear interpolation | `ses_interpolated` |
+| 2023-2025 | D1/employee growth rate from 2022 anchor | `ses_extrapolated` |
+| 2026-2031 | Log-linear GDP × wage/GDP ratio trend | `ses_projected` |
+| CH, GB, RU, BY, GE, KZ | Official national statistical office data | `national_office` |
+| UA, AM, AZ, MD, XK, AD, SM | Mean × fixed ratio (no official median) | `ratio_estimate` |
+| Pre-first-survey years | Mean wage growth applied backward | `backcast_guesswork` |
 
 ## Data Sources
 
 | Source | Role | Countries | Years |
 |--------|------|-----------|-------|
-| Eurostat SES (earn_ses_pub2s) | Median anchor | 36 | 2006-2022 (5 waves) |
-| Eurostat nama_10_a10 (D11) | Mean wages | ~40 | 1995-2025 |
-| OECD AV_AN_WAGE | Mean reference | 8 | 1990-2025 |
-| National offices | Mean growth rates | 11 | varies |
+| Eurostat `earn_ses_monthly` | Median anchor (monthly EUR) | 37 | 2002-2022 (6 waves) |
+| BFS LSE (Switzerland) | Official median monthly (CHF) | 1 | 2000-2024 |
+| ONS ASHE (UK) | Official median weekly (GBP) | 1 | 1997-2024 |
+| Rosstat (Russia) | April survey median (RUB) | 1 | 2005-2025 |
+| Belstat (Belarus) | Semi-annual median (BYN) | 1 | 2018-2025 |
+| Geostat (Georgia) | Annual median (GEL) | 1 | 2018-2024 |
+| BNS (Kazakhstan) | Annual median (KZT) | 1 | 2023-2025 |
+| Eurostat `nama_10_a10` | D1/employee growth rates | ~35 | 2020-2025 |
+| Eurostat `nama_10_pc` | GDP per capita for projection | ~35 | 2015-2025 |
 | IMF WEO Apr 2026 | GDP projections | 48 | 2026-2031 |
-| ECB FX rates | EUR conversion | 44 currencies | 1999-2025 |
 
 ## Key Design Decisions
 
 - **Median wages** — based on Eurostat SES survey data, not mean/average
+- **Direct monthly values** — `earn_ses_monthly` provides EUR/month directly, no hourly conversion
 - **Nominal EUR** — ECB market exchange rates, not PPP
 - **All data fetched programmatically** — no hand-curated CSVs
-- **SES as anchor** — real survey medians, growth-rate extrapolation between waves
-- **Projections:** IMF WEO GDP × historical wage/GDP ratio → 2031
+- **Transparent source labeling** — every data point has a `source` column
+- **Backcasting = guesswork** — clearly labeled, only used as last resort
 
 ## Running
 
@@ -81,11 +86,11 @@ uv pip install requests matplotlib openpyxl geopandas imageio[ffmpeg]
 # 1. Fetch mean wage data → CSV + charts (~2-3 min)
 .venv/Scripts/python src/01_fetch_wages.py
 
-# 2. Render animated choropleth → output/europe_wages.mp4 (~10-15 min)
-.venv/Scripts/python src/02_make_map.py
+# 2. Build median wage dataset → data/raw/median_wages_ses.csv (~30s)
+.venv/Scripts/python src/05_build_median.py
 
-# 3. Generate source coverage HTML table
-.venv/Scripts/python src/03_make_coverage_table.py
+# 3. Render animated choropleth → output/europe_wages_median.mp4 (~10-15 min)
+.venv/Scripts/python src/02_make_map.py --wage wage_median_eur
 
 # 4. Convert MP4 to GIF for Reddit
 .venv/Scripts/python src/04_make_gif.py
