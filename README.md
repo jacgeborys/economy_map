@@ -163,6 +163,60 @@ is 56% higher than what the typical worker gets. In most countries the ratio is
 
 Reddit feedback on the first version (which used mean) specifically asked for median.
 
+### "What about inflation? These are just nominal numbers"
+
+Yes, these are nominal (not inflation-adjusted). That's deliberate. Real wage
+calculations require choosing a deflator (CPI? HICP? GDP deflator?), a base year,
+and a geographic scope — each choice is debatable and adds a layer of modeling.
+
+Nominal EUR is the rawest cross-country comparison possible: what the payslip says,
+converted at market exchange rates. It answers "how much does a worker in Poland
+actually get paid compared to Germany?" — which is the question most people are
+asking when they look at a wage map.
+
+Inflation-adjusted wages would answer a different question ("has purchasing power
+grown?") and would flatten the convergence story — Eastern European wages catching
+up looks less dramatic in real terms. Both views are valid; this animation shows
+the nominal one. The convergence trend is real either way — it's just steeper in
+nominal terms.
+
+### "Lithuania looks too high — they changed their tax law"
+
+Correct. In 2019, Lithuania restructured: employer social contributions were moved
+into the gross wage. This made Lithuanian gross wages jump ~25% overnight, with no
+change in take-home pay or total employer cost. The Eurostat SES data reflects this
+because it reports gross wages as defined by each country.
+
+This is a known comparability issue with gross wages across Europe. The alternatives
+(net wages, total labor cost) each have their own cross-country comparability
+problems. Gross is the most widely available and consistently reported metric, even
+if Lithuania's 2019 reform created a visible artifact.
+
+### "The numbers are wrong for my country"
+
+Common sources of disagreement:
+- **Median vs mean**: median is typically 10-20% lower than mean. If you're comparing
+  to a mean figure you found online, that explains the gap.
+- **Gross vs net**: this shows gross (before tax). Net can be 30-50% lower depending
+  on the country's tax system.
+- **Full-time vs all workers**: this shows full-time employees only. Including
+  part-time workers would lower the numbers.
+- **Sector coverage**: Eurostat SES covers NACE B-S excluding O (public admin).
+  National statistics offices sometimes report different sector scopes.
+- **Currency conversion**: non-EUR countries are converted at ECB annual average
+  exchange rates, which can differ from the rate on any given day.
+- **Timing**: SES surveys are conducted every 4 years. Between-survey values are
+  interpolated. The "2024" value for most countries is an extrapolation from the
+  2022 survey, not a fresh measurement.
+
+### "Gross wages are meaningless — show net / take-home pay"
+
+Net wages require modeling each country's tax system (income tax brackets, social
+contributions, deductions, family status). A single person vs married with kids
+can differ by 20%+ in take-home pay. There is no single "net wage" — it depends
+on individual circumstances. Gross is the only figure that's directly comparable
+across countries without making assumptions about household composition.
+
 ### "How reliable is the backcast (pre-2002)?"
 
 Not very — it's labeled `mean_growth_backcast` for a reason. It applies mean wage

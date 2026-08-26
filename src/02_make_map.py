@@ -350,7 +350,7 @@ if _args.preview:
 
         fig = plt.figure(figsize=(FIG_W, FIG_H), facecolor=BG_COLOR)
         ax_map  = fig.add_axes([0.01, 0.02, 0.52, 0.96])
-        cbar_ax = fig.add_axes([0.535, 0.18, 0.010, 0.58])
+        cbar_ax = fig.add_axes([0.505, 0.18, 0.010, 0.58])
         ax_map.set_facecolor(BG_COLOR)
         ax_map.axis("off")
 
@@ -607,7 +607,7 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
 
     # ── LEFT PANEL: map ──────────────────────────────────────────────────
     ax_map   = fig.add_axes([0.01, 0.02, 0.52, 0.96])
-    cbar_ax  = fig.add_axes([0.535, 0.18, 0.010, 0.58])
+    cbar_ax  = fig.add_axes([0.52, 0.18, 0.010, 0.58])
     ax_map.set_facecolor(BG_COLOR)
     ax_map.axis("off")
 
