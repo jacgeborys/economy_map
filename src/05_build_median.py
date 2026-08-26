@@ -316,64 +316,7 @@ def main():
     rows.extend(extrap_rows)
     print(f"   +{len(extrap_rows)} extrapolated rows")
 
-    # ── 6. Project 2026-2031 ──────────────────────────────────────────────
-    print("\n6. Projecting 2026-2031 (log-linear GDP × wage/GDP ratio)...")
-
-    gdp_data = eurostat_json("nama_10_pc", {
-        "na_item": "B1GQ", "unit": "CP_EUR_HAB",
-        "sinceTimePeriod": "2015",
-    })
-    gdp_by_geo = defaultdict(dict)
-    for (geo, year), val in gdp_data.items():
-        gdp_by_geo[geo][year] = val
-
-    series = defaultdict(dict)
-    for geo, year, val, src in rows:
-        series[geo][year] = val
-
-    proj_rows = []
-    for geo in sorted(series):
-        yrs = sorted(series[geo].keys())
-        if not yrs:
-            continue
-        last_year = max(yrs)
-        if last_year < 2023:
-            continue
-
-        gdp_pts = [(y, gdp_by_geo[geo][y]) for y in range(last_year - 4, last_year + 1)
-                    if y in gdp_by_geo.get(geo, {})]
-        if len(gdp_pts) < 3:
-            continue
-
-        gdp_years = np.array([p[0] for p in gdp_pts])
-        gdp_vals = np.array([p[1] for p in gdp_pts])
-        log_gdp = np.log(gdp_vals)
-        coeffs = np.polyfit(gdp_years, log_gdp, 1)
-
-        wage_gdp_pts = []
-        for y in range(last_year - 4, last_year + 1):
-            w = series[geo].get(y)
-            g = gdp_by_geo.get(geo, {}).get(y)
-            if w and g:
-                wage_gdp_pts.append((y, w / (g / 12)))
-        if len(wage_gdp_pts) < 3:
-            continue
-
-        ratio_years = np.array([p[0] for p in wage_gdp_pts])
-        ratio_vals = np.array([p[1] for p in wage_gdp_pts])
-        ratio_coeffs = np.polyfit(ratio_years, ratio_vals, 1)
-
-        for year in range(last_year + 1, 2032):
-            proj_gdp = np.exp(coeffs[0] * year + coeffs[1])
-            proj_ratio = ratio_coeffs[0] * year + ratio_coeffs[1]
-            proj_ratio = max(proj_ratio, 0.1)
-            proj_wage = round(proj_ratio * proj_gdp / 12)
-            proj_rows.append((geo, year, proj_wage, "ses_projected"))
-
-    rows.extend(proj_rows)
-    print(f"   +{len(proj_rows)} projected rows")
-
-    # ── 7. Non-SES countries: official national median data ───────────────
+    # ── 6. Non-SES countries: official national median data ─────────────
     print("\n7. Non-SES countries: official median data from national offices...")
 
     mean_df = pd.read_csv(os.path.join(DATA_DIR, "oecd_wages_europe.csv"))
@@ -440,6 +383,46 @@ def main():
     rows.extend(non_ses_rows)
     print(f"   +{len(non_ses_rows)} non-SES rows total")
 
+    # ── 8. Project beyond last data using mean wage growth rates ──────────
+    # For each country, extend using the year-over-year growth from the
+    # mean wage pipeline (oecd_wages_europe.csv), which already has
+    # IMF WEO-based projections to 2031. This keeps the median/mean ratio
+    # stable rather than extrapolating it aggressively.
+    print("\n8. Projecting to 2031 using mean wage growth rates...")
+
+    mean_by_geo_proj = defaultdict(dict)
+    for _, row in mean_df.iterrows():
+        if pd.notna(row.get("wage_monthly_eur")):
+            mean_by_geo_proj[row["iso2"]][int(row["year"])] = row["wage_monthly_eur"]
+
+    series = defaultdict(dict)
+    for geo, year, val, src in rows:
+        series[geo][year] = val
+
+    proj_rows = []
+    for geo in sorted(series):
+        yrs = sorted(series[geo].keys())
+        last_year = max(yrs)
+        if last_year >= 2031:
+            continue
+        last_val = series[geo][last_year]
+        mean_series = mean_by_geo_proj.get(geo, {})
+        if last_year not in mean_series:
+            continue
+
+        for year in range(last_year + 1, 2032):
+            mean_cur = mean_series.get(year)
+            mean_prev = mean_series.get(year - 1)
+            if mean_cur and mean_prev and mean_prev > 0:
+                growth = mean_cur / mean_prev
+                last_val = round(last_val * growth)
+                proj_rows.append((geo, year, last_val, "mean_growth_projected"))
+            else:
+                break
+
+    rows.extend(proj_rows)
+    print(f"   +{len(proj_rows)} projected rows")
+
     # ── 9. Backcast pre-survey years (GUESSWORK) ──────────────────────────
     # SES starts 2002/2006, RU at 2005, BY at 2018. To fill earlier years,
     # we apply mean wage growth rates in reverse.
@@ -484,7 +467,7 @@ def main():
     source_priority = {
         "national_office": 0, "ses_survey": 1, "ses_interpolated": 2,
         "national_interpolated": 3, "ses_extrapolated": 4,
-        "ses_projected": 5, "ratio_estimate": 6, "backcast_guesswork": 7,
+        "mean_growth_projected": 5, "ratio_estimate": 6, "backcast_guesswork": 7,
     }
     df["_prio"] = df["source"].map(source_priority).fillna(99)
     df = df.sort_values(["iso2", "year", "_prio"]).drop_duplicates(

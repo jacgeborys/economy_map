@@ -67,12 +67,12 @@ AT,Austria,2022,3111,ses_survey
 AT,Austria,2023,3323,ses_extrapolated
 AT,Austria,2024,3564,ses_extrapolated
 AT,Austria,2025,3699,ses_extrapolated
-AT,Austria,2026,3913,ses_projected
-AT,Austria,2027,4126,ses_projected
-AT,Austria,2028,4350,ses_projected
-AT,Austria,2029,4587,ses_projected
-AT,Austria,2030,4836,ses_projected
-AT,Austria,2031,5099,ses_projected
+AT,Austria,2026,3882,mean_growth_projected
+AT,Austria,2027,4002,mean_growth_projected
+AT,Austria,2028,4113,mean_growth_projected
+AT,Austria,2029,4234,mean_growth_projected
+AT,Austria,2030,4349,mean_growth_projected
+AT,Austria,2031,4463,mean_growth_projected
 AZ,Azerbaijan,2025,412,ratio_estimate
 BA,Bosnia and Herzegovina,2010,563,backcast_guesswork
 BA,Bosnia and Herzegovina,2011,582,backcast_guesswork
@@ -89,13 +89,13 @@ BA,Bosnia and Herzegovina,2021,677,backcast_guesswork
 BA,Bosnia and Herzegovina,2022,788,ses_survey
 BA,Bosnia and Herzegovina,2023,882,ses_extrapolated
 BA,Bosnia and Herzegovina,2024,970,ses_extrapolated
-BA,Bosnia and Herzegovina,2025,1139,ses_projected
-BA,Bosnia and Herzegovina,2026,1302,ses_projected
-BA,Bosnia and Herzegovina,2027,1489,ses_projected
-BA,Bosnia and Herzegovina,2028,1701,ses_projected
-BA,Bosnia and Herzegovina,2029,1943,ses_projected
-BA,Bosnia and Herzegovina,2030,2219,ses_projected
-BA,Bosnia and Herzegovina,2031,2534,ses_projected
+BA,Bosnia and Herzegovina,2025,1012,mean_growth_projected
+BA,Bosnia and Herzegovina,2026,1132,mean_growth_projected
+BA,Bosnia and Herzegovina,2027,1201,mean_growth_projected
+BA,Bosnia and Herzegovina,2028,1265,mean_growth_projected
+BA,Bosnia and Herzegovina,2029,1337,mean_growth_projected
+BA,Bosnia and Herzegovina,2030,1412,mean_growth_projected
+BA,Bosnia and Herzegovina,2031,1490,mean_growth_projected
 BE,Belgium,1995,1901,backcast_guesswork
 BE,Belgium,1996,1897,backcast_guesswork
 BE,Belgium,1997,1884,backcast_guesswork
@@ -127,12 +127,12 @@ BE,Belgium,2022,3843,ses_survey
 BE,Belgium,2023,4132,ses_extrapolated
 BE,Belgium,2024,4272,ses_extrapolated
 BE,Belgium,2025,4412,ses_extrapolated
-BE,Belgium,2026,4652,ses_projected
-BE,Belgium,2027,4865,ses_projected
-BE,Belgium,2028,5087,ses_projected
-BE,Belgium,2029,5320,ses_projected
-BE,Belgium,2030,5563,ses_projected
-BE,Belgium,2031,5816,ses_projected
+BE,Belgium,2026,4688,mean_growth_projected
+BE,Belgium,2027,4794,mean_growth_projected
+BE,Belgium,2028,4899,mean_growth_projected
+BE,Belgium,2029,5028,mean_growth_projected
+BE,Belgium,2030,5152,mean_growth_projected
+BE,Belgium,2031,5281,mean_growth_projected
 BG,Bulgaria,1995,70,backcast_guesswork
 BG,Bulgaria,1996,47,backcast_guesswork
 BG,Bulgaria,1997,53,backcast_guesswork
@@ -164,12 +164,12 @@ BG,Bulgaria,2022,705,ses_survey
 BG,Bulgaria,2023,800,ses_extrapolated
 BG,Bulgaria,2024,913,ses_extrapolated
 BG,Bulgaria,2025,1007,ses_extrapolated
-BG,Bulgaria,2026,1135,ses_projected
-BG,Bulgaria,2027,1274,ses_projected
-BG,Bulgaria,2028,1430,ses_projected
-BG,Bulgaria,2029,1605,ses_projected
-BG,Bulgaria,2030,1801,ses_projected
-BG,Bulgaria,2031,2022,ses_projected
+BG,Bulgaria,2026,1177,mean_growth_projected
+BG,Bulgaria,2027,1269,mean_growth_projected
+BG,Bulgaria,2028,1375,mean_growth_projected
+BG,Bulgaria,2029,1463,mean_growth_projected
+BG,Bulgaria,2030,1561,mean_growth_projected
+BG,Bulgaria,2031,1659,mean_growth_projected
 BY,Belarus,2000,42,backcast_guesswork
 BY,Belarus,2001,68,backcast_guesswork
 BY,Belarus,2002,77,backcast_guesswork
@@ -195,6 +195,12 @@ BY,Belarus,2022,454,national_office
 BY,Belarus,2023,465,national_office
 BY,Belarus,2024,507,national_office
 BY,Belarus,2025,578,national_office
+BY,Belarus,2026,608,mean_growth_projected
+BY,Belarus,2027,644,mean_growth_projected
+BY,Belarus,2028,682,mean_growth_projected
+BY,Belarus,2029,729,mean_growth_projected
+BY,Belarus,2030,772,mean_growth_projected
+BY,Belarus,2031,815,mean_growth_projected
 CH,Switzerland,1995,2687,backcast_guesswork
 CH,Switzerland,1996,2677,backcast_guesswork
 CH,Switzerland,1997,2615,backcast_guesswork
@@ -226,12 +232,12 @@ CH,Switzerland,2022,5857,national_office
 CH,Switzerland,2023,6125,ses_interpolated
 CH,Switzerland,2024,6393,national_office
 CH,Switzerland,2025,6572,ses_extrapolated
-CH,Switzerland,2026,6887,ses_projected
-CH,Switzerland,2027,7167,ses_projected
-CH,Switzerland,2028,7458,ses_projected
-CH,Switzerland,2029,7760,ses_projected
-CH,Switzerland,2030,8073,ses_projected
-CH,Switzerland,2031,8397,ses_projected
+CH,Switzerland,2026,7138,mean_growth_projected
+CH,Switzerland,2027,7356,mean_growth_projected
+CH,Switzerland,2028,7618,mean_growth_projected
+CH,Switzerland,2029,7854,mean_growth_projected
+CH,Switzerland,2030,8147,mean_growth_projected
+CH,Switzerland,2031,8400,mean_growth_projected
 CY,Cyprus,1995,891,backcast_guesswork
 CY,Cyprus,1996,939,backcast_guesswork
 CY,Cyprus,1997,1006,backcast_guesswork
@@ -263,12 +269,12 @@ CY,Cyprus,2022,1686,ses_survey
 CY,Cyprus,2023,1844,ses_extrapolated
 CY,Cyprus,2024,1904,ses_extrapolated
 CY,Cyprus,2025,1985,ses_extrapolated
-CY,Cyprus,2026,2097,ses_projected
-CY,Cyprus,2027,2201,ses_projected
-CY,Cyprus,2028,2310,ses_projected
-CY,Cyprus,2029,2423,ses_projected
-CY,Cyprus,2030,2540,ses_projected
-CY,Cyprus,2031,2662,ses_projected
+CY,Cyprus,2026,2161,mean_growth_projected
+CY,Cyprus,2027,2241,mean_growth_projected
+CY,Cyprus,2028,2351,mean_growth_projected
+CY,Cyprus,2029,2470,mean_growth_projected
+CY,Cyprus,2030,2592,mean_growth_projected
+CY,Cyprus,2031,2721,mean_growth_projected
 CZ,Czechia,1995,199,backcast_guesswork
 CZ,Czechia,1996,235,backcast_guesswork
 CZ,Czechia,1997,249,backcast_guesswork
@@ -300,12 +306,12 @@ CZ,Czechia,2022,1424,ses_survey
 CZ,Czechia,2023,1559,ses_extrapolated
 CZ,Czechia,2024,1574,ses_extrapolated
 CZ,Czechia,2025,1690,ses_extrapolated
-CZ,Czechia,2026,1791,ses_projected
-CZ,Czechia,2027,1894,ses_projected
-CZ,Czechia,2028,2002,ses_projected
-CZ,Czechia,2029,2116,ses_projected
-CZ,Czechia,2030,2236,ses_projected
-CZ,Czechia,2031,2363,ses_projected
+CZ,Czechia,2026,1873,mean_growth_projected
+CZ,Czechia,2027,1959,mean_growth_projected
+CZ,Czechia,2028,2046,mean_growth_projected
+CZ,Czechia,2029,2132,mean_growth_projected
+CZ,Czechia,2030,2221,mean_growth_projected
+CZ,Czechia,2031,2313,mean_growth_projected
 DE,Germany,1995,2024,backcast_guesswork
 DE,Germany,1996,2079,backcast_guesswork
 DE,Germany,1997,2119,backcast_guesswork
@@ -337,12 +343,12 @@ DE,Germany,2022,3469,ses_survey
 DE,Germany,2023,3686,ses_extrapolated
 DE,Germany,2024,3877,ses_extrapolated
 DE,Germany,2025,4065,ses_extrapolated
-DE,Germany,2026,4245,ses_projected
-DE,Germany,2027,4446,ses_projected
-DE,Germany,2028,4657,ses_projected
-DE,Germany,2029,4878,ses_projected
-DE,Germany,2030,5109,ses_projected
-DE,Germany,2031,5351,ses_projected
+DE,Germany,2026,4352,mean_growth_projected
+DE,Germany,2027,4505,mean_growth_projected
+DE,Germany,2028,4652,mean_growth_projected
+DE,Germany,2029,4804,mean_growth_projected
+DE,Germany,2030,4949,mean_growth_projected
+DE,Germany,2031,5093,mean_growth_projected
 DK,Denmark,1995,2405,backcast_guesswork
 DK,Denmark,1996,2483,backcast_guesswork
 DK,Denmark,1997,2511,backcast_guesswork
@@ -374,12 +380,12 @@ DK,Denmark,2022,4998,ses_survey
 DK,Denmark,2023,5176,ses_extrapolated
 DK,Denmark,2024,5402,ses_extrapolated
 DK,Denmark,2025,5580,ses_extrapolated
-DK,Denmark,2026,5771,ses_projected
-DK,Denmark,2027,5974,ses_projected
-DK,Denmark,2028,6185,ses_projected
-DK,Denmark,2029,6403,ses_projected
-DK,Denmark,2030,6628,ses_projected
-DK,Denmark,2031,6861,ses_projected
+DK,Denmark,2026,5965,mean_growth_projected
+DK,Denmark,2027,6171,mean_growth_projected
+DK,Denmark,2028,6362,mean_growth_projected
+DK,Denmark,2029,6569,mean_growth_projected
+DK,Denmark,2030,6775,mean_growth_projected
+DK,Denmark,2031,6987,mean_growth_projected
 EE,Estonia,1995,135,backcast_guesswork
 EE,Estonia,1996,171,backcast_guesswork
 EE,Estonia,1997,199,backcast_guesswork
@@ -411,12 +417,12 @@ EE,Estonia,2022,1571,ses_survey
 EE,Estonia,2023,1706,ses_extrapolated
 EE,Estonia,2024,1819,ses_extrapolated
 EE,Estonia,2025,1912,ses_extrapolated
-EE,Estonia,2026,2059,ses_projected
-EE,Estonia,2027,2198,ses_projected
-EE,Estonia,2028,2347,ses_projected
-EE,Estonia,2029,2505,ses_projected
-EE,Estonia,2030,2674,ses_projected
-EE,Estonia,2031,2854,ses_projected
+EE,Estonia,2026,2049,mean_growth_projected
+EE,Estonia,2027,2154,mean_growth_projected
+EE,Estonia,2028,2271,mean_growth_projected
+EE,Estonia,2029,2383,mean_growth_projected
+EE,Estonia,2030,2492,mean_growth_projected
+EE,Estonia,2031,2600,mean_growth_projected
 ES,Spain,1995,1073,backcast_guesswork
 ES,Spain,1996,1132,backcast_guesswork
 ES,Spain,1997,1123,backcast_guesswork
@@ -448,12 +454,12 @@ ES,Spain,2022,2000,ses_survey
 ES,Spain,2023,2101,ses_extrapolated
 ES,Spain,2024,2197,ses_extrapolated
 ES,Spain,2025,2291,ses_extrapolated
-ES,Spain,2026,2374,ses_projected
-ES,Spain,2027,2467,ses_projected
-ES,Spain,2028,2562,ses_projected
-ES,Spain,2029,2658,ses_projected
-ES,Spain,2030,2754,ses_projected
-ES,Spain,2031,2852,ses_projected
+ES,Spain,2026,2538,mean_growth_projected
+ES,Spain,2027,2626,mean_growth_projected
+ES,Spain,2028,2720,mean_growth_projected
+ES,Spain,2029,2807,mean_growth_projected
+ES,Spain,2030,2903,mean_growth_projected
+ES,Spain,2031,3005,mean_growth_projected
 FI,Finland,1995,1693,backcast_guesswork
 FI,Finland,1996,1712,backcast_guesswork
 FI,Finland,1997,1731,backcast_guesswork
@@ -485,12 +491,12 @@ FI,Finland,2022,3393,ses_survey
 FI,Finland,2023,3503,ses_extrapolated
 FI,Finland,2024,3562,ses_extrapolated
 FI,Finland,2025,3686,ses_extrapolated
-FI,Finland,2026,3775,ses_projected
-FI,Finland,2027,3876,ses_projected
-FI,Finland,2028,3979,ses_projected
-FI,Finland,2029,4085,ses_projected
-FI,Finland,2030,4194,ses_projected
-FI,Finland,2031,4305,ses_projected
+FI,Finland,2026,3854,mean_growth_projected
+FI,Finland,2027,3998,mean_growth_projected
+FI,Finland,2028,4131,mean_growth_projected
+FI,Finland,2029,4284,mean_growth_projected
+FI,Finland,2030,4446,mean_growth_projected
+FI,Finland,2031,4609,mean_growth_projected
 FR,France,1995,1570,backcast_guesswork
 FR,France,1996,1605,backcast_guesswork
 FR,France,1997,1603,backcast_guesswork
@@ -522,12 +528,12 @@ FR,France,2022,2531,ses_survey
 FR,France,2023,2645,ses_extrapolated
 FR,France,2024,2726,ses_extrapolated
 FR,France,2025,2787,ses_extrapolated
-FR,France,2026,2871,ses_projected
-FR,France,2027,2952,ses_projected
-FR,France,2028,3035,ses_projected
-FR,France,2029,3120,ses_projected
-FR,France,2030,3206,ses_projected
-FR,France,2031,3294,ses_projected
+FR,France,2026,2987,mean_growth_projected
+FR,France,2027,3042,mean_growth_projected
+FR,France,2028,3119,mean_growth_projected
+FR,France,2029,3203,mean_growth_projected
+FR,France,2030,3289,mean_growth_projected
+FR,France,2031,3372,mean_growth_projected
 GB,United Kingdom,2000,2553,national_office
 GB,United Kingdom,2001,2619,national_office
 GB,United Kingdom,2002,2694,national_office
@@ -553,6 +559,13 @@ GB,United Kingdom,2021,3080,national_office
 GB,United Kingdom,2022,3252,national_office
 GB,United Kingdom,2023,3393,national_office
 GB,United Kingdom,2024,3691,national_office
+GB,United Kingdom,2025,3826,mean_growth_projected
+GB,United Kingdom,2026,4020,mean_growth_projected
+GB,United Kingdom,2027,4195,mean_growth_projected
+GB,United Kingdom,2028,4374,mean_growth_projected
+GB,United Kingdom,2029,4562,mean_growth_projected
+GB,United Kingdom,2030,4774,mean_growth_projected
+GB,United Kingdom,2031,4988,mean_growth_projected
 GE,Georgia,2006,106,backcast_guesswork
 GE,Georgia,2007,132,backcast_guesswork
 GE,Georgia,2008,158,backcast_guesswork
@@ -572,6 +585,13 @@ GE,Georgia,2021,239,national_office
 GE,Georgia,2022,341,national_office
 GE,Georgia,2023,437,national_office
 GE,Georgia,2024,443,national_office
+GE,Georgia,2025,490,mean_growth_projected
+GE,Georgia,2026,585,mean_growth_projected
+GE,Georgia,2027,641,mean_growth_projected
+GE,Georgia,2028,702,mean_growth_projected
+GE,Georgia,2029,771,mean_growth_projected
+GE,Georgia,2030,847,mean_growth_projected
+GE,Georgia,2031,929,mean_growth_projected
 GR,Greece,1995,713,backcast_guesswork
 GR,Greece,1996,773,backcast_guesswork
 GR,Greece,1997,867,backcast_guesswork
@@ -603,12 +623,12 @@ GR,Greece,2022,1274,ses_survey
 GR,Greece,2023,1317,ses_extrapolated
 GR,Greece,2024,1393,ses_extrapolated
 GR,Greece,2025,1442,ses_extrapolated
-GR,Greece,2026,1464,ses_projected
-GR,Greece,2027,1500,ses_projected
-GR,Greece,2028,1533,ses_projected
-GR,Greece,2029,1562,ses_projected
-GR,Greece,2030,1586,ses_projected
-GR,Greece,2031,1605,ses_projected
+GR,Greece,2026,1680,mean_growth_projected
+GR,Greece,2027,1753,mean_growth_projected
+GR,Greece,2028,1822,mean_growth_projected
+GR,Greece,2029,1892,mean_growth_projected
+GR,Greece,2030,1965,mean_growth_projected
+GR,Greece,2031,2044,mean_growth_projected
 HR,Croatia,1995,307,backcast_guesswork
 HR,Croatia,1996,349,backcast_guesswork
 HR,Croatia,1997,396,backcast_guesswork
@@ -640,12 +660,12 @@ HR,Croatia,2022,1172,ses_survey
 HR,Croatia,2023,1330,ses_extrapolated
 HR,Croatia,2024,1449,ses_extrapolated
 HR,Croatia,2025,1608,ses_extrapolated
-HR,Croatia,2026,1739,ses_projected
-HR,Croatia,2027,1899,ses_projected
-HR,Croatia,2028,2073,ses_projected
-HR,Croatia,2029,2261,ses_projected
-HR,Croatia,2030,2463,ses_projected
-HR,Croatia,2031,2681,ses_projected
+HR,Croatia,2026,1785,mean_growth_projected
+HR,Croatia,2027,1874,mean_growth_projected
+HR,Croatia,2028,1955,mean_growth_projected
+HR,Croatia,2029,2043,mean_growth_projected
+HR,Croatia,2030,2136,mean_growth_projected
+HR,Croatia,2031,2233,mean_growth_projected
 HU,Hungary,1995,180,backcast_guesswork
 HU,Hungary,1996,188,backcast_guesswork
 HU,Hungary,1997,208,backcast_guesswork
@@ -677,12 +697,12 @@ HU,Hungary,2022,1005,ses_survey
 HU,Hungary,2023,1185,ses_extrapolated
 HU,Hungary,2024,1289,ses_extrapolated
 HU,Hungary,2025,1397,ses_extrapolated
-HU,Hungary,2026,1559,ses_projected
-HU,Hungary,2027,1723,ses_projected
-HU,Hungary,2028,1903,ses_projected
-HU,Hungary,2029,2103,ses_projected
-HU,Hungary,2030,2323,ses_projected
-HU,Hungary,2031,2566,ses_projected
+HU,Hungary,2026,1471,mean_growth_projected
+HU,Hungary,2027,1547,mean_growth_projected
+HU,Hungary,2028,1626,mean_growth_projected
+HU,Hungary,2029,1714,mean_growth_projected
+HU,Hungary,2030,1806,mean_growth_projected
+HU,Hungary,2031,1903,mean_growth_projected
 IE,Ireland,1995,1520,backcast_guesswork
 IE,Ireland,1996,1671,backcast_guesswork
 IE,Ireland,1997,1936,backcast_guesswork
@@ -714,12 +734,12 @@ IE,Ireland,2022,3588,ses_survey
 IE,Ireland,2023,3735,ses_extrapolated
 IE,Ireland,2024,3983,ses_extrapolated
 IE,Ireland,2025,4088,ses_extrapolated
-IE,Ireland,2026,4267,ses_projected
-IE,Ireland,2027,4445,ses_projected
-IE,Ireland,2028,4629,ses_projected
-IE,Ireland,2029,4821,ses_projected
-IE,Ireland,2030,5021,ses_projected
-IE,Ireland,2031,5228,ses_projected
+IE,Ireland,2026,4601,mean_growth_projected
+IE,Ireland,2027,4730,mean_growth_projected
+IE,Ireland,2028,4860,mean_growth_projected
+IE,Ireland,2029,4972,mean_growth_projected
+IE,Ireland,2030,5096,mean_growth_projected
+IE,Ireland,2031,5226,mean_growth_projected
 IS,Iceland,1995,1565,backcast_guesswork
 IS,Iceland,1996,1733,backcast_guesswork
 IS,Iceland,1997,1860,backcast_guesswork
@@ -751,12 +771,12 @@ IS,Iceland,2022,4965,ses_survey
 IS,Iceland,2023,5112,ses_extrapolated
 IS,Iceland,2024,5348,ses_extrapolated
 IS,Iceland,2025,5859,ses_extrapolated
-IS,Iceland,2026,5907,ses_projected
-IS,Iceland,2027,6134,ses_projected
-IS,Iceland,2028,6358,ses_projected
-IS,Iceland,2029,6580,ses_projected
-IS,Iceland,2030,6797,ses_projected
-IS,Iceland,2031,7008,ses_projected
+IS,Iceland,2026,6579,mean_growth_projected
+IS,Iceland,2027,6763,mean_growth_projected
+IS,Iceland,2028,6928,mean_growth_projected
+IS,Iceland,2029,7110,mean_growth_projected
+IS,Iceland,2030,7298,mean_growth_projected
+IS,Iceland,2031,7490,mean_growth_projected
 IT,Italy,1995,1199,backcast_guesswork
 IT,Italy,1996,1370,backcast_guesswork
 IT,Italy,1997,1448,backcast_guesswork
@@ -788,12 +808,12 @@ IT,Italy,2022,2259,ses_survey
 IT,Italy,2023,2319,ses_extrapolated
 IT,Italy,2024,2396,ses_extrapolated
 IT,Italy,2025,2467,ses_extrapolated
-IT,Italy,2026,2502,ses_projected
-IT,Italy,2027,2555,ses_projected
-IT,Italy,2028,2606,ses_projected
-IT,Italy,2029,2655,ses_projected
-IT,Italy,2030,2703,ses_projected
-IT,Italy,2031,2748,ses_projected
+IT,Italy,2026,2708,mean_growth_projected
+IT,Italy,2027,2778,mean_growth_projected
+IT,Italy,2028,2863,mean_growth_projected
+IT,Italy,2029,2945,mean_growth_projected
+IT,Italy,2030,3031,mean_growth_projected
+IT,Italy,2031,3120,mean_growth_projected
 KZ,Kazakhstan,2015,353,backcast_guesswork
 KZ,Kazakhstan,2016,260,backcast_guesswork
 KZ,Kazakhstan,2017,283,backcast_guesswork
@@ -805,6 +825,12 @@ KZ,Kazakhstan,2022,441,backcast_guesswork
 KZ,Kazakhstan,2023,510,national_office
 KZ,Kazakhstan,2024,563,national_office
 KZ,Kazakhstan,2025,539,national_office
+KZ,Kazakhstan,2026,650,mean_growth_projected
+KZ,Kazakhstan,2027,689,mean_growth_projected
+KZ,Kazakhstan,2028,726,mean_growth_projected
+KZ,Kazakhstan,2029,768,mean_growth_projected
+KZ,Kazakhstan,2030,812,mean_growth_projected
+KZ,Kazakhstan,2031,861,mean_growth_projected
 LT,Lithuania,1995,82,backcast_guesswork
 LT,Lithuania,1996,111,backcast_guesswork
 LT,Lithuania,1997,149,backcast_guesswork
@@ -836,12 +862,12 @@ LT,Lithuania,2022,1490,ses_survey
 LT,Lithuania,2023,1670,ses_extrapolated
 LT,Lithuania,2024,1790,ses_extrapolated
 LT,Lithuania,2025,1969,ses_extrapolated
-LT,Lithuania,2026,2192,ses_projected
-LT,Lithuania,2027,2419,ses_projected
-LT,Lithuania,2028,2668,ses_projected
-LT,Lithuania,2029,2942,ses_projected
-LT,Lithuania,2030,3245,ses_projected
-LT,Lithuania,2031,3578,ses_projected
+LT,Lithuania,2026,2112,mean_growth_projected
+LT,Lithuania,2027,2201,mean_growth_projected
+LT,Lithuania,2028,2326,mean_growth_projected
+LT,Lithuania,2029,2445,mean_growth_projected
+LT,Lithuania,2030,2583,mean_growth_projected
+LT,Lithuania,2031,2714,mean_growth_projected
 LU,Luxembourg,1995,1995,backcast_guesswork
 LU,Luxembourg,1996,2028,backcast_guesswork
 LU,Luxembourg,1997,2026,backcast_guesswork
@@ -873,12 +899,12 @@ LU,Luxembourg,2022,4135,ses_survey
 LU,Luxembourg,2023,4446,ses_extrapolated
 LU,Luxembourg,2024,4601,ses_extrapolated
 LU,Luxembourg,2025,4802,ses_extrapolated
-LU,Luxembourg,2026,5043,ses_projected
-LU,Luxembourg,2027,5280,ses_projected
-LU,Luxembourg,2028,5527,ses_projected
-LU,Luxembourg,2029,5785,ses_projected
-LU,Luxembourg,2030,6054,ses_projected
-LU,Luxembourg,2031,6335,ses_projected
+LU,Luxembourg,2026,5064,mean_growth_projected
+LU,Luxembourg,2027,5147,mean_growth_projected
+LU,Luxembourg,2028,5252,mean_growth_projected
+LU,Luxembourg,2029,5364,mean_growth_projected
+LU,Luxembourg,2030,5477,mean_growth_projected
+LU,Luxembourg,2031,5592,mean_growth_projected
 LV,Latvia,1996,107,backcast_guesswork
 LV,Latvia,1997,127,backcast_guesswork
 LV,Latvia,1998,138,backcast_guesswork
@@ -909,12 +935,12 @@ LV,Latvia,2022,1200,ses_survey
 LV,Latvia,2023,1269,ses_extrapolated
 LV,Latvia,2024,1402,ses_extrapolated
 LV,Latvia,2025,1520,ses_extrapolated
-LV,Latvia,2026,1624,ses_projected
-LV,Latvia,2027,1750,ses_projected
-LV,Latvia,2028,1885,ses_projected
-LV,Latvia,2029,2032,ses_projected
-LV,Latvia,2030,2190,ses_projected
-LV,Latvia,2031,2359,ses_projected
+LV,Latvia,2026,1612,mean_growth_projected
+LV,Latvia,2027,1707,mean_growth_projected
+LV,Latvia,2028,1802,mean_growth_projected
+LV,Latvia,2029,1896,mean_growth_projected
+LV,Latvia,2030,1993,mean_growth_projected
+LV,Latvia,2031,2096,mean_growth_projected
 MD,Moldova,2015,214,ratio_estimate
 MD,Moldova,2016,226,ratio_estimate
 MD,Moldova,2017,268,ratio_estimate
@@ -941,6 +967,23 @@ ME,Montenegro,2011,641,backcast_guesswork
 ME,Montenegro,2012,619,backcast_guesswork
 ME,Montenegro,2013,562,backcast_guesswork
 ME,Montenegro,2014,608,ses_survey
+ME,Montenegro,2015,635,mean_growth_projected
+ME,Montenegro,2016,683,mean_growth_projected
+ME,Montenegro,2017,716,mean_growth_projected
+ME,Montenegro,2018,742,mean_growth_projected
+ME,Montenegro,2019,767,mean_growth_projected
+ME,Montenegro,2020,843,mean_growth_projected
+ME,Montenegro,2021,833,mean_growth_projected
+ME,Montenegro,2022,849,mean_growth_projected
+ME,Montenegro,2023,949,mean_growth_projected
+ME,Montenegro,2024,1044,mean_growth_projected
+ME,Montenegro,2025,1150,mean_growth_projected
+ME,Montenegro,2026,1309,mean_growth_projected
+ME,Montenegro,2027,1382,mean_growth_projected
+ME,Montenegro,2028,1455,mean_growth_projected
+ME,Montenegro,2029,1532,mean_growth_projected
+ME,Montenegro,2030,1611,mean_growth_projected
+ME,Montenegro,2031,1695,mean_growth_projected
 MK,North Macedonia,2010,422,ses_survey
 MK,North Macedonia,2011,418,ses_interpolated
 MK,North Macedonia,2012,414,ses_interpolated
@@ -954,6 +997,15 @@ MK,North Macedonia,2019,530,ses_interpolated
 MK,North Macedonia,2020,574,ses_interpolated
 MK,North Macedonia,2021,618,ses_interpolated
 MK,North Macedonia,2022,663,ses_survey
+MK,North Macedonia,2023,764,mean_growth_projected
+MK,North Macedonia,2024,862,mean_growth_projected
+MK,North Macedonia,2025,945,mean_growth_projected
+MK,North Macedonia,2026,1019,mean_growth_projected
+MK,North Macedonia,2027,1097,mean_growth_projected
+MK,North Macedonia,2028,1172,mean_growth_projected
+MK,North Macedonia,2029,1245,mean_growth_projected
+MK,North Macedonia,2030,1319,mean_growth_projected
+MK,North Macedonia,2031,1393,mean_growth_projected
 MT,Malta,1995,768,backcast_guesswork
 MT,Malta,1996,809,backcast_guesswork
 MT,Malta,1997,859,backcast_guesswork
@@ -985,12 +1037,12 @@ MT,Malta,2022,1801,ses_survey
 MT,Malta,2023,1844,ses_extrapolated
 MT,Malta,2024,1984,ses_extrapolated
 MT,Malta,2025,2068,ses_extrapolated
-MT,Malta,2026,2103,ses_projected
-MT,Malta,2027,2167,ses_projected
-MT,Malta,2028,2229,ses_projected
-MT,Malta,2029,2289,ses_projected
-MT,Malta,2030,2345,ses_projected
-MT,Malta,2031,2396,ses_projected
+MT,Malta,2026,2385,mean_growth_projected
+MT,Malta,2027,2475,mean_growth_projected
+MT,Malta,2028,2573,mean_growth_projected
+MT,Malta,2029,2682,mean_growth_projected
+MT,Malta,2030,2801,mean_growth_projected
+MT,Malta,2031,2928,mean_growth_projected
 NL,Netherlands,1995,2092,backcast_guesswork
 NL,Netherlands,1996,2080,backcast_guesswork
 NL,Netherlands,1997,2075,backcast_guesswork
@@ -1022,12 +1074,12 @@ NL,Netherlands,2022,3667,ses_survey
 NL,Netherlands,2023,3884,ses_extrapolated
 NL,Netherlands,2024,4140,ses_extrapolated
 NL,Netherlands,2025,4345,ses_extrapolated
-NL,Netherlands,2026,4568,ses_projected
-NL,Netherlands,2027,4812,ses_projected
-NL,Netherlands,2028,5068,ses_projected
-NL,Netherlands,2029,5338,ses_projected
-NL,Netherlands,2030,5622,ses_projected
-NL,Netherlands,2031,5920,ses_projected
+NL,Netherlands,2026,4748,mean_growth_projected
+NL,Netherlands,2027,4892,mean_growth_projected
+NL,Netherlands,2028,5036,mean_growth_projected
+NL,Netherlands,2029,5184,mean_growth_projected
+NL,Netherlands,2030,5329,mean_growth_projected
+NL,Netherlands,2031,5477,mean_growth_projected
 NO,Norway,1995,2182,backcast_guesswork
 NO,Norway,1996,2301,backcast_guesswork
 NO,Norway,1997,2467,backcast_guesswork
@@ -1059,12 +1111,12 @@ NO,Norway,2022,5005,ses_survey
 NO,Norway,2023,4690,ses_extrapolated
 NO,Norway,2024,4853,ses_extrapolated
 NO,Norway,2025,5021,ses_extrapolated
-NO,Norway,2026,4901,ses_projected
-NO,Norway,2027,4893,ses_projected
-NO,Norway,2028,4882,ses_projected
-NO,Norway,2029,4870,ses_projected
-NO,Norway,2030,4857,ses_projected
-NO,Norway,2031,4842,ses_projected
+NO,Norway,2026,5231,mean_growth_projected
+NO,Norway,2027,5232,mean_growth_projected
+NO,Norway,2028,5204,mean_growth_projected
+NO,Norway,2029,5182,mean_growth_projected
+NO,Norway,2030,5179,mean_growth_projected
+NO,Norway,2031,5189,mean_growth_projected
 PL,Poland,1995,233,backcast_guesswork
 PL,Poland,1996,276,backcast_guesswork
 PL,Poland,1997,305,backcast_guesswork
@@ -1096,12 +1148,12 @@ PL,Poland,2022,1150,ses_survey
 PL,Poland,2023,1357,ses_extrapolated
 PL,Poland,2024,1617,ses_extrapolated
 PL,Poland,2025,1774,ses_extrapolated
-PL,Poland,2026,2036,ses_projected
-PL,Poland,2027,2321,ses_projected
-PL,Poland,2028,2644,ses_projected
-PL,Poland,2029,3012,ses_projected
-PL,Poland,2030,3430,ses_projected
-PL,Poland,2031,3906,ses_projected
+PL,Poland,2026,1898,mean_growth_projected
+PL,Poland,2027,1986,mean_growth_projected
+PL,Poland,2028,2097,mean_growth_projected
+PL,Poland,2029,2218,mean_growth_projected
+PL,Poland,2030,2341,mean_growth_projected
+PL,Poland,2031,2469,mean_growth_projected
 PT,Portugal,1995,521,backcast_guesswork
 PT,Portugal,1996,556,backcast_guesswork
 PT,Portugal,1997,577,backcast_guesswork
@@ -1133,12 +1185,12 @@ PT,Portugal,2022,1099,ses_survey
 PT,Portugal,2023,1202,ses_extrapolated
 PT,Portugal,2024,1292,ses_extrapolated
 PT,Portugal,2025,1354,ses_extrapolated
-PT,Portugal,2026,1452,ses_projected
-PT,Portugal,2027,1549,ses_projected
-PT,Portugal,2028,1651,ses_projected
-PT,Portugal,2029,1760,ses_projected
-PT,Portugal,2030,1876,ses_projected
-PT,Portugal,2031,1999,ses_projected
+PT,Portugal,2026,1507,mean_growth_projected
+PT,Portugal,2027,1573,mean_growth_projected
+PT,Portugal,2028,1642,mean_growth_projected
+PT,Portugal,2029,1711,mean_growth_projected
+PT,Portugal,2030,1778,mean_growth_projected
+PT,Portugal,2031,1847,mean_growth_projected
 RO,Romania,1995,74,backcast_guesswork
 RO,Romania,1996,77,backcast_guesswork
 RO,Romania,1997,69,backcast_guesswork
@@ -1170,12 +1222,12 @@ RO,Romania,2022,953,ses_survey
 RO,Romania,2023,1143,ses_extrapolated
 RO,Romania,2024,1333,ses_extrapolated
 RO,Romania,2025,1423,ses_extrapolated
-RO,Romania,2026,1655,ses_projected
-RO,Romania,2027,1879,ses_projected
-RO,Romania,2028,2133,ses_projected
-RO,Romania,2029,2420,ses_projected
-RO,Romania,2030,2746,ses_projected
-RO,Romania,2031,3116,ses_projected
+RO,Romania,2026,1621,mean_growth_projected
+RO,Romania,2027,1735,mean_growth_projected
+RO,Romania,2028,1868,mean_growth_projected
+RO,Romania,2029,1992,mean_growth_projected
+RO,Romania,2030,2125,mean_growth_projected
+RO,Romania,2031,2259,mean_growth_projected
 RS,Serbia,1995,207,backcast_guesswork
 RS,Serbia,1996,141,backcast_guesswork
 RS,Serbia,1997,167,backcast_guesswork
@@ -1207,12 +1259,12 @@ RS,Serbia,2022,758,ses_survey
 RS,Serbia,2023,863,ses_extrapolated
 RS,Serbia,2024,993,ses_extrapolated
 RS,Serbia,2025,1113,ses_extrapolated
-RS,Serbia,2026,1251,ses_projected
-RS,Serbia,2027,1411,ses_projected
-RS,Serbia,2028,1591,ses_projected
-RS,Serbia,2029,1794,ses_projected
-RS,Serbia,2030,2022,ses_projected
-RS,Serbia,2031,2279,ses_projected
+RS,Serbia,2026,1212,mean_growth_projected
+RS,Serbia,2027,1331,mean_growth_projected
+RS,Serbia,2028,1430,mean_growth_projected
+RS,Serbia,2029,1536,mean_growth_projected
+RS,Serbia,2030,1651,mean_growth_projected
+RS,Serbia,2031,1775,mean_growth_projected
 RU,Russia,2000,54,backcast_guesswork
 RU,Russia,2001,79,backcast_guesswork
 RU,Russia,2002,94,backcast_guesswork
@@ -1239,6 +1291,12 @@ RU,Russia,2022,477,national_interpolated
 RU,Russia,2023,569,national_office
 RU,Russia,2024,573,national_office
 RU,Russia,2025,794,national_office
+RU,Russia,2026,763,mean_growth_projected
+RU,Russia,2027,730,mean_growth_projected
+RU,Russia,2028,737,mean_growth_projected
+RU,Russia,2029,744,mean_growth_projected
+RU,Russia,2030,753,mean_growth_projected
+RU,Russia,2031,762,mean_growth_projected
 SE,Sweden,1995,1688,backcast_guesswork
 SE,Sweden,1996,1977,backcast_guesswork
 SE,Sweden,1997,2052,backcast_guesswork
@@ -1270,12 +1328,12 @@ SE,Sweden,2022,3463,ses_survey
 SE,Sweden,2023,3376,ses_extrapolated
 SE,Sweden,2024,3541,ses_extrapolated
 SE,Sweden,2025,3708,ses_extrapolated
-SE,Sweden,2026,3700,ses_projected
-SE,Sweden,2027,3769,ses_projected
-SE,Sweden,2028,3840,ses_projected
-SE,Sweden,2029,3912,ses_projected
-SE,Sweden,2030,3985,ses_projected
-SE,Sweden,2031,4059,ses_projected
+SE,Sweden,2026,4177,mean_growth_projected
+SE,Sweden,2027,4332,mean_growth_projected
+SE,Sweden,2028,4518,mean_growth_projected
+SE,Sweden,2029,4686,mean_growth_projected
+SE,Sweden,2030,4867,mean_growth_projected
+SE,Sweden,2031,5046,mean_growth_projected
 SI,Slovenia,1995,574,backcast_guesswork
 SI,Slovenia,1996,604,backcast_guesswork
 SI,Slovenia,1997,655,backcast_guesswork
@@ -1307,12 +1365,12 @@ SI,Slovenia,2022,1754,ses_survey
 SI,Slovenia,2023,1923,ses_extrapolated
 SI,Slovenia,2024,2042,ses_extrapolated
 SI,Slovenia,2025,2203,ses_extrapolated
-SI,Slovenia,2026,2355,ses_projected
-SI,Slovenia,2027,2525,ses_projected
-SI,Slovenia,2028,2707,ses_projected
-SI,Slovenia,2029,2901,ses_projected
-SI,Slovenia,2030,3110,ses_projected
-SI,Slovenia,2031,3334,ses_projected
+SI,Slovenia,2026,2358,mean_growth_projected
+SI,Slovenia,2027,2448,mean_growth_projected
+SI,Slovenia,2028,2553,mean_growth_projected
+SI,Slovenia,2029,2664,mean_growth_projected
+SI,Slovenia,2030,2779,mean_growth_projected
+SI,Slovenia,2031,2897,mean_growth_projected
 SK,Slovakia,1995,154,backcast_guesswork
 SK,Slovakia,1996,174,backcast_guesswork
 SK,Slovakia,1997,210,backcast_guesswork
@@ -1344,12 +1402,12 @@ SK,Slovakia,2022,1281,ses_survey
 SK,Slovakia,2023,1414,ses_extrapolated
 SK,Slovakia,2024,1523,ses_extrapolated
 SK,Slovakia,2025,1618,ses_extrapolated
-SK,Slovakia,2026,1757,ses_projected
-SK,Slovakia,2027,1895,ses_projected
-SK,Slovakia,2028,2043,ses_projected
-SK,Slovakia,2029,2203,ses_projected
-SK,Slovakia,2030,2376,ses_projected
-SK,Slovakia,2031,2562,ses_projected
+SK,Slovakia,2026,1786,mean_growth_projected
+SK,Slovakia,2027,1877,mean_growth_projected
+SK,Slovakia,2028,1982,mean_growth_projected
+SK,Slovakia,2029,2083,mean_growth_projected
+SK,Slovakia,2030,2178,mean_growth_projected
+SK,Slovakia,2031,2267,mean_growth_projected
 SM,San Marino,2025,2235,ratio_estimate
 TR,Turkey,2004,308,backcast_guesswork
 TR,Turkey,2005,368,backcast_guesswork
@@ -1366,6 +1424,19 @@ TR,Turkey,2015,488,ses_interpolated
 TR,Turkey,2016,494,ses_interpolated
 TR,Turkey,2017,500,ses_interpolated
 TR,Turkey,2018,505,ses_survey
+TR,Turkey,2019,572,mean_growth_projected
+TR,Turkey,2020,533,mean_growth_projected
+TR,Turkey,2021,487,mean_growth_projected
+TR,Turkey,2022,509,mean_growth_projected
+TR,Turkey,2023,709,mean_growth_projected
+TR,Turkey,2024,892,mean_growth_projected
+TR,Turkey,2025,1039,mean_growth_projected
+TR,Turkey,2026,1062,mean_growth_projected
+TR,Turkey,2027,1050,mean_growth_projected
+TR,Turkey,2028,1117,mean_growth_projected
+TR,Turkey,2029,1177,mean_growth_projected
+TR,Turkey,2030,1230,mean_growth_projected
+TR,Turkey,2031,1282,mean_growth_projected
 UA,Ukraine,1999,29,ratio_estimate
 UA,Ukraine,2000,35,ratio_estimate
 UA,Ukraine,2002,54,ratio_estimate
