@@ -359,6 +359,16 @@ def main():
         if pd.notna(row.get("wage_monthly_eur")):
             mean_by_geo_proj[row["iso2"]][int(row["year"])] = row["wage_monthly_eur"]
 
+    # Fill single-year gaps in mean series (e.g. BY missing 2016)
+    # so that backcast/projection chains don't break on isolated gaps
+    for geo in list(mean_by_geo_proj):
+        ms = mean_by_geo_proj[geo]
+        all_yrs = sorted(ms)
+        for i in range(len(all_yrs) - 1):
+            y0, y1 = all_yrs[i], all_yrs[i + 1]
+            if y1 - y0 == 2:  # single missing year
+                ms[y0 + 1] = round((ms[y0] + ms[y1]) / 2)
+
     series = defaultdict(dict)
     for geo, year, val, src in rows:
         series[geo][year] = val
@@ -371,8 +381,20 @@ def main():
             continue
         last_val = series[geo][last_year]
         mean_series = mean_by_geo_proj.get(geo, {})
+
+        # If median's last year isn't in mean series, start projection
+        # from the first available mean year instead (e.g. AL: median ends
+        # 2022, mean starts 2023 — project from 2023 using ratio estimate)
         if last_year not in mean_series:
-            continue
+            next_mean_yr = min((y for y in mean_series if y > last_year), default=None)
+            if next_mean_yr is None:
+                continue
+            # Bridge gap using computed median/mean ratio
+            for gap_yr in range(last_year + 1, next_mean_yr + 1):
+                if gap_yr in mean_series:
+                    last_val = round(mean_series[gap_yr] * COMPUTED_RATIO)
+                    proj_rows.append((geo, gap_yr, last_val, "ratio_estimate"))
+            last_year = next_mean_yr
 
         for year in range(last_year + 1, 2032):
             mean_cur = mean_series.get(year)
