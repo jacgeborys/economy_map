@@ -362,23 +362,37 @@ def main():
               f"{anchor_years[0]}-{anchor_years[-1]}")
 
     # ── 8. Ratio estimates (countries with NO official median) ─────────────
-    RATIO_ESTIMATES = {
-        "UA": 0.72,  # SSSU does not publish median
-        "AM": 0.75,
-        "AZ": 0.70,
-        "MD": 0.75,
-        "XK": 0.80,
-        "AD": 0.85,
-        "SM": 0.85,
-    }
-    for iso, ratio in RATIO_ESTIMATES.items():
+    # For countries without any official median, estimate using median/mean
+    # ratio computed from SES countries. The ratio is the overall median of
+    # all SES countries' median/mean ratios in 2022 (= 0.856).
+    # This is an ESTIMATE, not measured data.
+
+    # Compute actual median/mean ratio from SES 2022 survey data
+    existing_med = defaultdict(dict)
+    for geo, year, val, src in rows:
+        existing_med[geo][year] = val
+    mean_2022 = {}
+    for _, row in mean_df.iterrows():
+        if int(row["year"]) == 2022 and pd.notna(row.get("wage_monthly_eur")):
+            mean_2022[row["iso2"]] = row["wage_monthly_eur"]
+    ratios_2022 = []
+    for geo in ses_geos:
+        med = existing_med.get(geo, {}).get(2022)
+        mn = mean_2022.get(geo)
+        if med and mn and mn > 0:
+            ratios_2022.append(med / mn)
+    COMPUTED_RATIO = round(sorted(ratios_2022)[len(ratios_2022) // 2], 3)
+    print(f"   Computed median/mean ratio from SES 2022: {COMPUTED_RATIO}")
+
+    RATIO_COUNTRIES = ["UA", "AM", "AZ", "MD", "XK", "AD", "SM"]
+    for iso in RATIO_COUNTRIES:
         country_data = mean_df[mean_df.iso2 == iso]
         for _, row in country_data.iterrows():
             if pd.notna(row.get("wage_monthly_eur")):
-                median_val = round(row["wage_monthly_eur"] * ratio)
+                median_val = round(row["wage_monthly_eur"] * COMPUTED_RATIO)
                 non_ses_rows.append((iso, int(row["year"]), median_val, "ratio_estimate"))
         if not country_data.empty:
-            print(f"   {iso} (ratio {ratio}, no official median): {len(country_data)} years")
+            print(f"   {iso} (ratio {COMPUTED_RATIO}, no official median): {len(country_data)} years")
 
     rows.extend(non_ses_rows)
     print(f"   +{len(non_ses_rows)} non-SES rows total")
@@ -423,16 +437,10 @@ def main():
     rows.extend(proj_rows)
     print(f"   +{len(proj_rows)} projected rows")
 
-    # ── 9. Backcast pre-survey years (GUESSWORK) ──────────────────────────
-    # SES starts 2002/2006, RU at 2005, BY at 2018. To fill earlier years,
-    # we apply mean wage growth rates in reverse.
-    # Formula: median_y = median_anchor × (mean_y / mean_anchor)
-    # THIS IS GUESSWORK — the median/mean ratio may have changed over time.
-    print("\n9. Backcasting pre-survey years (GUESSWORK — mean wage growth rates)...")
-    mean_by_geo = defaultdict(dict)
-    for _, row in mean_df.iterrows():
-        if pd.notna(row.get("wage_monthly_eur")):
-            mean_by_geo[row["iso2"]][int(row["year"])] = row["wage_monthly_eur"]
+    # ── 9. Backcast pre-survey years ─────────────────────────────────────
+    # Same method as projection: apply mean wage year-over-year growth,
+    # but backward. Assumes constant median/mean ratio over time.
+    print("\n9. Backcasting pre-survey years (mean wage growth, backward)...")
 
     START_YEAR = 1995
     backcast_rows = []
@@ -444,20 +452,21 @@ def main():
         earliest = min(existing[geo].keys())
         if earliest <= START_YEAR:
             continue
-        anchor_val = existing[geo][earliest]
-        mean_series = mean_by_geo.get(geo, {})
-        if earliest not in mean_series:
-            continue
-        mean_anchor = mean_series[earliest]
+        cur_val = existing[geo][earliest]
+        mean_series = mean_by_geo_proj.get(geo, {})
 
         for year in range(earliest - 1, START_YEAR - 1, -1):
-            mean_y = mean_series.get(year)
-            if mean_y and mean_anchor > 0:
-                backcast_val = round(anchor_val * (mean_y / mean_anchor))
-                backcast_rows.append((geo, year, backcast_val, "backcast_guesswork"))
+            mean_cur = mean_series.get(year)
+            mean_next = mean_series.get(year + 1)
+            if mean_cur and mean_next and mean_next > 0:
+                growth = mean_cur / mean_next  # backward: this year / next year
+                cur_val = round(cur_val * growth)
+                backcast_rows.append((geo, year, cur_val, "mean_growth_backcast"))
+            else:
+                break
 
     rows.extend(backcast_rows)
-    print(f"   +{len(backcast_rows)} backcast rows (labeled as guesswork)")
+    print(f"   +{len(backcast_rows)} backcast rows")
 
     # ── 10. Assemble and save ─────────────────────────────────────────────
     print("\n10. Assembling final dataset...")
@@ -467,7 +476,7 @@ def main():
     source_priority = {
         "national_office": 0, "ses_survey": 1, "ses_interpolated": 2,
         "national_interpolated": 3, "ses_extrapolated": 4,
-        "mean_growth_projected": 5, "ratio_estimate": 6, "backcast_guesswork": 7,
+        "mean_growth_projected": 5, "mean_growth_backcast": 6, "ratio_estimate": 7,
     }
     df["_prio"] = df["source"].map(source_priority).fillna(99)
     df = df.sort_values(["iso2", "year", "_prio"]).drop_duplicates(
