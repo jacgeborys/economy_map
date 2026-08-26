@@ -8,12 +8,12 @@ Methodology (transparent, minimal processing):
   2. National overrides:
      - CH: BFS LSE official monthly median (CHF → EUR)
      - GB: ONS ASHE median gross weekly pay (GBP → monthly → EUR)
-  3. Interpolation: linear between survey years (no tricks)
-  4. Extrapolation (2023+): latest anchor × D1 compensation growth rate
-  5. Projection (2026-2031): log-linear GDP extrapolation × wage/GDP ratio trend
-  6. Non-SES countries: official national office medians (RU, BY, GE, KZ)
-  7. Ratio estimates: UA, AM, AZ, MD, XK, AD, SM (clearly flagged)
-  8. Backcast: pre-survey years using mean wage growth (GUESSWORK, clearly labeled)
+  3. Interpolation: linear between survey years
+  4. Non-SES countries: official national office medians (RU, BY, GE, KZ)
+  5. Ratio estimates: UA, AM, AZ, MD, XK, AD, SM — using computed
+     median/mean ratio from SES data (0.864)
+  6. Projection & backcast: apply mean wage year-over-year growth rates
+     from the pipeline (which uses IMF WEO GDP forecasts for 2026-2031)
 
 Output: data/raw/median_wages_ses.csv
   Columns: iso2, country, year, wage_median_eur, source
@@ -266,57 +266,7 @@ def main():
 
     print(f"   {len(rows)} rows (survey + interpolated)")
 
-    # ── 5. Extrapolate 2023-2025 using D1 per-employee growth rate ────────
-    print("\n5. Extrapolating 2023-2025 using D1/employee growth rates...")
-
-    d1_data = eurostat_json("nama_10_a10", {
-        "na_item": "D1", "nace_r2": "TOTAL", "unit": "CP_MEUR",
-        "sinceTimePeriod": "2020",
-    })
-    emp_data = eurostat_json("nama_10_a10_e", {
-        "na_item": "SAL_DC", "nace_r2": "TOTAL", "unit": "THS_PER",
-        "sinceTimePeriod": "2020",
-    })
-
-    d1_by_geo = defaultdict(dict)
-    emp_by_geo = defaultdict(dict)
-    for (geo, year), val in d1_data.items():
-        d1_by_geo[geo][year] = val
-    for (geo, year), val in emp_data.items():
-        emp_by_geo[geo][year] = val
-
-    anchor_2022 = {}
-    for geo, year, val, src in rows:
-        if year == 2022 and src in ("ses_survey", "national_office"):
-            anchor_2022[geo] = val
-
-    extrap_rows = []
-    for geo, base_val in anchor_2022.items():
-        d1_22 = d1_by_geo.get(geo, {}).get(2022)
-        emp_22 = emp_by_geo.get(geo, {}).get(2022)
-        if not d1_22 or not emp_22:
-            continue
-        per_emp_22 = d1_22 / emp_22
-
-        for year in [2023, 2024, 2025]:
-            d1_y = d1_by_geo.get(geo, {}).get(year)
-            emp_y = emp_by_geo.get(geo, {}).get(year)
-            if d1_y and emp_y:
-                per_emp_y = d1_y / emp_y
-                growth = per_emp_y / per_emp_22
-                extrap_val = round(base_val * growth)
-                extrap_rows.append((geo, year, extrap_val, "ses_extrapolated"))
-
-    # For CH, prefer BFS 2024 official over extrapolation
-    if 2024 in ch_override:
-        extrap_rows = [(g, y, v, s) if not (g == "CH" and y == 2024)
-                       else (g, y, ch_override[2024], "national_office")
-                       for g, y, v, s in extrap_rows]
-
-    rows.extend(extrap_rows)
-    print(f"   +{len(extrap_rows)} extrapolated rows")
-
-    # ── 6. Non-SES countries: official national median data ─────────────
+    # ── 5. Non-SES countries: official national median data ─────────────
     print("\n7. Non-SES countries: official median data from national offices...")
 
     mean_df = pd.read_csv(os.path.join(DATA_DIR, "oecd_wages_europe.csv"))
