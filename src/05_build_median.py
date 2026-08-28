@@ -69,7 +69,7 @@ ONS_MEDIAN_GBP_WEEKLY = {
     2006: 443.6, 2007: 459, 2008: 479, 2009: 489, 2010: 499,
     2011: 498, 2012: 506, 2013: 518, 2014: 518, 2015: 529,
     2016: 541, 2017: 554, 2018: 569, 2019: 585, 2020: 586,
-    2021: 611, 2022: 640, 2023: 681, 2024: 721,
+    2021: 611, 2022: 640, 2023: 681, 2024: 721, 2025: 766.60,
 }
 
 # ── Official median wages from national statistical offices ────────────────
@@ -118,6 +118,38 @@ OFFICIAL_MEDIANS = {
         "source": "BNS Kazakhstan",
         "values": {
             2023: 251356, 2024: 285677, 2025: 317512,
+        },
+    },
+    # Poland: GUS distribution of wages in national economy (median)
+    # Source: stat.gov.pl/en/topics/labour-market/ (April or October reference month)
+    # National economy = broader than enterprise sector (includes small firms, public)
+    "PL": {
+        "currency": "PLN",
+        "source": "GUS",
+        "values": {
+            2024: 6857,   # October 2024
+            2025: 7262,   # April 2025
+        },
+    },
+    # Czechia: CZSO quarterly median wage
+    # Source: csu.gov.cz/rychle-informace/average-wages
+    # Q4 values used (closest to annual reference)
+    "CZ": {
+        "currency": "CZK",
+        "source": "CZSO",
+        "values": {
+            2024: 41739,  # Q4 2024
+            2025: 45523,  # Q4 2025
+        },
+    },
+    # Spain: INE Encuesta Anual de Estructura Salarial (EAES) median
+    # Source: ine.es/dyngs/Prensa/EAES2024.htm — published May 2026
+    # Annual salary / 12 to get monthly (includes pagas extra)
+    "ES": {
+        "currency": "EUR",
+        "source": "INE",
+        "values": {
+            2024: 2041,   # 24,497.17 EUR/yr / 12
         },
     },
 }
@@ -190,85 +222,8 @@ def main():
         if vals:
             print(f"   {geo}: {vals}")
 
-    # ── 2. Override CH with BFS LSE official values ───────────────────────
-    print("\n2. Overriding Switzerland with BFS LSE official values...")
-    orig = pd.read_csv(os.path.join(DATA_DIR, "oecd_wages_europe.csv"))
-
-    # Derive CHF/EUR rates from pipeline data
-    ch_orig = orig[(orig.iso2 == "CH") & orig.wage_monthly_local.notna() & orig.wage_monthly_eur.notna()]
-    chf_rates = {}
-    for _, row in ch_orig.iterrows():
-        rate = row["wage_monthly_local"] / row["wage_monthly_eur"]
-        chf_rates[int(row["year"])] = rate
-
-    ch_override = {}
-    for year, chf_val in BFS_MEDIAN_CHF.items():
-        rate = chf_rates.get(year)
-        if rate:
-            eur_val = chf_val / rate
-            ch_override[year] = round(eur_val)
-            print(f"   CH {year}: CHF {chf_val:,} / {rate:.4f} = €{round(eur_val):,}")
-
-    # ── 3. Override GB with ONS ASHE official values ──────────────────────
-    print("\n3. Overriding UK with ONS ASHE official median values...")
-    gb_orig = orig[(orig.iso2 == "GB") & orig.wage_monthly_local.notna() & orig.wage_monthly_eur.notna()]
-    gbp_rates = {}
-    for _, row in gb_orig.iterrows():
-        rate = row["wage_monthly_local"] / row["wage_monthly_eur"]
-        gbp_rates[int(row["year"])] = rate
-
-    gb_override = {}
-    for year, weekly_gbp in ONS_MEDIAN_GBP_WEEKLY.items():
-        monthly_gbp = weekly_gbp * 52 / 12
-        rate = gbp_rates.get(year)
-        if rate:
-            eur_val = monthly_gbp / rate
-            gb_override[year] = round(eur_val)
-            if year <= 2000 or year >= 2022:
-                print(f"   GB {year}: GBP {weekly_gbp}/wk = {monthly_gbp:.0f}/mo / {rate:.4f} = €{round(eur_val):,}")
-    print(f"   ... {len(gb_override)} years total (1997-2024)")
-
-    # ── 4. Build interpolated annual series ────────────────────────────────
-    print("\n4. Building interpolated annual series...")
-    rows = []
-
-    all_geos = set(ses_geos) | {"GB"}
-    for geo in sorted(all_geos):
-        if geo == "CH":
-            anchors = ch_override
-            src_survey = "national_office"
-        elif geo == "GB":
-            anchors = gb_override
-            src_survey = "national_office"
-        else:
-            anchors = {y: ses_monthly[(geo, y)] for y in ses_years if (geo, y) in ses_monthly}
-            src_survey = "ses_survey"
-
-        if not anchors:
-            continue
-
-        anchor_years = sorted(anchors.keys())
-        min_year = anchor_years[0]
-        max_year = anchor_years[-1]
-
-        for year in range(min_year, max_year + 1):
-            if year in anchors:
-                rows.append((geo, year, anchors[year], src_survey))
-            else:
-                prev_y = max(y for y in anchor_years if y <= year)
-                next_y = min(y for y in anchor_years if y >= year)
-                if prev_y == next_y:
-                    rows.append((geo, year, anchors[prev_y], "ses_interpolated"))
-                else:
-                    frac = (year - prev_y) / (next_y - prev_y)
-                    val = anchors[prev_y] + frac * (anchors[next_y] - anchors[prev_y])
-                    rows.append((geo, year, round(val), "ses_interpolated"))
-
-    print(f"   {len(rows)} rows (survey + interpolated)")
-
-    # ── 5. Non-SES countries: official national median data ─────────────
-    print("\n7. Non-SES countries: official median data from national offices...")
-
+    # ── 2. Load mean wage pipeline + build FX rate lookup ─────────────────
+    print("\n2. Loading mean wage pipeline data...")
     mean_df = pd.read_csv(os.path.join(DATA_DIR, "oecd_wages_europe.csv"))
 
     fx_rates = defaultdict(dict)
@@ -286,9 +241,127 @@ def main():
             return rates[closest]
         return None
 
+    # ── 2b. Override CH with BFS LSE official values ────────────────────
+    print("\n   Overriding Switzerland with BFS LSE official values...")
+
+    # Derive CHF/EUR rates from pipeline data
+    ch_orig = mean_df[(mean_df.iso2 == "CH") & mean_df.wage_monthly_local.notna() & mean_df.wage_monthly_eur.notna()]
+    chf_rates = {}
+    for _, row in ch_orig.iterrows():
+        rate = row["wage_monthly_local"] / row["wage_monthly_eur"]
+        chf_rates[int(row["year"])] = rate
+
+    ch_override = {}
+    for year, chf_val in BFS_MEDIAN_CHF.items():
+        rate = chf_rates.get(year)
+        if rate:
+            eur_val = chf_val / rate
+            ch_override[year] = round(eur_val)
+            print(f"   CH {year}: CHF {chf_val:,} / {rate:.4f} = €{round(eur_val):,}")
+
+    # ── 3. Override GB with ONS ASHE official values ──────────────────────
+    print("\n3. Overriding UK with ONS ASHE official median values...")
+    gb_orig = mean_df[(mean_df.iso2 == "GB") & mean_df.wage_monthly_local.notna() & mean_df.wage_monthly_eur.notna()]
+    gbp_rates = {}
+    for _, row in gb_orig.iterrows():
+        rate = row["wage_monthly_local"] / row["wage_monthly_eur"]
+        gbp_rates[int(row["year"])] = rate
+
+    gb_override = {}
+    for year, weekly_gbp in ONS_MEDIAN_GBP_WEEKLY.items():
+        monthly_gbp = weekly_gbp * 52 / 12
+        rate = gbp_rates.get(year)
+        if rate:
+            eur_val = monthly_gbp / rate
+            gb_override[year] = round(eur_val)
+            if year <= 2000 or year >= 2022:
+                print(f"   GB {year}: GBP {weekly_gbp}/wk = {monthly_gbp:.0f}/mo / {rate:.4f} = €{round(eur_val):,}")
+    print(f"   ... {len(gb_override)} years total (1997-2025)")
+
+    # ── 3b. Build national office overrides for SES countries ──────────
+    # These countries have SES data but also more recent national office
+    # median values. Merge them so interpolation fills gaps (e.g. 2023).
+    ses_overrides = {}  # geo -> {year: eur_val}
+
+    # DE: Destatis Verdiensterhebung (April reference month, full-time)
+    # Source: destatis.de/DE/Themen/Arbeit/Verdienste/
+    DESTATIS_MEDIAN_EUR = {
+        2025: 4123,   # Verdiensterhebung April 2025
+    }
+    ses_overrides["DE"] = dict(DESTATIS_MEDIAN_EUR)
+    for year, val in DESTATIS_MEDIAN_EUR.items():
+        print(f"   DE {year}: Destatis median = €{val:,}")
+
+    # PL, CZ, ES: convert from local currency to EUR using pipeline FX rates
+    for iso in ["PL", "CZ", "ES"]:
+        if iso not in OFFICIAL_MEDIANS:
+            continue
+        info = OFFICIAL_MEDIANS[iso]
+        override = {}
+        for year, local_val in info["values"].items():
+            if info["currency"] == "EUR":
+                override[year] = local_val
+                print(f"   {iso} {year}: {info['source']} median = €{local_val:,}")
+            else:
+                rate = get_fx(iso, year)
+                if rate:
+                    eur_val = round(local_val / rate)
+                    override[year] = eur_val
+                    print(f"   {iso} {year}: {info['source']} median = {local_val:,} {info['currency']} / {rate:.4f} = €{eur_val:,}")
+        ses_overrides[iso] = override
+
+    # ── 4. Build interpolated annual series ────────────────────────────────
+    print("\n4. Building interpolated annual series...")
+    rows = []
+
+    all_geos = set(ses_geos) | {"GB"}
+    for geo in sorted(all_geos):
+        if geo == "CH":
+            anchors = ch_override
+            src_survey = "national_office"
+        elif geo == "GB":
+            anchors = gb_override
+            src_survey = "national_office"
+        else:
+            anchors = {y: ses_monthly[(geo, y)] for y in ses_years if (geo, y) in ses_monthly}
+            # Merge national office overrides for SES countries
+            if geo in ses_overrides:
+                anchors.update(ses_overrides[geo])
+            src_survey = "ses_survey"
+
+        if not anchors:
+            continue
+
+        anchor_years = sorted(anchors.keys())
+        min_year = anchor_years[0]
+        max_year = anchor_years[-1]
+
+        override_years = set(ses_overrides.get(geo, {}).keys())
+        for year in range(min_year, max_year + 1):
+            if year in anchors:
+                src = "national_office" if year in override_years else src_survey
+                rows.append((geo, year, anchors[year], src))
+            else:
+                prev_y = max(y for y in anchor_years if y <= year)
+                next_y = min(y for y in anchor_years if y >= year)
+                if prev_y == next_y:
+                    rows.append((geo, year, anchors[prev_y], "ses_interpolated"))
+                else:
+                    frac = (year - prev_y) / (next_y - prev_y)
+                    val = anchors[prev_y] + frac * (anchors[next_y] - anchors[prev_y])
+                    rows.append((geo, year, round(val), "ses_interpolated"))
+
+    print(f"   {len(rows)} rows (survey + interpolated)")
+
+    # ── 5. Non-SES countries: official national median data ─────────────
+    # Only process countries NOT already handled in step 4 (skip PL, CZ, ES, DE)
+    print("\n5. Non-SES countries: official median data from national offices...")
+
+    NON_SES_OFFICIAL = {k: v for k, v in OFFICIAL_MEDIANS.items()
+                        if k not in ses_overrides}
     non_ses_rows = []
 
-    for iso, info in OFFICIAL_MEDIANS.items():
+    for iso, info in NON_SES_OFFICIAL.items():
         for year, local_val in info["values"].items():
             rate = get_fx(iso, year)
             if rate:

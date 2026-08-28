@@ -313,15 +313,15 @@ CZ,Czechia,2019,1159,ses_interpolated
 CZ,Czechia,2020,1248,ses_interpolated
 CZ,Czechia,2021,1336,ses_interpolated
 CZ,Czechia,2022,1424,ses_survey
-CZ,Czechia,2023,1565,mean_growth_projected
-CZ,Czechia,2024,1577,mean_growth_projected
-CZ,Czechia,2025,1698,mean_growth_projected
-CZ,Czechia,2026,1882,mean_growth_projected
-CZ,Czechia,2027,1969,mean_growth_projected
-CZ,Czechia,2028,2057,mean_growth_projected
-CZ,Czechia,2029,2144,mean_growth_projected
-CZ,Czechia,2030,2233,mean_growth_projected
-CZ,Czechia,2031,2326,mean_growth_projected
+CZ,Czechia,2023,1512,ses_interpolated
+CZ,Czechia,2024,1601,national_office
+CZ,Czechia,2025,1756,national_office
+CZ,Czechia,2026,1947,mean_growth_projected
+CZ,Czechia,2027,2037,mean_growth_projected
+CZ,Czechia,2028,2128,mean_growth_projected
+CZ,Czechia,2029,2218,mean_growth_projected
+CZ,Czechia,2030,2310,mean_growth_projected
+CZ,Czechia,2031,2406,mean_growth_projected
 DE,Germany,1995,2023,mean_growth_backcast
 DE,Germany,1996,2079,mean_growth_backcast
 DE,Germany,1997,2119,mean_growth_backcast
@@ -350,15 +350,15 @@ DE,Germany,2019,3282,ses_interpolated
 DE,Germany,2020,3344,ses_interpolated
 DE,Germany,2021,3407,ses_interpolated
 DE,Germany,2022,3469,ses_survey
-DE,Germany,2023,3618,mean_growth_projected
-DE,Germany,2024,3799,mean_growth_projected
-DE,Germany,2025,3929,mean_growth_projected
-DE,Germany,2026,4206,mean_growth_projected
-DE,Germany,2027,4354,mean_growth_projected
-DE,Germany,2028,4496,mean_growth_projected
-DE,Germany,2029,4643,mean_growth_projected
-DE,Germany,2030,4783,mean_growth_projected
-DE,Germany,2031,4922,mean_growth_projected
+DE,Germany,2023,3687,ses_interpolated
+DE,Germany,2024,3905,ses_interpolated
+DE,Germany,2025,4123,national_office
+DE,Germany,2026,4414,mean_growth_projected
+DE,Germany,2027,4570,mean_growth_projected
+DE,Germany,2028,4719,mean_growth_projected
+DE,Germany,2029,4873,mean_growth_projected
+DE,Germany,2030,5020,mean_growth_projected
+DE,Germany,2031,5166,mean_growth_projected
 DK,Denmark,1995,2406,mean_growth_backcast
 DK,Denmark,1996,2484,mean_growth_backcast
 DK,Denmark,1997,2512,mean_growth_backcast
@@ -461,15 +461,15 @@ ES,Spain,2019,1855,ses_interpolated
 ES,Spain,2020,1904,ses_interpolated
 ES,Spain,2021,1952,ses_interpolated
 ES,Spain,2022,2000,ses_survey
-ES,Spain,2023,2091,mean_growth_projected
-ES,Spain,2024,2187,mean_growth_projected
-ES,Spain,2025,2279,mean_growth_projected
-ES,Spain,2026,2525,mean_growth_projected
-ES,Spain,2027,2613,mean_growth_projected
-ES,Spain,2028,2707,mean_growth_projected
-ES,Spain,2029,2793,mean_growth_projected
-ES,Spain,2030,2888,mean_growth_projected
-ES,Spain,2031,2989,mean_growth_projected
+ES,Spain,2023,2020,ses_interpolated
+ES,Spain,2024,2041,national_office
+ES,Spain,2025,2127,mean_growth_projected
+ES,Spain,2026,2356,mean_growth_projected
+ES,Spain,2027,2438,mean_growth_projected
+ES,Spain,2028,2525,mean_growth_projected
+ES,Spain,2029,2605,mean_growth_projected
+ES,Spain,2030,2694,mean_growth_projected
+ES,Spain,2031,2788,mean_growth_projected
 FI,Finland,1995,1693,mean_growth_backcast
 FI,Finland,1996,1713,mean_growth_backcast
 FI,Finland,1997,1732,mean_growth_backcast
@@ -569,13 +569,13 @@ GB,United Kingdom,2021,3080,national_office
 GB,United Kingdom,2022,3252,national_office
 GB,United Kingdom,2023,3393,national_office
 GB,United Kingdom,2024,3691,national_office
-GB,United Kingdom,2025,3826,mean_growth_projected
-GB,United Kingdom,2026,4020,mean_growth_projected
-GB,United Kingdom,2027,4195,mean_growth_projected
-GB,United Kingdom,2028,4374,mean_growth_projected
-GB,United Kingdom,2029,4562,mean_growth_projected
-GB,United Kingdom,2030,4774,mean_growth_projected
-GB,United Kingdom,2031,4988,mean_growth_projected
+GB,United Kingdom,2025,3877,national_office
+GB,United Kingdom,2026,4074,mean_growth_projected
+GB,United Kingdom,2027,4251,mean_growth_projected
+GB,United Kingdom,2028,4432,mean_growth_projected
+GB,United Kingdom,2029,4623,mean_growth_projected
+GB,United Kingdom,2030,4838,mean_growth_projected
+GB,United Kingdom,2031,5055,mean_growth_projected
 GE,Georgia,2006,106,mean_growth_backcast
 GE,Georgia,2007,132,mean_growth_backcast
 GE,Georgia,2008,158,mean_growth_backcast
@@ -1155,15 +1155,15 @@ PL,Poland,2019,971,ses_interpolated
 PL,Poland,2020,1030,ses_interpolated
 PL,Poland,2021,1090,ses_interpolated
 PL,Poland,2022,1150,ses_survey
-PL,Poland,2023,1344,mean_growth_projected
-PL,Poland,2024,1611,mean_growth_projected
-PL,Poland,2025,1778,mean_growth_projected
-PL,Poland,2026,1902,mean_growth_projected
-PL,Poland,2027,1990,mean_growth_projected
-PL,Poland,2028,2102,mean_growth_projected
-PL,Poland,2029,2223,mean_growth_projected
-PL,Poland,2030,2346,mean_growth_projected
-PL,Poland,2031,2475,mean_growth_projected
+PL,Poland,2023,1371,ses_interpolated
+PL,Poland,2024,1592,national_office
+PL,Poland,2025,1713,national_office
+PL,Poland,2026,1832,mean_growth_projected
+PL,Poland,2027,1917,mean_growth_projected
+PL,Poland,2028,2025,mean_growth_projected
+PL,Poland,2029,2142,mean_growth_projected
+PL,Poland,2030,2260,mean_growth_projected
+PL,Poland,2031,2384,mean_growth_projected
 PT,Portugal,1995,520,mean_growth_backcast
 PT,Portugal,1996,555,mean_growth_backcast
 PT,Portugal,1997,576,mean_growth_backcast
