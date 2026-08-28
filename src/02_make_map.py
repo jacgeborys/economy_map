@@ -316,7 +316,11 @@ print(f"  {total} frames total  ({len(years)}yr x {INTERP} steps + {hold_count} 
 print(f"  Duration: {total/FPS:.1f}s at {FPS}fps")
 
 # ── 5. colormap ───────────────────────────────────────────────────────────
-cmap = plt.get_cmap(CMAP)
+# Truncate inferno to skip the pure-black bottom (~7%), so lowest values
+# are dark purple instead of invisible black against the dark background
+_base_cmap = plt.get_cmap(CMAP)
+cmap = mcolors.LinearSegmentedColormap.from_list(
+    CMAP + "_trunc", _base_cmap(np.linspace(0.07, 1.0, 256)))
 norm = mcolors.Normalize(vmin=VMIN, vmax=VMAX)
 sm   = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
 sm.set_array([])
@@ -338,7 +342,9 @@ if _args.preview:
 
     for cmap_name in _args.preview:
         print(f"  Rendering preview: {cmap_name} (year={yr})...")
-        _cmap = plt.get_cmap(cmap_name)
+        _base = plt.get_cmap(cmap_name)
+        _cmap = mcolors.LinearSegmentedColormap.from_list(
+            cmap_name + "_trunc", _base(np.linspace(0.07, 1.0, 256)))
         _norm = mcolors.Normalize(vmin=VMIN, vmax=VMAX)
         _sm   = plt.cm.ScalarMappable(cmap=_cmap, norm=_norm)
         _sm.set_array([])
