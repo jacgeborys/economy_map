@@ -703,13 +703,6 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
                 fontsize=6.5, color="#aaaacc", alpha=0.8, ha="left", va="top",
                 fontfamily=TEXT_FONT)
 
-    # Country count
-    n = int(gdf["wage"].notna().sum())
-    ax_map.text(0.98, 0.03, f"{n} countries",
-                transform=ax_map.transAxes,
-                fontsize=6.5, color="#aaaacc", alpha=0.7, ha="right", va="bottom",
-                fontfamily=TEXT_FONT)
-
     # Progress bar
     total_steps = len(years) * INTERP
     cur_step    = (yr - START_YEAR) * INTERP + step
