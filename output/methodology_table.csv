@@ -1,0 +1,49 @@
+iso2,country,population_m,currency,mean_wage_local_2025,mean_wage_eur_2025,mean_source,d11_employee_eur_2025,gdp_pc_eur_2025,mean_gdp_ratio,median_wage_eur_2025,median_source,median_mean_ratio,mean_actual_years,mean_data_range,median_anchor_count,is_imf_forecast
+AD,Andorra,0.08,EUR,,2515,wikipedia (2024-09),,48046,0.628,2173,ratio_estimate,0.864,1,2025-2025,0,0
+AL,Albania,2.8,ALL,84100,799,national_office,,9942,0.964,691,mean_growth_projected,0.865,3,2023-2025,2,0
+AM,Armenia,2.8,AMD,303140,693,national_office,,8384,0.992,599,ratio_estimate,0.864,28,1996-2025,0,0
+AT,Austria,9.1,EUR,4896,4331,eurostat_d11emp,4331,55870,0.93,3709,mean_growth_projected,0.856,36,1990-2025,5,0
+AZ,Azerbaijan,10.1,EUR,,588,wikipedia (2026-06),,6558,1.076,508,ratio_estimate,0.864,1,2025-2025,0,0
+BA,Bosnia & Herz.,3.2,EUR,,947,projected,,8467,1.342,1012,mean_growth_projected,1.069,15,2010-2024,1,1
+BE,Belgium,,EUR,5146,4615,eurostat_d11emp,4615,53930,1.027,4391,mean_growth_projected,0.951,36,1990-2025,5,0
+BG,Bulgaria,6.5,EUR,,1402,projected,,18060,0.932,1005,mean_growth_projected,0.717,30,1995-2024,6,1
+BY,Belarus,9.2,BYN,2680,744,national_office,,9097,0.981,578,national_office,0.777,25,2000-2025,8,0
+CH,Switzerland,8.8,CHF,8194,7588,eurostat_d11emp,7588,101810,0.894,6545,mean_growth_projected,0.863,31,1995-2025,12,0
+CY,Cyprus,1.2,EUR,2318,2318,eurostat_d11emp,2318,36850,0.755,2016,mean_growth_projected,0.87,31,1995-2025,5,0
+CZ,Czechia,10.9,CZK,53265,2055,eurostat_d11emp,2055,31880,0.774,1756,national_office,0.855,31,1995-2025,8,0
+DE,Germany,84.5,EUR,4851,4851,national_office,4009,53520,1.088,4123,national_office,0.85,35,1991-2025,6,0
+DK,Denmark,5.9,DKK,45043,5287,eurostat_d11emp,5287,69550,0.912,5591,mean_growth_projected,1.057,31,1995-2025,5,0
+EE,Estonia,1.3,EUR,2296,2169,eurostat_d11emp,2169,30380,0.857,1905,mean_growth_projected,0.878,31,1995-2025,5,0
+ES,Spain,48.0,EUR,2927,2725,eurostat_d11emp,2725,34210,0.956,2127,mean_growth_projected,0.781,36,1990-2025,7,0
+FI,Finland,5.6,EUR,4214,3892,eurostat_d11emp,3892,49850,0.937,3701,mean_growth_projected,0.951,36,1990-2025,5,0
+FR,France,68.2,EUR,3692,3468,eurostat_d11emp,3468,43350,0.96,2766,mean_growth_projected,0.798,36,1990-2025,5,0
+GB,United Kingdom,67.7,GBP,3155,3682,national_office,,50976,0.867,3877,national_office,1.053,26,2000-2025,26,0
+GE,Georgia,3.7,EUR,,714,projected,,8577,0.999,490,mean_growth_projected,0.686,19,2006-2024,7,1
+GR,Greece,10.4,EUR,1567,1511,eurostat_d11emp,1511,23570,0.769,1456,mean_growth_projected,0.964,31,1995-2025,5,0
+HR,Croatia,3.9,EUR,,2186,projected,,23950,1.095,1638,mean_growth_projected,0.749,30,1995-2024,4,1
+HU,Hungary,9.7,HUF,667226,1642,eurostat_d11emp,1642,23000,0.857,1400,mean_growth_projected,0.853,31,1995-2025,6,0
+IE,Ireland,5.1,EUR,5282,4799,eurostat_d11emp,4799,110150,0.523,4148,mean_growth_projected,0.864,36,1990-2025,6,0
+IS,Iceland,0.38,ISK,1396730,5643,eurostat_d11emp,5643,87410,0.775,5858,mean_growth_projected,1.038,31,1995-2025,5,0
+IT,Italy,58.9,EUR,2894,2669,eurostat_d11emp,2669,38310,0.836,2469,mean_growth_projected,0.925,36,1990-2025,5,0
+KZ,KZ,19.8,KZT,443315,753,national_office,,13146,0.687,539,national_office,0.716,11,2015-2025,3,0
+LT,Lithuania,2.9,EUR,2662,2608,eurostat_d11emp,2608,29170,1.073,1930,national_office,0.74,31,1995-2025,7,0
+LU,Luxembourg,0.66,EUR,7168,6701,eurostat_d11emp,6701,130300,0.617,4768,mean_growth_projected,0.712,36,1990-2025,5,0
+LV,Latvia,1.8,EUR,2057,1958,eurostat_d11emp,1958,23410,1.004,1511,mean_growth_projected,0.772,30,1996-2025,5,0
+MD,Moldova,2.6,EUR,,867,projected,,7590,1.371,749,ratio_estimate,0.864,10,2015-2024,0,1
+ME,Montenegro,0.62,EUR,1163,1163,eurostat_d11emp,1163,13110,1.065,1150,mean_growth_projected,0.989,20,2006-2025,1,0
+MK,N. Macedonia,1.8,MKD,67951,1105,national_office,,9310,1.424,945,mean_growth_projected,0.855,15,2011-2025,4,0
+MT,Malta,0.54,EUR,2778,2778,eurostat_d11emp,2778,42160,0.791,2078,mean_growth_projected,0.748,31,1995-2025,5,0
+NL,Netherlands,17.9,EUR,5124,4137,eurostat_d11emp,4137,64710,0.767,4352,mean_growth_projected,1.052,36,1990-2025,6,0
+NO,Norway,5.5,NOK,61226,4596,eurostat_d11emp,4596,83860,0.658,5004,mean_growth_projected,1.089,36,1990-2025,5,0
+PL,Poland,37.6,PLN,9379,2212,national_office,1939,24680,1.076,1713,national_office,0.774,31,1995-2025,8,0
+PT,Portugal,10.3,EUR,2152,2092,eurostat_d11emp,2092,28390,0.884,1346,mean_growth_projected,0.643,31,1995-2025,5,0
+RO,Romania,19.0,EUR,,1791,projected,,19960,1.077,1363,mean_growth_projected,0.761,30,1995-2024,6,1
+RS,Serbia,6.6,EUR,1255,1255,eurostat_d11emp,1255,13540,1.112,1118,mean_growth_projected,0.891,31,1995-2025,3,0
+RU,Russia,144.0,RUB,101784,1094,national_office,,15528,0.845,794,national_office,0.726,26,2000-2025,12,0
+SE,Sweden,10.5,SEK,45514,3768,eurostat_d11emp,3768,56330,0.803,3685,mean_growth_projected,0.978,33,1993-2025,6,0
+SI,Slovenia,2.1,EUR,3131,3033,eurostat_d11emp,3033,33060,1.101,2198,mean_growth_projected,0.725,31,1995-2025,6,0
+SK,Slovakia,5.5,EUR,1784,1747,eurostat_d11emp,1747,25060,0.837,1584,mean_growth_projected,0.907,32,1994-2025,6,0
+SM,San Marino,0.03,EUR,,2629,wikipedia (2024-10),,58003,0.544,2271,ratio_estimate,0.864,1,2025-2025,0,0
+TR,Turkey,85.3,EUR,,1472,projected,,16470,1.072,1039,mean_growth_projected,0.706,20,2004-2023,4,1
+UA,Ukraine,37.0,EUR,,559,projected,,5191,1.292,483,ratio_estimate,0.864,23,1999-2022,0,1
+XK,Kosovo,1.8,EUR,,713,wikipedia (2025),,6991,1.224,616,ratio_estimate,0.864,1,2025-2025,0,0
