@@ -115,8 +115,9 @@ FIG_W    = 12.80   # inches (12.80 × 150 = 1920)
 FIG_H    = 7.20    # inches (7.20  × 150 = 1080)
 DPI      = 150
 
-CLOCK_FONT = "Consolas"
-LABEL_FONT = "Consolas"
+CLOCK_FONT = "Consolas"          # year/month display (monospace)
+LABEL_FONT = "Consolas"          # €-labels on map (monospace)
+TEXT_FONT  = "Noto Sans"         # titles, chart labels, axes, captions
 
 YUGO_INDEPENDENCE = {
     "SI": 1992, "HR": 1992, "BA": 1992, "MK": 1993,
@@ -355,8 +356,8 @@ if _args.preview:
         gdf["wage"] = gdf["iso2"].map(frame_wages)
 
         fig = plt.figure(figsize=(FIG_W, FIG_H), facecolor=BG_COLOR)
-        ax_map  = fig.add_axes([0.01, 0.02, 0.52, 0.96])
-        cbar_ax = fig.add_axes([0.505, 0.18, 0.010, 0.58])
+        ax_map  = fig.add_axes([0.025, 0.02, 0.49, 0.96])
+        cbar_ax = fig.add_axes([0.495, 0.18, 0.010, 0.58])
         ax_map.set_facecolor(BG_COLOR)
         ax_map.axis("off")
 
@@ -399,8 +400,9 @@ if _args.preview:
                                       alpha=0.35, linewidth=0))
 
         cbar = fig.colorbar(_sm, cax=cbar_ax)
-        cbar_ax.yaxis.set_tick_params(color="white", labelsize=6)
-        plt.setp(cbar_ax.yaxis.get_ticklabels(), color="white", fontsize=6)
+        cbar_ax.yaxis.set_tick_params(color="white", labelsize=7)
+        plt.setp(cbar_ax.yaxis.get_ticklabels(), color="white", fontsize=7,
+                 fontfamily=TEXT_FONT)
         cbar_ax.set_facecolor(BG_COLOR)
 
         ax_map.text(0.02, 0.05, str(yr), transform=ax_map.transAxes,
@@ -411,13 +413,14 @@ if _args.preview:
                     fontfamily=CLOCK_FONT)
         ax_map.text(0.02, 0.975, TITLE_MAP[WAGE_COLUMN],
                     transform=ax_map.transAxes, fontsize=11, color="white",
-                    alpha=0.9, ha="left", va="top", fontweight="bold")
-        ax_map.text(0.02, 0.948, SOURCE_MAP[WAGE_COLUMN],
+                    alpha=0.9, ha="left", va="top", fontweight="bold",
+                    fontfamily=TEXT_FONT)
+        ax_map.text(0.02, 0.945, SOURCE_MAP[WAGE_COLUMN],
                     transform=ax_map.transAxes, fontsize=6.5, color="#aaaacc",
-                    alpha=0.8, ha="left", va="top")
+                    alpha=0.8, ha="left", va="top", fontfamily=TEXT_FONT)
 
         # Right panel: chart
-        ax_chart = fig.add_axes([0.60, 0.05, 0.32, 0.90])
+        ax_chart = fig.add_axes([0.565, 0.05, 0.37, 0.90])
         ax_chart.set_facecolor(BG_COLOR)
         ax_chart.set_xlim(START_YEAR - 0.5, END_YEAR + 3.0)
         chart_max_visible = 0
@@ -468,7 +471,7 @@ if _args.preview:
             val = int(round(y_val / 50) * 50)
             ax_chart.text(label_x_p, dyn_ymax - min_gap_p * i_t,
                           f"{name} (\u20ac{val:,})", fontsize=6.5, color=color,
-                          va="center", fontfamily=LABEL_FONT, fontweight="bold",
+                          va="center", fontfamily=TEXT_FONT, fontweight="bold",
                           alpha=0.9, clip_on=False)
         placed_ys_p = []
         for y_val, name, color, _ in chart_labels_p:
@@ -486,7 +489,7 @@ if _args.preview:
         for i_lbl, (y_val, name, color, _) in enumerate(chart_labels_p):
             nudged = placed_ys_p[i_lbl]
             ax_chart.text(label_x_p, nudged, name, fontsize=6.5, color=color,
-                          va="center", fontfamily=LABEL_FONT, fontweight="bold",
+                          va="center", fontfamily=TEXT_FONT, fontweight="bold",
                           alpha=0.9, clip_on=False)
             if abs(nudged - y_val) > min_gap_p * 0.5:
                 ax_chart.plot(t_frac, y_val, "o", color=color, markersize=2.5,
@@ -495,13 +498,16 @@ if _args.preview:
                               color=color, linewidth=0.6, alpha=0.35, clip_on=False)
 
         ax_chart.tick_params(colors="#aaaacc", labelsize=7)
+        for _lbl in ax_chart.get_xticklabels() + ax_chart.get_yticklabels():
+            _lbl.set_fontfamily(TEXT_FONT)
         ax_chart.spines["bottom"].set_color("#333355")
         ax_chart.spines["left"].set_color("#333355")
         ax_chart.spines["top"].set_visible(False)
         ax_chart.spines["right"].set_visible(False)
         ax_chart.grid(True, alpha=0.12, color="white")
         ax_chart.set_title("Wage Convergence + Projection",
-                           color="white", fontsize=10, fontweight="bold", pad=4)
+                           color="white", fontsize=10, fontweight="bold", pad=4,
+                           fontfamily=TEXT_FONT)
 
         out_path = os.path.join(preview_dir, f"{cmap_name}_{_WAGE_SUFFIX}.png")
         fig.savefig(out_path, dpi=DPI, facecolor=BG_COLOR)
@@ -548,7 +554,7 @@ if _args.preview:
             val = int(round(y_val / 50) * 50)
             ax_c.text(label_x_c, CHART_YMAX - min_gap_c * i_t,
                       f"{name} (\u20ac{val:,})", fontsize=7, color=color,
-                      va="center", fontfamily=LABEL_FONT, fontweight="bold",
+                      va="center", fontfamily=TEXT_FONT, fontweight="bold",
                       alpha=0.9, clip_on=False)
         placed_ys_c = []
         for y_val, name, color, _ in chart_labels_c:
@@ -574,17 +580,21 @@ if _args.preview:
                 ax_c.plot([END_YEAR + 0.5, label_x_c - 0.2], [y_val, nudged],
                           color=color, linewidth=0.6, alpha=0.35, clip_on=False)
 
-        ax_c.set_ylabel("EUR / month", color="#aaaacc", fontsize=8)
+        ax_c.set_ylabel("EUR / month", color="#aaaacc", fontsize=8, fontfamily=TEXT_FONT)
         ax_c.tick_params(colors="#aaaacc", labelsize=7)
+        for _lbl in ax_c.get_xticklabels() + ax_c.get_yticklabels():
+            _lbl.set_fontfamily(TEXT_FONT)
         ax_c.spines["bottom"].set_color("#333355")
         ax_c.spines["left"].set_color("#333355")
         ax_c.spines["top"].set_visible(False)
         ax_c.spines["right"].set_visible(False)
         ax_c.grid(True, alpha=0.12, color="white")
         ax_c.set_title(TITLE_MAP[WAGE_COLUMN] + " — Convergence + Projection",
-                       color="white", fontsize=10, fontweight="bold", pad=4)
+                       color="white", fontsize=10, fontweight="bold", pad=4,
+                       fontfamily=TEXT_FONT)
         ax_c.text(0.5, -0.04, SOURCE_MAP[WAGE_COLUMN], transform=ax_c.transAxes,
-                  fontsize=6.5, color="#aaaacc", alpha=0.8, ha="center", va="top")
+                  fontsize=6.5, color="#aaaacc", alpha=0.8, ha="center", va="top",
+                  fontfamily=TEXT_FONT)
 
         chart_path = os.path.join(preview_dir, f"chart_{_WAGE_SUFFIX}.png")
         fig_c.savefig(chart_path, dpi=150, facecolor=BG_COLOR)
@@ -612,8 +622,8 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
     fig = plt.figure(figsize=(FIG_W, FIG_H), facecolor=BG_COLOR)
 
     # ── LEFT PANEL: map ──────────────────────────────────────────────────
-    ax_map   = fig.add_axes([0.01, 0.02, 0.52, 0.96])
-    cbar_ax  = fig.add_axes([0.52, 0.18, 0.010, 0.58])
+    ax_map   = fig.add_axes([0.025, 0.02, 0.49, 0.96])
+    cbar_ax  = fig.add_axes([0.495, 0.18, 0.010, 0.58])
     ax_map.set_facecolor(BG_COLOR)
     ax_map.axis("off")
 
@@ -665,8 +675,9 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
 
     # Colorbar
     cbar = fig.colorbar(sm, cax=cbar_ax)
-    cbar_ax.yaxis.set_tick_params(color="white", labelsize=6)
-    plt.setp(cbar_ax.yaxis.get_ticklabels(), color="white", fontsize=6)
+    cbar_ax.yaxis.set_tick_params(color="white", labelsize=7)
+    plt.setp(cbar_ax.yaxis.get_ticklabels(), color="white", fontsize=7,
+             fontfamily=TEXT_FONT)
     cbar_ax.set_facecolor(BG_COLOR)
 
     # Year + month (on map)
@@ -683,24 +694,28 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
     if is_proj:
         ax_map.text(0.02, 0.025, "PROJECTED  (IMF WEO Apr 2026)",
                     transform=ax_map.transAxes,
-                    fontsize=6.5, color="#ffdd44", alpha=0.7, va="top")
+                    fontsize=6.5, color="#ffdd44", alpha=0.7, va="top",
+                    fontfamily=TEXT_FONT)
 
     # Title (on map, left-aligned)
     ax_map.text(0.02, 0.975,
                 TITLE_MAP[WAGE_COLUMN],
                 transform=ax_map.transAxes,
                 fontsize=11, color="white", alpha=0.9,
-                ha="left", va="top", fontweight="bold")
-    ax_map.text(0.02, 0.948,
+                ha="left", va="top", fontweight="bold",
+                fontfamily=TEXT_FONT)
+    ax_map.text(0.02, 0.945,
                 SOURCE_MAP[WAGE_COLUMN],
                 transform=ax_map.transAxes,
-                fontsize=6.5, color="#aaaacc", alpha=0.8, ha="left", va="top")
+                fontsize=6.5, color="#aaaacc", alpha=0.8, ha="left", va="top",
+                fontfamily=TEXT_FONT)
 
     # Country count
     n = int(gdf["wage"].notna().sum())
     ax_map.text(0.98, 0.03, f"{n} countries",
                 transform=ax_map.transAxes,
-                fontsize=6.5, color="#aaaacc", alpha=0.7, ha="right", va="bottom")
+                fontsize=6.5, color="#aaaacc", alpha=0.7, ha="right", va="bottom",
+                fontfamily=TEXT_FONT)
 
     # Progress bar
     total_steps = len(years) * INTERP
@@ -715,7 +730,7 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
                 linewidth=0.4, alpha=0.15, solid_capstyle="butt")
 
     # ── RIGHT PANEL: chart ───────────────────────────────────────────────
-    ax_chart = fig.add_axes([0.60, 0.05, 0.32, 0.90])
+    ax_chart = fig.add_axes([0.565, 0.05, 0.37, 0.90])
     ax_chart.set_facecolor(BG_COLOR)
     ax_chart.set_xlim(START_YEAR - 0.5, END_YEAR + 3.0)
 
@@ -797,7 +812,7 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
         pin_y = dyn_ymax - min_gap * i_top
         ax_chart.text(label_x, pin_y, label_txt,
                       fontsize=6.5, color=color, va="center",
-                      fontfamily=LABEL_FONT, fontweight="bold",
+                      fontfamily=TEXT_FONT, fontweight="bold",
                       alpha=0.9, clip_on=False)
 
     # First pass: push down to avoid overlaps
@@ -828,7 +843,7 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
 
         ax_chart.text(label_x, nudged, name,
                       fontsize=6.5, color=color, va="center",
-                      fontfamily=LABEL_FONT, fontweight="bold",
+                      fontfamily=TEXT_FONT, fontweight="bold",
                       alpha=0.9, clip_on=False)
 
         # Leader line when label is nudged away from data point
@@ -842,15 +857,19 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
                           clip_on=False)
 
     # Chart styling
-    ax_chart.set_ylabel("EUR / month", color="#aaaacc", fontsize=7, labelpad=4)
+    ax_chart.set_ylabel("EUR / month", color="#aaaacc", fontsize=7, labelpad=4,
+                        fontfamily=TEXT_FONT)
     ax_chart.tick_params(colors="#aaaacc", labelsize=7)
+    for _lbl in ax_chart.get_xticklabels() + ax_chart.get_yticklabels():
+        _lbl.set_fontfamily(TEXT_FONT)
     ax_chart.spines["bottom"].set_color("#333355")
     ax_chart.spines["left"].set_color("#333355")
     ax_chart.spines["top"].set_visible(False)
     ax_chart.spines["right"].set_visible(False)
     ax_chart.grid(True, alpha=0.12, color="white")
     ax_chart.set_title("Wage Convergence + Projection",
-                       color="white", fontsize=10, fontweight="bold", pad=4)
+                       color="white", fontsize=10, fontweight="bold", pad=4,
+                       fontfamily=TEXT_FONT)
 
     # ── save frame ───────────────────────────────────────────────────────
     frame_path = os.path.join(FRAMES, f"frame_{idx:05d}.png")
