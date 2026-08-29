@@ -408,9 +408,6 @@ if _args.preview:
         ax_map.text(0.02, 0.05, str(yr), transform=ax_map.transAxes,
                     fontsize=38, fontweight="bold", color="white",
                     alpha=0.95, va="bottom", fontfamily=CLOCK_FONT)
-        ax_map.text(0.02, 0.045, MONTHS[step_f], transform=ax_map.transAxes,
-                    fontsize=11, color="white", alpha=0.75, va="top",
-                    fontfamily=CLOCK_FONT)
         ax_map.text(0.02, 0.975, TITLE_MAP[WAGE_COLUMN],
                     transform=ax_map.transAxes, fontsize=11, color="white",
                     alpha=0.9, ha="left", va="top", fontweight="bold",
@@ -622,8 +619,8 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
     fig = plt.figure(figsize=(FIG_W, FIG_H), facecolor=BG_COLOR)
 
     # ── LEFT PANEL: map ──────────────────────────────────────────────────
-    ax_map   = fig.add_axes([0.01, 0.02, 0.50, 0.96])
-    cbar_ax  = fig.add_axes([0.49, 0.18, 0.010, 0.58])
+    ax_map   = fig.add_axes([0.00, 0.02, 0.50, 0.96])
+    cbar_ax  = fig.add_axes([0.485, 0.18, 0.010, 0.58])
     ax_map.set_facecolor(BG_COLOR)
     ax_map.axis("off")
 
@@ -686,10 +683,6 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
                 transform=ax_map.transAxes,
                 fontsize=38, fontweight="bold", color=year_color,
                 alpha=0.95, va="bottom", fontfamily=CLOCK_FONT)
-    ax_map.text(0.02, 0.045, MONTHS[step],
-                transform=ax_map.transAxes,
-                fontsize=11, color=year_color, alpha=0.75, va="top",
-                fontfamily=CLOCK_FONT)
 
     if is_proj:
         ax_map.text(0.02, 0.025, "PROJECTED  (IMF WEO Apr 2026)",
