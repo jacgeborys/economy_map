@@ -405,7 +405,7 @@ if _args.preview:
                  fontfamily=TEXT_FONT)
         cbar_ax.set_facecolor(BG_COLOR)
 
-        ax_map.text(0.02, 0.05, str(yr), transform=ax_map.transAxes,
+        ax_map.text(0.02, 0.035, str(yr), transform=ax_map.transAxes,
                     fontsize=38, fontweight="bold", color="white",
                     alpha=0.95, va="bottom", fontfamily=CLOCK_FONT)
         ax_map.text(0.02, 0.975, TITLE_MAP[WAGE_COLUMN],
@@ -679,7 +679,7 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
 
     # Year + month (on map)
     year_color = "#ffdd44" if is_proj else "white"
-    ax_map.text(0.02, 0.05, str(yr),
+    ax_map.text(0.02, 0.035, str(yr),
                 transform=ax_map.transAxes,
                 fontsize=38, fontweight="bold", color=year_color,
                 alpha=0.95, va="bottom", fontfamily=CLOCK_FONT)
