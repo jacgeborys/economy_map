@@ -292,6 +292,15 @@ def main():
     for year, val in DESTATIS_MEDIAN_EUR.items():
         print(f"   DE {year}: Destatis median = €{val:,}")
 
+    # LT: Sodra (social insurance) admin data — median gross monthly
+    # Source: lrt.lt / Sodra quarterly reports
+    ses_overrides["LT"] = {2025: 1930}  # Q4 2025, €1,930 gross
+    print(f"   LT 2025: Sodra median gross = €1,930")
+
+    # FR: INSEE publishes median NET only (€2,190 in 2024). Gross can be
+    # derived (~€2,886) but the DADS level is systematically ~14% above SES
+    # (different scope/methodology), so NOT used as anchor to avoid discontinuity.
+
     # PL, CZ, ES: convert from local currency to EUR using pipeline FX rates
     for iso in ["PL", "CZ", "ES"]:
         if iso not in OFFICIAL_MEDIANS:
