@@ -356,8 +356,8 @@ if _args.preview:
         gdf["wage"] = gdf["iso2"].map(frame_wages)
 
         fig = plt.figure(figsize=(FIG_W, FIG_H), facecolor=BG_COLOR)
-        ax_map  = fig.add_axes([0.025, 0.02, 0.49, 0.96])
-        cbar_ax = fig.add_axes([0.495, 0.18, 0.010, 0.58])
+        ax_map  = fig.add_axes([0.01, 0.02, 0.50, 0.96])
+        cbar_ax = fig.add_axes([0.49, 0.18, 0.010, 0.58])
         ax_map.set_facecolor(BG_COLOR)
         ax_map.axis("off")
 
@@ -497,7 +497,7 @@ if _args.preview:
                 ax_chart.plot([t_frac, label_x_p - 0.2], [y_val, nudged],
                               color=color, linewidth=0.6, alpha=0.35, clip_on=False)
 
-        ax_chart.tick_params(colors="#aaaacc", labelsize=7)
+        ax_chart.tick_params(colors="white", labelsize=7)
         for _lbl in ax_chart.get_xticklabels() + ax_chart.get_yticklabels():
             _lbl.set_fontfamily(TEXT_FONT)
         ax_chart.spines["bottom"].set_color("#333355")
@@ -580,8 +580,8 @@ if _args.preview:
                 ax_c.plot([END_YEAR + 0.5, label_x_c - 0.2], [y_val, nudged],
                           color=color, linewidth=0.6, alpha=0.35, clip_on=False)
 
-        ax_c.set_ylabel("EUR / month", color="#aaaacc", fontsize=8, fontfamily=TEXT_FONT)
-        ax_c.tick_params(colors="#aaaacc", labelsize=7)
+        ax_c.set_ylabel("EUR / month", color="white", fontsize=8, fontfamily=TEXT_FONT)
+        ax_c.tick_params(colors="white", labelsize=7)
         for _lbl in ax_c.get_xticklabels() + ax_c.get_yticklabels():
             _lbl.set_fontfamily(TEXT_FONT)
         ax_c.spines["bottom"].set_color("#333355")
@@ -622,8 +622,8 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
     fig = plt.figure(figsize=(FIG_W, FIG_H), facecolor=BG_COLOR)
 
     # ── LEFT PANEL: map ──────────────────────────────────────────────────
-    ax_map   = fig.add_axes([0.025, 0.02, 0.49, 0.96])
-    cbar_ax  = fig.add_axes([0.495, 0.18, 0.010, 0.58])
+    ax_map   = fig.add_axes([0.01, 0.02, 0.50, 0.96])
+    cbar_ax  = fig.add_axes([0.49, 0.18, 0.010, 0.58])
     ax_map.set_facecolor(BG_COLOR)
     ax_map.axis("off")
 
@@ -857,9 +857,9 @@ for idx, (yr, step, is_proj, frame_wages, t_frac) in enumerate(frame_seq):
                           clip_on=False)
 
     # Chart styling
-    ax_chart.set_ylabel("EUR / month", color="#aaaacc", fontsize=7, labelpad=4,
+    ax_chart.set_ylabel("EUR / month", color="white", fontsize=7, labelpad=4,
                         fontfamily=TEXT_FONT)
-    ax_chart.tick_params(colors="#aaaacc", labelsize=7)
+    ax_chart.tick_params(colors="white", labelsize=7)
     for _lbl in ax_chart.get_xticklabels() + ax_chart.get_yticklabels():
         _lbl.set_fontfamily(TEXT_FONT)
     ax_chart.spines["bottom"].set_color("#333355")
