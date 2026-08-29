@@ -114,12 +114,16 @@ Countries without post-2022 anchors (e.g. IT, FR) keep their SES 2022 ratio froz
 
 PPP (Purchasing Power Parity) is a model, not a measurement. It's based on a basket
 of goods that statisticians can never fully agree on — the IMF, World Bank, and Eurostat
-each publish different PPP factors for the same country in the same year.
+each publish different PPP factors for the same country in the same year. The choice
+of basket, reference year, and methodology is inherently conventional — there is no
+"correct" PPP.
 
 Nominal EUR shows what employers actually pay and what workers actually receive in a
-common currency. A Polish engineer earning 1,600 EUR **is** paid less than a German one
-earning 4,500 EUR when they buy a car, travel, invest, or save for retirement. PPP
-smooths this away.
+common currency. A Polish engineer earning €1,700 **is** paid less than a German one
+earning €4,100 when they buy a car, travel, invest, or save for retirement. PPP
+smooths this away. And crucially, nominal is what matters for migration decisions,
+cross-border hiring, and remittances — the things people actually care about when
+they compare wages.
 
 With PPP the convergence trend is similar, just more compressed — Eastern European
 wages look closer to Western ones. The shape of the story is the same, but nominal
@@ -142,9 +146,21 @@ in the European market genuinely swung by these amounts.
 
 ### "Same question about Switzerland"
 
-Same answer. CHF/EUR swings are real — the SNB cap removal in January 2015 caused a
-20% overnight appreciation. Swiss wages in CHF are perfectly smooth; in EUR they jump
-because the exchange rate jumped. That's the reality of cross-border comparison.
+Same answer — but with a twist. Swiss CHF wages grew just 1.2%/year over the last
+decade. Modest by any standard. But because the franc kept strengthening against EUR,
+Swiss wages *in EUR* grew at 2.7%/year — CHF appreciation added 15.6% of extra growth
+that has nothing to do with paychecks getting bigger. Switzerland's dominance at the
+top of the chart is partly a currency story. The SNB cap removal in January 2015 alone
+caused a 20% overnight jump.
+
+### "Norway used to be top, why is Denmark overtaking it?"
+
+Currency again. Norwegian NOK wages grew 3.6%/year over the last decade — solid
+growth. But the krone weakened so badly against EUR (from 10.1 to 13.3 NOK/EUR) that
+in EUR terms Norwegian wages grew just 0.8%/year. The NOK depreciation erased 24% of
+Norway's wage growth. Denmark, with the krone pegged to EUR, kept all of its growth.
+That's why Denmark overtook Norway around 2020 — not because Danish workers got richer
+faster, but because Norway's currency got cheaper.
 
 ### "Poland will really overtake Spain by 2031?"
 
@@ -184,6 +200,8 @@ Reddit feedback on the first version (which used mean) specifically asked for me
 Yes, these are nominal (not inflation-adjusted). That's deliberate. Real wage
 calculations require choosing a deflator (CPI? HICP? GDP deflator?), a base year,
 and a geographic scope — each choice is debatable and adds a layer of modeling.
+You'd also need to pick *whose* inflation — does a Polish worker care about Polish
+CPI or German CPI? It depends on the question you're asking.
 
 Nominal EUR is the rawest cross-country comparison possible: what the payslip says,
 converted at market exchange rates. It answers "how much does a worker in Poland
@@ -195,6 +213,19 @@ grown?") and would flatten the convergence story — Eastern European wages catc
 up looks less dramatic in real terms. Both views are valid; this animation shows
 the nominal one. The convergence trend is real either way — it's just steeper in
 nominal terms.
+
+### "Isn't this just showing exchange rate movements, not real wages?"
+
+Partly — and that's the point. Exchange rates aren't noise; they're a real economic
+force. When the Norwegian krone weakens, a Norwegian worker *actually* has less
+purchasing power in the European market. When the Swiss franc strengthens, a Swiss
+worker *actually* gets richer relative to eurozone peers — even if their CHF paycheck
+barely changed.
+
+Eurozone countries (DE, FR, ES, IT, etc.) have no currency effect at all — their
+convergence is purely about wages. For non-EUR countries, the currency is part of the
+story, and stripping it out would be its own editorial choice. The animation shows
+what it shows: wages in a common currency, exchange rate effects included.
 
 ### "Lithuania looks too high — they changed their tax law"
 
@@ -224,6 +255,17 @@ Common sources of disagreement:
 - **Timing**: SES surveys are conducted every 4 years. Between-survey values are
   interpolated. The "2024" value for most countries is an extrapolation from the
   2022 survey, not a fresh measurement.
+
+### "Central Europe catching up is just cheap labor, it'll stop"
+
+The data says otherwise — this isn't a blip, it's a 25-year structural trend.
+Since 2000: Lithuania 9x, Czechia 5.7x, Poland 4.2x. The growth comes from EU
+single market integration, FDI, rising productivity, and tight labor markets —
+not from a one-off adjustment. But here's the flip side: the catch-up itself
+*erodes* the cheap-labor advantage that powered it. Poland at 85% of Spain's
+median wage is no longer a low-cost destination. Central Europe is approaching
+the point where it needs to compete on output quality and specialization, not
+price. The convergence is real — and so are its consequences.
 
 ### "Gross wages are meaningless — show net / take-home pay"
 
@@ -255,6 +297,23 @@ For these 7 countries, no statistical office publishes a median wage. We estimat
 using: `median = mean x 0.864`, where 0.864 is the median of all SES countries'
 actual median/mean ratios in 2022 (ranges from 0.64 in Portugal to 1.09 in Norway).
 These are clearly labeled `ratio_estimate` in the data. It's a rough approximation.
+
+### "Italy looks too high relative to Poland/Spain in the projection"
+
+Italy's last median measurement is SES October 2022. Everything 2023-2031 is
+projected using mean wage growth, with the median/mean ratio frozen at 0.925 —
+the highest among the big four (DE: 0.810, ES: 0.836, PL: 0.804). That ratio
+is genuinely high (Italy has strong collective bargaining that compresses the
+wage distribution), but it's also 3+ years stale.
+
+Meanwhile Poland (GUS, 2025) and Spain (INE, 2024) have fresh national anchors
+that came in 4-7% below where pure SES projection would place them — partly
+because these national surveys cover all firm sizes (including low-wage micro-firms),
+while SES only covers enterprises with 10+ employees. Italy doesn't have an
+equivalent survey between SES waves, so it keeps its high ratio uncorrected.
+
+This is a known limitation. When the next SES wave publishes (October 2026 data,
+expected ~2028), all countries will realign on the same scope and methodology.
 
 ## Running
 
