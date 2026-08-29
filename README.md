@@ -8,13 +8,15 @@ evolution across European countries from 1995-2025, with forecast to 2031.
 **Median wage pipeline:** Complete. 48 countries, ~1,480 data points.
 - Anchor data: Eurostat `earn_ses_monthly` — direct median gross monthly EUR
   for 37 EU/EEA countries at 6 survey waves (2002, 2006, 2010, 2014, 2018, 2022).
-- National office overrides: CH (BFS LSE, 2000-2024), GB (ONS ASHE, 1997-2024),
+- National office overrides for non-SES countries: CH (BFS LSE, 2000-2024), GB (ONS ASHE, 1997-2025),
   RU (Rosstat, 2005-2025), BY (Belstat, 2018-2025), GE (Geostat, 2018-2024), KZ (BNS, 2023-2025).
+- Post-2022 median anchors for SES countries: DE (Destatis, 2025), PL (GUS, 2024-2025),
+  CZ (CZSO, 2024-2025), ES (INE EAES, 2024), LT (Sodra, 2025).
 - Between anchor years: linear interpolation. Pre-first-survey: backcast via mean wage growth.
 - Projection to 2031: mean wage year-over-year growth (itself based on IMF WEO GDP forecasts).
 
 **Animation:** Side-by-side choropleth map + progressive time-series chart.
-1920x1080, inferno colormap, 15fps, ~32s duration.
+1920x1080, inferno colormap, 10fps, ~46s duration.
 
 ## Architecture
 
@@ -57,21 +59,20 @@ conversion is needed.
 The projection never invents growth rates. It follows published data at every step:
 
 ```
-1. Anchor: SES 2022 median = 1,150 EUR  (Eurostat earn_ses_monthly)
-2. 2023:   1,150 x (1,672/1,431) = 1,344 EUR
+1. Anchors: SES 2022 = €1,150  (Eurostat earn_ses_monthly)
+            GUS 2024 = 6,857 PLN / 4.306 = €1,592  (national office override)
+            GUS 2025 = 7,262 PLN / 4.240 = €1,713  (national office override)
+   -> Linear interpolation fills 2023 between SES 2022 and GUS 2024
+2. 2026:   1,713 x (2,366/2,212) = 1,832 EUR
                      ^^^^  ^^^^
-                     GUS mean 2023 / GUS mean 2022  (Polish statistical office)
-3. 2024:   1,344 x (2,004/1,672) = 1,611 EUR  (GUS actual)
-4. 2025:   1,611 x (2,212/2,004) = 1,778 EUR  (GUS actual)
-5. 2026:   1,778 x (2,366/2,212) = 1,902 EUR
-                     ^^^^
-                     mean_2026 = 1.024 x IMF_GDP_pc / 12
-                     (1.024 = avg wage/GDP ratio over last 5 actual years)
-6. ...to 2031
+                     mean_2026 / mean_2025  (GUS actual for 2025,
+                     IMF WEO GDP-based for 2026)
+3. ...to 2031 using same method
 ```
 
-The median/mean ratio (0.804 for Poland) stays constant by construction —
-only the growth rate is borrowed from the mean series, not the level.
+Where national office median anchors exist (DE, PL, CZ, ES, LT), they override
+the pure SES projection. The projection from the last anchor forward applies
+mean wage year-over-year growth, keeping the median/mean ratio constant.
 
 ## Data Sources
 
@@ -79,13 +80,24 @@ only the growth rate is borrowed from the mean series, not the level.
 |--------|------|-----------|-------|
 | Eurostat `earn_ses_monthly` | Median anchor (monthly EUR) | 37 | 2002-2022 (6 waves) |
 | BFS LSE (Switzerland) | Official median monthly (CHF) | 1 | 2000-2024 |
-| ONS ASHE (UK) | Official median weekly (GBP) | 1 | 1997-2024 |
+| ONS ASHE (UK) | Official median weekly (GBP) | 1 | 1997-2025 |
 | Rosstat (Russia) | April survey median (RUB) | 1 | 2005-2025 |
 | Belstat (Belarus) | Semi-annual median (BYN) | 1 | 2018-2025 |
 | Geostat (Georgia) | Annual median (GEL) | 1 | 2018-2024 |
 | BNS (Kazakhstan) | Annual median (KZT) | 1 | 2023-2025 |
+| Destatis (Germany) | Verdiensterhebung median (EUR) | 1 | 2025 |
+| GUS (Poland) | National economy median (PLN) | 1 | 2024-2025 |
+| CZSO (Czechia) | Quarterly median (CZK) | 1 | 2024-2025 |
+| INE EAES (Spain) | Annual salary survey median (EUR) | 1 | 2024 |
+| Sodra/LRT (Lithuania) | Social insurance admin median (EUR) | 1 | 2025 |
 | GUS/Destatis/etc. | Mean wage (national offices) | ~15 | varies |
 | IMF WEO Apr 2026 | GDP per capita forecasts | 48 | 2026-2031 |
+
+**Scope caveat:** National office median surveys (GUS, INE EAES) sometimes cover broader
+populations than SES (e.g. all firm sizes vs 10+ employees). This can pull medians slightly
+lower — PL's GUS anchor is 3.7% below pure SES projection, ES's INE anchor is 6.7% below.
+Countries without post-2022 anchors (e.g. IT, FR) keep their SES 2022 ratio frozen through
+2031. This creates a small asymmetry in how up-to-date each country's median estimate is.
 
 ## Key Design Decisions
 
@@ -136,16 +148,20 @@ because the exchange rate jumped. That's the reality of cross-border comparison.
 
 ### "Poland will really overtake Spain by 2031?"
 
-The projection shows Poland at ~2,475 EUR and Spain at ~2,500 EUR in 2031 — near
-parity but not overtaking. This is driven by:
+The projection shows Poland at ~€2,384 and Spain at ~€2,788 in 2031 — Poland at
+~85% of Spain, up from ~58% in 2022. This is driven by:
 - Poland's actual 2022-2025 wage growth was 15-20% per year (minimum wage hikes,
   tight labor market, EU funds)
 - Spain's was ~5% per year
 - IMF projects Poland's GDP growth at ~5% nominal EUR vs Spain's ~4%
 
-The projection freezes the median/mean ratio from 2022 and follows IMF GDP forecasts.
-It's plausible but not certain — a recession, currency shock, or policy change could
-alter the trajectory.
+Note: Poland has a fresh GUS median anchor (2025) while Spain's last anchor is INE 2024.
+Both national surveys cover broader populations than SES (all firm sizes vs 10+ employees),
+which pulls their medians ~4-7% below pure SES projection. Italy, with no post-2022 anchor,
+keeps its high SES ratio (0.925) frozen — making it look relatively stronger in the projection.
+
+The projection is plausible but not certain — a recession, currency shock, or policy change
+could alter the trajectory.
 
 ### "Russia drops after 2025?"
 
