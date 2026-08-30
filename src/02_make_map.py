@@ -258,28 +258,36 @@ for iso2, yr_data in wage_lookup.items():
 # ── 3b. build chart time series (sub-year resolution) ─────────────────────
 # For each chart country, build a dense series: {fractional_year: wage}
 # e.g. 2020.0 = Jan 2020, 2020.5 = Jul 2020
+# Uses PCHIP spline for smooth curves that pass through all data points
+# without overshooting (monotone-preserving).
+from scipy.interpolate import PchipInterpolator
+
 chart_series = {}  # iso2 -> [(t, wage), ...]
 for iso2 in CHART_COUNTRIES:
     yr_data = wage_lookup.get(iso2, {})
     if not yr_data:
         continue
-    pts = []
     yrs = sorted(yr_data.keys())
+    wages = [yr_data[y] for y in yrs]
+
+    # Build dense time grid (monthly steps within range)
+    t_dense = []
     for i, yr in enumerate(yrs):
-        next_yr = yrs[i + 1] if i + 1 < len(yrs) else None
-        for step in range(INTERP):
+        n_steps = INTERP if i < len(yrs) - 1 else 1
+        for step in range(n_steps):
             t = yr + step / INTERP
-            if t < START_YEAR or t > END_YEAR + 1:
-                continue
-            w0 = yr_data[yr]
-            if next_yr is not None:
-                w1 = yr_data[next_yr]
-                alpha = step / INTERP
-                w = w0 * (1.0 - alpha) + w1 * alpha
-            else:
-                w = w0
-            pts.append((t, w))
-    chart_series[iso2] = pts
+            if START_YEAR <= t <= END_YEAR + 1:
+                t_dense.append(t)
+
+    if len(yrs) >= 2:
+        spline = PchipInterpolator(yrs, wages)
+        w_dense = spline(t_dense)
+        # Clamp to non-negative (safety)
+        w_dense = [max(0, float(w)) for w in w_dense]
+    else:
+        w_dense = [wages[0]] * len(t_dense)
+
+    chart_series[iso2] = list(zip(t_dense, w_dense))
 
 # ── 4. build interpolated frame list ──────────────────────────────────────
 print("Building interpolated frame sequence...")
