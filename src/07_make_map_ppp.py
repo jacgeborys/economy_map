@@ -364,15 +364,20 @@ for render_i, idx in enumerate(render_indices):
                     fontsize=5.5, color="#ffdd44", alpha=0.7, va="top",
                     fontfamily=TEXT_FONT)
 
-    # Title
-    ax_map.text(0.02, 0.83, TITLE,
+    # Title + source + credit
+    ax_map.text(0.02, 0.86, TITLE,
                 transform=ax_map.transAxes,
                 fontsize=9, color="white", alpha=0.9,
                 ha="left", va="top", fontweight="bold",
                 fontfamily=TEXT_FONT)
-    ax_map.text(0.02, 0.80, SOURCE,
+    ax_map.text(0.02, 0.828, SOURCE,
                 transform=ax_map.transAxes,
-                fontsize=5.5, color="#aaaacc", alpha=0.8, ha="left", va="top",
+                fontsize=7, color="white", alpha=0.85, ha="left", va="top",
+                fontfamily=TEXT_FONT)
+    ax_map.text(0.02, 0.805, CREDIT,
+                transform=ax_map.transAxes,
+                fontsize=7, color="white", alpha=0.85,
+                ha="left", va="top",
                 fontfamily=TEXT_FONT)
 
     # Progress bar
@@ -508,11 +513,6 @@ for render_i, idx in enumerate(render_indices):
     ax_chart.set_title("Wage Convergence + Projection (PPP)",
                        color="white", fontsize=8, fontweight="bold", pad=4,
                        fontfamily=TEXT_FONT)
-
-    # ── Credit ────────────────────────────────────────────────────────────
-    fig.text(0.98, 0.01, CREDIT,
-             fontsize=5, color="#666688", alpha=0.7,
-             ha="right", va="bottom", fontfamily=TEXT_FONT)
 
     # ── save frame ────────────────────────────────────────────────────────
     frame_path = os.path.join(FRAMES, f"frame_{idx:05d}.png")
