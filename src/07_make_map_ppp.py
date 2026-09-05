@@ -75,13 +75,13 @@ LABEL_OVERRIDES = {
     "NO": (4_224_000, 4_222_000),
     "TR": (6_200_000, 2_100_000),
     "GR": (5_300_000, 1_800_000),
-    "IS": (2_850_000, 4_850_000),
+    "IS": (3_010_000, 4_930_000),
 }
 
-# Vertical: 1350×1950 at DPI=150
-FIG_W    = 9.00    # inches (9.00 × 150 = 1350)
-FIG_H    = 13.00   # inches (13.0 × 150 = 1950)
-DPI      = 150
+# Vertical: 1800×2600 at DPI=200
+FIG_W    = 9.00    # inches (9.00 × 200 = 1800)
+FIG_H    = 13.00   # inches (13.0 × 200 = 2600)
+DPI      = 200
 
 CLOCK_FONT = "Consolas"
 LABEL_FONT = "Consolas"
@@ -337,7 +337,7 @@ for render_i, idx in enumerate(render_indices):
             if pt.x > BBOX_3035[2] - 150_000:
                 continue
             ax_map.text(pt.x, pt.y, txt,
-                        fontsize=6 if small else 7.5,
+                        fontsize=6.5 if small else 7.5,
                         color="white", ha="center", va="center",
                         alpha=0.82 if small else 0.93,
                         fontfamily=LABEL_FONT, fontweight="bold",
