@@ -60,8 +60,8 @@ MONTHS = ["Jan","Feb","Mar","Apr","May","Jun",
 BBOX_WGS84 = (-25, 33, 58, 72)
 
 # Display extent in EPSG:3035 — tuned so x/y ratio matches axes aspect
-# x-range 4.55M, y-range 3.9M → ratio 1.167 ≈ axes (0.93×9)/(0.55×13)=1.170
-BBOX_3035  = (2_100_000, 1_300_000, 6_650_000, 5_200_000)
+# x-range 4.25M, y-range 3.9M → ratio 1.090 ≈ axes (0.87×9)/(0.55×13)=1.094
+BBOX_3035  = (2_400_000, 1_300_000, 6_650_000, 5_200_000)
 CRS        = "EPSG:3035"
 
 SMALL_LABEL_ISOS = {"ME", "XK", "LU", "SI", "AD", "SM", "MT", "LI",
@@ -295,8 +295,8 @@ for render_i, idx in enumerate(render_indices):
     fig = plt.figure(figsize=(FIG_W, FIG_H), facecolor=BG_COLOR)
 
     # ── TOP PANEL: map ────────────────────────────────────────────────────
-    ax_map = fig.add_axes([0.00, 0.43, 0.93, 0.55])
-    cbar_ax = fig.add_axes([0.935, 0.55, 0.010, 0.30])
+    ax_map = fig.add_axes([0.00, 0.43, 0.87, 0.55])
+    cbar_ax = fig.add_axes([0.875, 0.55, 0.010, 0.30])
     ax_map.set_facecolor(BG_COLOR)
     ax_map.axis("off")
 
@@ -337,7 +337,7 @@ for render_i, idx in enumerate(render_indices):
             if pt.x > BBOX_3035[2] - 150_000:
                 continue
             ax_map.text(pt.x, pt.y, txt,
-                        fontsize=6.5 if small else 7.5,
+                        fontsize=8.5 if small else 10,
                         color="white", ha="center", va="center",
                         alpha=0.82 if small else 0.93,
                         fontfamily=LABEL_FONT, fontweight="bold",
